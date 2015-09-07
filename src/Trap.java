@@ -4,25 +4,38 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Created by Shea on 2015-09-07.
- * Class name and description go here.
+ * Created by arirappaport on 9/7/15.
  */
-public abstract class Entity
+public class Trap extends Entity
 {
-  public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
+  protected Point2D.Float upperLeftCorner;
+  protected Point2D.Float center;
+  protected boolean isTriggered;
+
+  public Trap(Point2D.Float upperLeftCorner)
   {
+    this.upperLeftCorner = upperLeftCorner;
+    int centerX = (int) upperLeftCorner.getX() + SettingsManager.getInteger("tileSize") / 2;
+    int centerY = (int) upperLeftCorner.getY() + SettingsManager.getInteger("tileSize") / 2;
+    center.setLocation(centerX, centerY);
+  }
+
+  public void setIsTriggered(boolean isTriggered)
+  {
+    this.isTriggered = isTriggered;
+  }
+
+  public void draw(Graphics2D local, Graphics2D screen)
+  {
+
   }
   public Point2D.Float getPosition() //returns center point of object
   {
-    return null;
+    return center;
   }
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
-    Point2D.Float position = getPosition();
-    if (position == null) return null;
-    int halfTileSize = SettingsManager.getInteger("tileSize") / 2;
-    return new Rectangle2D.Float(position.x - halfTileSize, position.y - halfTileSize,
-        position.x + halfTileSize, position.y + halfTileSize);
+    return null;
   }
   public boolean isSolid() //solid objects cannot move into each other
   {

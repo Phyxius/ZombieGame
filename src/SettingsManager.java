@@ -12,7 +12,10 @@ public class SettingsManager
 
   static //defaults go here
   {
-    set("framerate", 60);
+    set("frameRate", 60);
+    set("zombieSpeed", 0.50f);
+    set("zombieDecisionRate", 2.0f);
+    set("zombieSmell", 7.0f);
     set("tileSize", 80);
   }
 
