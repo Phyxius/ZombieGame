@@ -13,6 +13,9 @@ public class SettingsManager
   static //defaults go here
   {
     set("framerate", 60);
+    set("zombiespeed", 0.50f);
+    set("zombiedecisionrate", 2.0f);
+    set("zombiesmell", 7.0f);
   }
 
   public static void set(String name, float value)

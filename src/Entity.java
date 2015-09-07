@@ -11,7 +11,6 @@ public abstract class Entity
 {
   public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
-
   }
   public Point2D.Float getPosition() //returns center point of object
   {
