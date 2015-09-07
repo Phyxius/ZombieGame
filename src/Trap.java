@@ -12,16 +12,14 @@ public class Trap extends Entity
   protected Point2D.Float upperLeftCorner;
   protected Point2D.Float center;
   protected Rectangle2D boundingRect;
-  private static int[] dx = {-1, 0, 1,-1, 1,-1, 0, 1};
-  private static int[] dy = {-1,-1,-1, 0, 0, 1, 1, 1};
 
   public Trap(Point2D.Float upperLeftCorner)
   {
     this.upperLeftCorner = upperLeftCorner;
-    tileSize = SettingsManager.getInteger("tilesize");
+    tileSize = Settings.tileSize;
     boundingRect = new Rectangle((int) upperLeftCorner.getX(),(int) upperLeftCorner.getY(),tileSize , tileSize);
-    int centerX = (int) upperLeftCorner.getX() + SettingsManager.getInteger("tilesize") / 2;
-    int centerY = (int) upperLeftCorner.getY() + SettingsManager.getInteger("tilesize") / 2;
+    int centerX = (int) upperLeftCorner.getX() + tileSize;
+    int centerY = (int) upperLeftCorner.getY() + tileSize;
     center.setLocation(centerX, centerY);
   }
 
@@ -43,23 +41,20 @@ public class Trap extends Entity
     return true;
   }
 
-  private void dentonate()
+  private void detonate()
   {
-    //Detonation animation
-    for(int i = 0; i < 8; i++)
-    {
-      int curDx = dx[i];
-      int curDy = dy[i];
-    }
-
+    int fireX = (int) upperLeftCorner.getX() - tileSize;
+    int fireY = (int) upperLeftCorner.getY() - tileSize;
+    Rectangle2D.Float explosionArea = new Rectangle2D.Float(fireX, fireY, 3 * tileSize, 3 * tileSize);
+    new Fire(explosionArea);
   }
 
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
+    //TODO: add the condition that the player is running
     if(other instanceof ZombieModel)
     {
       detonate();
     }
-
   }
 }
