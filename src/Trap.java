@@ -16,10 +16,10 @@ public class Trap extends Entity
   public Trap(Point2D.Float upperLeftCorner)
   {
     this.upperLeftCorner = upperLeftCorner;
-    tileSize = SettingsManager.getInteger("tilesize");
+    tileSize = Settings.tileSize;
     boundingRect = new Rectangle((int) upperLeftCorner.getX(),(int) upperLeftCorner.getY(),tileSize , tileSize);
-    int centerX = (int) upperLeftCorner.getX() + SettingsManager.getInteger("tilesize") / 2;
-    int centerY = (int) upperLeftCorner.getY() + SettingsManager.getInteger("tilesize") / 2;
+    int centerX = (int) upperLeftCorner.getX() + tileSize;
+    int centerY = (int) upperLeftCorner.getY() + tileSize;
     center.setLocation(centerX, centerY);
   }
 
