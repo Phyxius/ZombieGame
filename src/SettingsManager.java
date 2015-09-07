@@ -12,6 +12,12 @@ public class SettingsManager
 
   static //defaults go here
   {
+    //Possibly change to static vars later
+    int tileSize = 80;
+    int frameRate = 60;
+    float zombieSpeed = 0.5f;
+    float zombieDecisionRate = 2.0f;
+    float zombieSmell = 7.0f;
     set("framerate", 60);
     set("zombiespeed", 0.50f);
     set("zombiedecisionrate", 2.0f);
