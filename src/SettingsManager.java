@@ -13,6 +13,7 @@ public class SettingsManager
   static //defaults go here
   {
     set("framerate", 60);
+    set("tileSize", 80);
   }
 
   public static void set(String name, float value)
