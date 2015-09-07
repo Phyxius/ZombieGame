@@ -9,6 +9,11 @@ public class SettingsManager
   private final static HashMap<String, String> stringSettings = new HashMap<>();
   private final static HashMap<String, Float> numericSettings = new HashMap<>();
 
+  static //defaults go here
+  {
+
+  }
+
   public void set(String name, float value)
   {
     numericSettings.put(name, value);
