@@ -37,7 +37,7 @@ public abstract class Entity
   {
 
   }
-  public void onCollision(Entity other) //called when collided with other entity
+  public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
 
   }
