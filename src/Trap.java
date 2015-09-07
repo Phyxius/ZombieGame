@@ -43,7 +43,10 @@ public class Trap extends Entity
 
   private void detonate()
   {
-
+    int fireX = (int) upperLeftCorner.getX() - tileSize;
+    int fireY = (int) upperLeftCorner.getY() - tileSize;
+    Rectangle2D.Float explosionArea = new Rectangle2D.Float(fireX, fireY, 3 * tileSize, 3 * tileSize);
+    new Fire(explosionArea);
   }
 
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
