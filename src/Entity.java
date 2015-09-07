@@ -8,6 +8,6 @@ public interface Entity
   Point[] getPosition(); //returns array of grid squares occupied by object
   boolean isSolid(); //solid objects cannot move into each other
   void keyPressed(keyEventArgs e);
-  void update(EntityManager e); //called for each update tick, EntityManager contains methods to add/remove/etc entities
+  void update(UpdateManager e); //called for each update tick, EntityManager contains methods to add/remove/etc entities
   void onCollision(Entity other); //called when collided with other entity
 }
