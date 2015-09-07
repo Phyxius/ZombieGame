@@ -20,7 +20,7 @@ public abstract class Entity
   {
     Point2D.Float position = getPosition();
     if (position == null) return null;
-    int halfTileSize = SettingsManager.getInteger("tileSize") / 2;
+    int halfTileSize = Settings.tileSize / 2;
     return new Rectangle2D.Float(position.x - halfTileSize, position.y - halfTileSize,
         position.x + halfTileSize, position.y + halfTileSize);
   }
