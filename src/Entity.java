@@ -29,6 +29,10 @@ public abstract class Entity
   {
 
   }
+  public void keyReleased(KeyEvent e)
+  {
+
+  }
   public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
   {
 
