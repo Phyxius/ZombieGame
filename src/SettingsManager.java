@@ -7,7 +7,8 @@ import java.util.HashMap;
 public class SettingsManager
 {
   private final static HashMap<String, String> stringSettings = new HashMap<>();
-  private final static HashMap<String, Float> numericSettings = new HashMap<>();
+  private final static HashMap<String, Float> floatSettings = new HashMap<>();
+  private final static HashMap<String, Integer> integralSettings = new HashMap<>();
 
   static //defaults go here
   {
@@ -16,12 +17,17 @@ public class SettingsManager
 
   public static void set(String name, float value)
   {
-    numericSettings.put(name, value);
+    floatSettings.put(name, value);
   }
 
   public static void set(String name, String value)
   {
     stringSettings.put(name, value);
+  }
+
+  public static void set(String name, int value)
+  {
+    integralSettings.put(name, value);
   }
 
   public static String getString(String name)
@@ -31,6 +37,11 @@ public class SettingsManager
 
   public static Float getFloat(String name)
   {
-    return numericSettings.getOrDefault(name, null);
+    return floatSettings.getOrDefault(name, null);
+  }
+
+  public static Integer getInteger(String name)
+  {
+    return integralSettings.getOrDefault(name, null);
   }
 }
