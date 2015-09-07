@@ -18,7 +18,11 @@ public abstract class Entity
   }
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
-    return null;
+    Point2D.Float position = getPosition();
+    if (position == null) return null;
+    int halfTileSize = SettingsManager.getInteger("tileSize") / 2;
+    return new Rectangle2D.Float(position.x - halfTileSize, position.y - halfTileSize,
+        position.x + halfTileSize, position.y + halfTileSize);
   }
   public boolean isSolid() //solid objects cannot move into each other
   {
