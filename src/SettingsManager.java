@@ -11,25 +11,25 @@ public class SettingsManager
 
   static //defaults go here
   {
-
+    set("framerate", 60);
   }
 
-  public void set(String name, float value)
+  public static void set(String name, float value)
   {
     numericSettings.put(name, value);
   }
 
-  public void set(String name, String value)
+  public static void set(String name, String value)
   {
     stringSettings.put(name, value);
   }
 
-  public String getString(String name)
+  public static String getString(String name)
   {
     return stringSettings.getOrDefault(name, null);
   }
 
-  public Float getFloat(String name)
+  public static Float getFloat(String name)
   {
     return numericSettings.getOrDefault(name, null);
   }
