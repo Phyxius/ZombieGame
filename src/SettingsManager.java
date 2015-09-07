@@ -17,6 +17,7 @@ public class SettingsManager
     set("zombieDecisionRate", 2.0f);
     set("zombieSmell", 7.0f);
     set("tileSize", 80);
+    set("zombieSpawnRate", 0.01f);
   }
 
   public static void set(String name, float value)

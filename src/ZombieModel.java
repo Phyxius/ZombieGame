@@ -10,6 +10,7 @@ abstract class ZombieModel extends Entity
   protected float speed; // displacement = speed * tiles
   protected int decisionRate; // New decision every decisionRate updates.
   protected float smell; // smell radius = smell * tiles
+  protected float stamina;
   protected int updateCount = 0;
   protected Player player;
   protected Point2D.Float playerPosition = null;

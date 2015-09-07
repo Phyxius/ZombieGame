@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 /**
@@ -11,6 +12,14 @@ public class Player extends Entity
   void setPosition(Point2D.Float position)
   {
     this.position = position;
+  }
+
+  @Override
+  public void draw (Graphics2D local, Graphics2D global)
+  {
+    int tileSize = SettingsManager.getInteger("tileSize");
+    local.setColor(Color.YELLOW);
+    local.drawRoundRect(0, 0, tileSize, tileSize, tileSize/10, tileSize/10);
   }
 
   @Override
