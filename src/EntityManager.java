@@ -3,6 +3,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**
@@ -14,6 +15,7 @@ public class EntityManager
   private ArrayList<Entity> entities = new ArrayList<>();
   private ArrayList<Entity> entitiesToRemove = new ArrayList<>();
   private ArrayList<Entity> entitiesToAdd = new ArrayList<>();
+  private Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
 
   public void update()
   {
@@ -43,6 +45,7 @@ public class EntityManager
     entitiesToRemove.clear();
     entities.addAll(entitiesToAdd);
     entitiesToAdd.clear();
+    entities.sort(depthComparator);
   }
 
   public void remove(Entity entity)
