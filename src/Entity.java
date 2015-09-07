@@ -44,4 +44,9 @@ public abstract class Entity
   {
 
   }
+
+  public int getDepth() //lower numbers are drawn above higher numbers
+  {
+    return 0;
+  }
 }
