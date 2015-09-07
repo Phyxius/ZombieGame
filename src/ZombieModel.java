@@ -41,9 +41,4 @@ abstract class ZombieModel extends Entity
   {
     return this.position;
   }
-
-  @Override
-  public void onCollision (Entity other)
-  {
-  }
 }
