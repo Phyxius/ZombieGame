@@ -15,27 +15,30 @@ abstract class ZombieModel extends Entity
   protected Player player;
   protected Point2D.Float playerPosition = null;
   protected Point2D.Float position;
+  protected double lastHeading;
+  protected boolean collision;
 
   ZombieModel (Player player, Point2D.Float position)
   {
-    speed = SettingsManager.getFloat("zombieSpeed");
-    decisionRate = (int) (SettingsManager.getFloat("zombieDecision") * SettingsManager.getInteger("frameRate"));
-    smell = SettingsManager.getFloat("zombieSmell");
+    speed = Settings.zombieSpeed;
+    decisionRate = (int) (Settings.zombieDecisionRate * Settings.frameRate);
+    smell = Settings.zombieSmellRadius;
     this.position.setLocation(position.getX(), position.getY());
+    this.player = player;
   }
 
   ZombieModel (Player player, float speed, float decisionRate, float smell, Point2D.Float position)
   {
     this(player, position);
     this.speed = speed;
-    this.decisionRate = (int) (decisionRate * SettingsManager.getInteger("frameRate"));
+    this.decisionRate = (int) (decisionRate * Settings.frameRate);
     this.smell = smell;
   }
 
   @Override
   public void draw (Graphics2D local, Graphics2D global)
   {
-    int tileSize = SettingsManager.getInteger("tileSize");
+    int tileSize = Settings.tileSize;
     local.setColor(Color.GREEN);
     local.drawRoundRect(0, 0, tileSize, tileSize, tileSize/10, tileSize/10);
   }
