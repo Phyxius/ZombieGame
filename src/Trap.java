@@ -18,8 +18,8 @@ public class Trap extends Entity
     this.upperLeftCorner = upperLeftCorner;
     tileSize = Settings.tileSize;
     boundingRect = new Rectangle((int) upperLeftCorner.getX(),(int) upperLeftCorner.getY(),tileSize , tileSize);
-    int centerX = (int) upperLeftCorner.getX() + tileSize;
-    int centerY = (int) upperLeftCorner.getY() + tileSize;
+    int centerX = (int) upperLeftCorner.getX() + (tileSize / 2);
+    int centerY = (int) upperLeftCorner.getY() + (tileSize / 2);
     center.setLocation(centerX, centerY);
   }
 
@@ -51,10 +51,21 @@ public class Trap extends Entity
 
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
-    //TODO: add the condition that the player is running
-    if(other instanceof ZombieModel)
+    if(other instanceof LineZombie)
     {
       detonate();
+    }
+    if(other instanceof Player)
+    {
+      Player player = (Player) other;
+      if(player.isRunning())
+      {
+        detonate();
+      }
+      else if(player.isPickingUp())
+      {
+        c.remove(this);
+      }
     }
   }
 }
