@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
 /**
@@ -28,13 +29,13 @@ public class ZombiePanel extends JPanel
   public void paintComponent(Graphics g)
   {
     int tileSize = Settings.tileSize;
-    String tilePaths[] = ResourceManager.tilePaths;
+    ArrayList<String> tilePaths = ResourceManager.tilePaths;
     BufferedImage curImg;
     for(int i = 0; i < 20; i++)
     {
       for(int j = 0; j < 20; j++)
       {
-        curImg = ResourceManager.tileHashMap.get(tilePaths[i%tilePaths.length]);
+        curImg = ResourceManager.tileHashMap.get(tilePaths.get(i%tilePaths.size()));
         g.drawImage(curImg, j*tileSize, i*tileSize,tileSize, tileSize, null);
       }
     }

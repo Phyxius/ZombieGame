@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.io.InputStream;
 import java.util.HashMap;
 
@@ -10,12 +11,15 @@ import java.util.HashMap;
 public class ResourceManager
 {
   public static HashMap<String, BufferedImage> tileHashMap;
-  public static String tilePaths[] = {"resources/tileset/center.png", "resources/tileset/horizhall.png",
-                                      "resources/tileset/leftwall.png", "resources/tileset/lowerleft.png"};
-
+  public static ArrayList<String> tilePaths;
   public ResourceManager()
   {
     tileHashMap = new HashMap<>();
+    tilePaths = new ArrayList<>();
+    tilePaths.add("resources/tileset/center.png");
+    tilePaths.add("resources/tileset/horizhall.png");
+    tilePaths.add("resources/tileset/leftwall.png");
+    tilePaths.add("resources/tileset/rightwall.png");
   }
 
   public void populateImageHashMap()
@@ -23,9 +27,8 @@ public class ResourceManager
     BufferedImage img = null;
     ClassLoader c1;
     InputStream in;
-    for(int i = 0; i < tilePaths.length; i++)
+    for(String imagePath: tilePaths)
     {
-      String imagePath = tilePaths[i];
       try
       {
         c1 = this.getClass().getClassLoader();
