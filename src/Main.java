@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by arirappaport on 9/7/15.
@@ -7,8 +8,12 @@ public class Main
 {
   public static void main(String[] args)
   {
-    ZombieFrame zombieFrame = new ZombieFrame();
+    JFrame zombieFrame = new JFrame();
+    ZombiePanel zombiePanel = new ZombiePanel(zombieFrame);
+    zombiePanel.init();
     zombieFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     zombieFrame.setVisible(true);
+    zombieFrame.setSize(new Dimension(10 * Settings.tileSize, 10 * Settings.tileSize));
+    zombieFrame.setContentPane(zombiePanel);
   }
 }
