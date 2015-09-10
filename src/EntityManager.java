@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -36,7 +37,16 @@ public class EntityManager
       }
     }
     ProcessAdditionsAndRemovals();
+  }
 
+  public void draw(Graphics2D g)
+  {
+    for (Entity entity : entities)
+    {
+      final Rectangle2D.Float boundingBox = entity.getBoundingBox();
+      entity.draw((Graphics2D)g.create((int)boundingBox.x, (int)boundingBox.y,
+          ((int) boundingBox.width), ((int) boundingBox.height)), (Graphics2D)g.create());
+    }
   }
 
   private void ProcessAdditionsAndRemovals()
