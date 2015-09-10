@@ -47,7 +47,7 @@ public class ZombiePanel extends JPanel
     {
       for(int j = 0; j < 20; j++)
       {
-        curImg = ResourceManager.tileHashMap.get(tilePaths.get(i%tilePaths.size()));
+        curImg = ResourceManager.imageHashMap.get(tilePaths.get(i%tilePaths.size()));
         g.drawImage(curImg, j*tileSize, i*tileSize,tileSize, tileSize, null);
       }
     }

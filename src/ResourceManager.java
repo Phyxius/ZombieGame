@@ -10,11 +10,11 @@ import java.util.HashMap;
  */
 public class ResourceManager
 {
-  public static HashMap<String, BufferedImage> tileHashMap;
+  public static HashMap<String, BufferedImage> imageHashMap;
   public static ArrayList<String> tilePaths;
   public ResourceManager()
   {
-    tileHashMap = new HashMap<>();
+    imageHashMap = new HashMap<>();
     tilePaths = new ArrayList<>();
     tilePaths.add("resources/center.png");
     tilePaths.add("resources/horizhall.png");
@@ -38,7 +38,7 @@ public class ResourceManager
       {
         ex.printStackTrace();
       }
-      tileHashMap.put(imagePath, img);
+      imageHashMap.put(imagePath, img);
     }
   }
 }
