@@ -45,6 +45,11 @@ public class UpdateManager
     entityManager.remove(entities);
   }
 
+  public Collection<Entity> getAllEntities()
+  {
+    return entityManager.getAllEntities();
+  }
+
   public Collection<Entity> getCollidingEntities(Rectangle2D.Float boundingBox)
   {
     return entityManager.getCollidingEntities(boundingBox);
