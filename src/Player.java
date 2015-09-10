@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 
 /**
@@ -34,6 +35,20 @@ public class Player extends Entity
   public boolean isRunning()
   {
     return isRunning;
+  }
+
+  @Override
+  public void update(UpdateManager e)
+  {
+    float horizontalSpeed = 0, veriticalSpeed = 0;
+    if (e.isKeyPressed(KeyEvent.VK_LEFT)) horizontalSpeed -= Settings.playerSpeed;
+    if (e.isKeyPressed(KeyEvent.VK_RIGHT)) horizontalSpeed += Settings.playerSpeed;
+    if (e.isKeyPressed(KeyEvent.VK_UP)) veriticalSpeed -= Settings.playerSpeed;
+    if (e.isKeyPressed(KeyEvent.VK_DOWN)) veriticalSpeed += Settings.playerSpeed;
+    float magnitude = horizontalSpeed * horizontalSpeed + veriticalSpeed * veriticalSpeed;
+    horizontalSpeed /= magnitude;
+    veriticalSpeed /= magnitude;
+    position.setLocation(position.x + horizontalSpeed, position.y + veriticalSpeed);
   }
 
   public boolean isPickingUp()

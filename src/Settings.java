@@ -14,4 +14,5 @@ public class Settings
   public static float zombieDecisionRate = 2.0f; //sec
   public static float zombieSmellRadius = 7f; //tiles
   public static int tileSize = 80; //pixels
+  public static float playerSpeed = Util.tilesPerSecondToPixelsPerFrame(1);
 }
