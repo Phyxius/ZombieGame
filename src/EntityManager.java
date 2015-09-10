@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -47,6 +48,16 @@ public class EntityManager
       entity.draw((Graphics2D)g.create((int)boundingBox.x, (int)boundingBox.y,
           ((int) boundingBox.width), ((int) boundingBox.height)), (Graphics2D)g.create());
     }
+  }
+
+  public void keyPressed(KeyEvent e)
+  {
+    entities.forEach(ent -> ent.keyPressed(e));
+  }
+
+  public void keyReleased(KeyEvent e)
+  {
+    entities.forEach(ent -> ent.keyReleased(e));
   }
 
   private void ProcessAdditionsAndRemovals()
