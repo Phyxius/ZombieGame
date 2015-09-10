@@ -2,10 +2,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 /**
@@ -18,6 +18,26 @@ public class EntityManager
   private ArrayList<Entity> entitiesToRemove = new ArrayList<>();
   private ArrayList<Entity> entitiesToAdd = new ArrayList<>();
   private Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
+  private HashMap<Integer, Boolean> keyDict = new HashMap<>();
+
+  public EntityManager()
+  {
+    initializeKeyboardDict();
+  }
+
+  //Add every possible key value to the dict, initialized to false
+  private void initializeKeyboardDict()
+  {
+    for (Field field : KeyEvent.class.getDeclaredFields())
+    {
+      if (!Modifier.isStatic(field.getModifiers()) || !int.class.isAssignableFrom(field.getType())) continue;
+      try
+      {
+        keyDict.put(field.getInt(null), false);
+      }
+      catch (IllegalAccessException ignored) { }//must not be a public field, so don't need it
+    }
+  }
 
   public void update()
   {
@@ -52,11 +72,13 @@ public class EntityManager
 
   public void keyPressed(KeyEvent e)
   {
+    keyDict.put(e.getKeyCode(), true);
     entities.forEach(ent -> ent.keyPressed(e));
   }
 
   public void keyReleased(KeyEvent e)
   {
+    keyDict.put(e.getKeyCode(), false);
     entities.forEach(ent -> ent.keyReleased(e));
   }
 
@@ -114,5 +136,10 @@ public class EntityManager
   {
     return entities.parallelStream().filter(e -> e.getBoundingBox()
         .contains(point)).collect(Collectors.toList());
+  }
+
+  public boolean isKeyPressed(int keyCode)
+  {
+    return keyDict.get(keyCode);
   }
 }

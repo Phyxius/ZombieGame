@@ -59,4 +59,9 @@ public class UpdateManager
   {
     return entityManager.getIntersectingEntities(point);
   }
+
+  public boolean isKeyPressed(int keyCode)
+  {
+    return entityManager.isKeyPressed(keyCode);
+  }
 }
