@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * Created by arirappaport on 9/10/15.
  */
-public abstract class Animation
+public class Animation
 {
   int maxFrame;
   HashMap<String, BufferedImage> imageHashMap;

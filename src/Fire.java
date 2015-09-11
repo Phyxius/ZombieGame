@@ -7,9 +7,11 @@ import java.awt.geom.Rectangle2D;
 public class Fire extends Entity
 {
   private Rectangle2D explosionArea;
+  private int numFireFrames;
   public Fire(Rectangle2D.Float explosionArea)
   {
     this.explosionArea = explosionArea;
+    numFireFrames = 15;
   }
 
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
@@ -25,8 +27,8 @@ public class Fire extends Entity
   public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
     //Animate fire
-    local.drawRect((int) explosionArea.getX(),(int) explosionArea.getY(),
-                   (int) explosionArea.getWidth(),(int) explosionArea.getHeight());
+    Animation fireAnimation = new Animation("fireAnimation", numFireFrames);
+    fireAnimation.animate(local);
     //Draw ash
   }
 }
