@@ -14,8 +14,8 @@ abstract class ZombieModel extends Entity
   protected int updateCount = 0;
   protected Player player;
   protected Point2D.Float playerPosition = null;
-  protected Point2D.Float position;
-  protected double lastHeading;
+  protected Point2D.Float position; // Center of the object
+  protected double directionAngle; // 0 - 2 * PI
   protected boolean collision;
 
   ZombieModel (Player player, Point2D.Float position)
@@ -53,7 +53,17 @@ abstract class ZombieModel extends Entity
   {
     if (player.getPosition().distance(this.position) <= smell)
     {
-      playerPosition = player.getPosition();
+      playerPosition = new Point2D.Float(player.getPosition().x, player.getPosition().y);
     }
+    else
+    {
+      playerPosition = null;
+    }
+  }
+
+  @Override
+  public boolean isSolid()
+  {
+    return true;
   }
 }
