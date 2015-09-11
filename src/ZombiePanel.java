@@ -25,7 +25,7 @@ public class ZombiePanel extends JPanel
     ResourceManager manager = new ResourceManager();
     manager.populateImageHashMap();
     repaint();
-    addKeyListener(new KeyboardHandler());
+    frame.addKeyListener(new KeyboardHandler());
     entityManager.add(new Player());
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
