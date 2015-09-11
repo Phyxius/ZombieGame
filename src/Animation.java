@@ -22,8 +22,8 @@ public class Animation
     BufferedImage img;
     for(int i = 0; i < maxFrame; i++)
     {
-      if(i < 10) img = imageHashMap.get(filePath + "0" + i);
-      else img = imageHashMap.get(filePath + i);
+      if(i < 10) img = imageHashMap.get(filePath + "0" + i + ".png");
+      else img = imageHashMap.get(filePath + i + ".png");
       local.drawImage(img, 0 , 0, img.getWidth(), img.getHeight(), null);
     }
   }
