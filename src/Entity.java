@@ -12,7 +12,7 @@ public abstract class Entity
   public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
   }
-  public Point2D.Float getPosition() //returns center point of object
+  public Point2D.Float getPosition() //returns upper left point of the object
   {
     return null;
   }
@@ -20,9 +20,8 @@ public abstract class Entity
   {
     Point2D.Float position = getPosition();
     if (position == null) return null;
-    int halfTileSize = Settings.tileSize / 2;
-    return new Rectangle2D.Float(position.x - halfTileSize, position.y - halfTileSize,
-        position.x + halfTileSize, position.y + halfTileSize);
+    return new Rectangle2D.Float(position.x, position.y,
+        position.x + Settings.tileSize, position.y + Settings.tileSize);
   }
   public boolean isSolid() //solid objects cannot move into each other
   {

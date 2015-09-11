@@ -13,6 +13,6 @@ public class Util
   }
   static float tilesPerSecondToPixelsPerFrame(float tilesPerSec)
   {
-    return tilesPerSec / (Settings.frameRate * Settings.tileSize);
+    return tilesPerSec * Settings.tileSize / Settings.frameRate;
   }
 }

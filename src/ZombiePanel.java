@@ -26,7 +26,8 @@ public class ZombiePanel extends JPanel
     manager.populateImageHashMap();
     repaint();
     addKeyListener(new KeyboardHandler());
-    new Timer(1000 / Settings.frameRate, this::timerTick);
+    entityManager.add(new Player());
+    new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 
   private void timerTick(ActionEvent actionEvent)
@@ -40,6 +41,19 @@ public class ZombiePanel extends JPanel
   // all the tiles
   public void paintComponent(Graphics g)
   {
+    /*int tileSize = Settings.tileSize;
+    ArrayList<String> tilePaths = ResourceManager.tilePaths;
+    BufferedImage curImg;
+    for(int i = 0; i < 20; i++)
+    {
+      for(int j = 0; j < 20; j++)
+      {
+        curImg = ResourceManager.imageHashMap.get(tilePaths.get(i%tilePaths.size()));
+        g.drawImage(curImg, j*tileSize, i*tileSize,tileSize, tileSize, null);
+      }
+    }*/
+    g.setColor(Color.WHITE);
+    g.fillRect(0, 0, getWidth(), getHeight());
     entityManager.draw((Graphics2D)g);
   }
 
