@@ -24,7 +24,7 @@ public class House extends Entity
     {
       for(int j = 0; j < gridWidth; j++)
       {
-        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), i * set);
+        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), i, j, null);
       }
     }
   }
