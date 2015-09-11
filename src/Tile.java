@@ -9,6 +9,6 @@ public class Tile extends Entity
 
   public Tile(String imgName)
   {
-    tileImg = ResourceManager.imageHashMap(imgName);
+    tileImg = ResourceManager.imageHashMap.get(imgName);
   }
 }
