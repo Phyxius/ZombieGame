@@ -40,17 +40,6 @@ public class ZombiePanel extends JPanel
   // all the tiles
   public void paintComponent(Graphics g)
   {
-    int tileSize = Settings.tileSize;
-    ArrayList<String> tilePaths = ResourceManager.tilePaths;
-    BufferedImage curImg;
-    for(int i = 0; i < 20; i++)
-    {
-      for(int j = 0; j < 20; j++)
-      {
-        curImg = ResourceManager.imageHashMap.get(tilePaths.get(i%tilePaths.size()));
-        g.drawImage(curImg, j*tileSize, i*tileSize,tileSize, tileSize, null);
-      }
-    }
     entityManager.draw((Graphics2D)g);
   }
 

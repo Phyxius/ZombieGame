@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -10,5 +11,10 @@ public class Tile extends Entity
   public Tile(String imgName)
   {
     tileImg = ResourceManager.imageHashMap.get(imgName);
+  }
+
+  public BufferedImage getTileImg()
+  {
+    return tileImg;
   }
 }

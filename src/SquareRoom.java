@@ -20,16 +20,25 @@ public class SquareRoom extends RoomModel
     int startX = (int) startPoint.getX();
     int startY = (int) startPoint.getY();
 
-    for(int i = startX; i < height; i++)
+    for(int i = startY; i <= height; i++)
     {
-      for(int j = startY; j < width; j++)
+      for(int j = startX; j <= width; j++)
       {
-        if(i == startX)
+        if(i == startY)
         {
-
+          if(j == startX) tiles[i][j] = new Tile("upperleft");
+          else if(j == width) tiles[i][j] = new Tile("upperright");
+          else tiles[i][j] = new Tile("top");
         }
+        else if(i == height)
+        {
+          if(j == startX) tiles[i][j] = new Tile("lowerleft");
+          else if(j == width) tiles[i][j] = new Tile("lowerright");
+          else tiles[i][j] = new Tile("down");
+        }
+        else tiles[i][j] = new Tile("center");
       }
     }
-    return null;
+    return tiles;
   }
 }
