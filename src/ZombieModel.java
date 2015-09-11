@@ -14,7 +14,7 @@ abstract class ZombieModel extends Entity
   protected int updateCount = 0;
   protected Player player;
   protected Point2D.Float playerPosition = null;
-  protected Point2D.Float position;
+  protected Point2D.Float position; // Center of the object
   protected double directionAngle; // 0 - 2 * PI
   protected boolean collision;
 
