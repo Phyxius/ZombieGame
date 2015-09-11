@@ -6,12 +6,14 @@ import java.awt.geom.Point2D;
  */
 public class SquareRoom extends RoomModel
 {
-  private int width;
-  private int height;
+  int width, height;
   public SquareRoom(Point2D startPoint)
   {
-    width = 8;
-    height = 8;
+    super(startPoint);
+    setWidth(8);
+    setHeight(8);
+    width = getWidth();
+    height = getHeight();
     makeRoom(startPoint);
   }
 
@@ -26,19 +28,19 @@ public class SquareRoom extends RoomModel
       {
         if(i == startY)
         {
-          if(j == startX) tiles[i][j] = new Tile("upperleft");
-          else if(j == width) tiles[i][j] = new Tile("upperright");
-          else tiles[i][j] = new Tile("top");
+          if(j == startX) setTilesAt(j,i,new Tile("upperleft"));
+          else if(j == width) setTilesAt(j,i,new Tile("upperright"));
+          else setTilesAt(j,i,new Tile("top"));
         }
         else if(i == height)
         {
-          if(j == startX) tiles[i][j] = new Tile("lowerleft");
-          else if(j == width) tiles[i][j] = new Tile("lowerright");
-          else tiles[i][j] = new Tile("down");
+          if(j == startX) setTilesAt(j,i,new Tile("lowerleft"));
+          else if(j == width) setTilesAt(j,i,new Tile("lowerright"));
+          else setTilesAt(j,i,new Tile("down"));
         }
-        else tiles[i][j] = new Tile("center");
+        else setTilesAt(j, i ,new Tile("center"));
       }
     }
-    return tiles;
+    return getTiles();
   }
 }

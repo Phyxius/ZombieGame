@@ -9,6 +9,57 @@ public abstract class HouseEntity
   //relative to rest of house
   public Point2D startPoint;
   //List of tiles associated with object
-  public Tile[][] tiles;
-  public Entity[][] obstacles;
+  private Entity[][] obstacles;
+  private int width, height;
+  private Tile[][] tiles;
+
+  public HouseEntity(Point2D startPoint)
+  {
+    this.startPoint = startPoint;
+  }
+
+  public Point2D getStartPoint()
+  {
+    return startPoint;
+  }
+
+  public int getWidth()
+  {
+    return width;
+  }
+
+  public int getHeight()
+  {
+    return height;
+  }
+
+  public void setWidth(int width)
+  {
+    this.width = width;
+  }
+
+  public void setHeight(int height)
+  {
+    this.height = height;
+  }
+
+  public Tile[][] getTiles()
+  {
+    return tiles;
+  }
+
+  public void setTilesAt(int x, int y, Tile tile)
+  {
+    tiles[y][x] = tile;
+  }
+
+  public Tile getTileAt(int x, int y)
+  {
+    return tiles[y][x];
+  }
+
+  public Entity[][] getObstacles()
+  {
+    return obstacles;
+  }
 }

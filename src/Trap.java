@@ -46,7 +46,6 @@ public class Trap extends Entity
     return true;
   }
 
-
   @Override
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {

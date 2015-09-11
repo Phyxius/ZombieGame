@@ -6,4 +6,8 @@ import java.awt.geom.Point2D;
 public abstract class RoomModel extends HouseEntity
 {
 
+  public RoomModel(Point2D starPoint)
+  {
+    super(starPoint);
+  }
 }
