@@ -27,6 +27,7 @@ public class ZombiePanel extends JPanel
     repaint();
     frame.addKeyListener(new KeyboardHandler());
     entityManager.add(new Player());
+    entityManager.add(new House(32, 32));
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 
@@ -54,7 +55,9 @@ public class ZombiePanel extends JPanel
     }*/
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, getWidth(), getHeight());
-    entityManager.draw((Graphics2D)g);
+    //House house = new House(32,32);
+    //g.drawImage(house.houseImg, 0, 0, house.houseImg.getWidth(), house.houseImg.getHeight(), null);
+    entityManager.draw((Graphics2D) g);
   }
 
   private class KeyboardHandler extends KeyAdapter

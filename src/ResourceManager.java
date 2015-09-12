@@ -16,10 +16,9 @@ public class ResourceManager
   {
     imageHashMap = new HashMap<>();
     tilePaths = new ArrayList<>();
-    tilePaths.add("tileset/center.png");
-    tilePaths.add("tileset/horizhall.png");
-    tilePaths.add("tileset/leftwall.png");
-    tilePaths.add("tileset/rightwall.png");
+    tilePaths.add("tileset/nonwall.png");
+    tilePaths.add("tileset/wall.png");
+    tilePaths.add("tileset/outofbounds.png");
   }
 
   public void populateImageHashMap()

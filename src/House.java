@@ -1,5 +1,7 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -9,42 +11,82 @@ import java.util.ArrayList;
 public class House extends Entity
 {
   public static Tile[][] fullGrid;
-  private ArrayList<RoomModel> roomList;
-  private BufferedImage houseImg;
+  private ArrayList<Room> roomList;
+  public static BufferedImage houseImg;
   private int gridHeight, gridWidth;
 
   public House(int gridWidth, int gridHeight)
   {
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
+    int tileSize = Settings.tileSize;
     roomList  = new ArrayList<>();
     fullGrid = new Tile[gridHeight][gridWidth];
-    houseImg = null;
+    houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_3BYTE_BGR);
+    generateRoomList();
+    copyRoomsToGrid();
     generateBuffImgHouse();
   }
 
   @Override
   public void draw(Graphics2D local, Graphics2D screen)
   {
-    local.drawImage(houseImg, 0, 0, null);
+    screen.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
+  }
+
+  //Will be very sophisticated at some point
+
+  public Point2D.Float getPosition() //returns upper left point of the object
+  {
+    return new Point2D.Float(0,0);
+  }
+  public Rectangle2D.Float getBoundingBox() //returns bounding box of object
+  {
+    Point2D.Float position = getPosition();
+    if (position == null) return null;
+    return new Rectangle2D.Float(position.x, position.y,
+            position.x + gridWidth, position.y + gridHeight);
+  }
+  public boolean isSolid() //solid objects cannot move into each other
+  {
+    return false;
+  }
+  public void keyPressed(KeyEvent e) {}
+  public void keyReleased(KeyEvent e)
+  {
+
+  }
+  public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
+  {
+
+  }
+  public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
+  {
+  }
+
+  public int getDepth() //lower numbers are drawn above higher numbers
+  {
+    return -1;
   }
 
   private void generateRoomList()
   {
-    SquareRoom room1 = new SquareRoom(new Point(0,0));
+    Room room1 = new Room(new Point(0,0), 8, 8);
+    Room room2 = new Room(new Point(9,12), 4, 4);
     roomList.add(room1);
+    roomList.add(room2);
   }
 
   private void copyRoomsToGrid()
   {
     int startX, startY;
     int width, height;
-    for(RoomModel room: roomList)
+    for(Room room: roomList)
     {
       startX = (int)room.getStartPoint().getX();
       startY = (int)room.getStartPoint().getY();
-      width = room.getWidth();
-      height = room.getHeight();
+      width = room.getWidth()+startX;
+      height = room.getHeight()+startY;
 
       for(int i = startY; i < height; i++)
       {
@@ -55,7 +97,7 @@ public class House extends Entity
       }
     }
   }
-  //Will be very sophisticated at some point
+
   private void generateBuffImgHouse()
   {
     int tileSize = Settings.tileSize;
@@ -64,6 +106,7 @@ public class House extends Entity
     {
       for(int j = 0; j < gridWidth; j++)
       {
+        if(fullGrid[i][j] == null) fullGrid[i][j] = new Tile("tileset/outofbounds");
         houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), i*tileSize, j*tileSize, null);
       }
     }

@@ -11,7 +11,7 @@ public abstract class HouseEntity
   //List of tiles associated with object
   private Entity[][] obstacles;
   private int width, height;
-  private Tile[][] tiles;
+  public Tile[][] tiles;
 
   public HouseEntity(Point2D startPoint)
   {
@@ -48,12 +48,12 @@ public abstract class HouseEntity
     return tiles;
   }
 
-  public void setTilesAt(int x, int y, Tile tile)
+  public void setTilesAt(int y, int x, Tile tile)
   {
     tiles[y][x] = tile;
   }
 
-  public Tile getTileAt(int x, int y)
+  public Tile getTileAt(int y, int x)
   {
     return tiles[y][x];
   }
