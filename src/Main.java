@@ -13,7 +13,7 @@ public class Main
     zombiePanel.init();
     zombieFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     zombieFrame.setVisible(true);
-    zombieFrame.setSize(new Dimension(10 * Settings.tileSize, 10 * Settings.tileSize));
+    zombieFrame.setSize(new Dimension(20 * Settings.tileSize, 20 * Settings.tileSize));
     zombieFrame.setContentPane(zombiePanel);
   }
 }

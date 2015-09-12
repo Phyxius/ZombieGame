@@ -25,6 +25,7 @@ public class House extends Entity
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_3BYTE_BGR);
     generateRoomList();
     copyRoomsToGrid();
+    //TODO: Hallways
     generateBuffImgHouse();
   }
 
@@ -34,12 +35,11 @@ public class House extends Entity
     screen.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
   }
 
-  //Will be very sophisticated at some point
-
   public Point2D.Float getPosition() //returns upper left point of the object
   {
     return new Point2D.Float(0,0);
   }
+
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
     Point2D.Float position = getPosition();
@@ -69,12 +69,15 @@ public class House extends Entity
     return -1;
   }
 
+  //Will be very sophisticated at some point
   private void generateRoomList()
   {
     Room room1 = new Room(new Point(0,0), 8, 8);
     Room room2 = new Room(new Point(9,12), 4, 4);
+    Room room3 = new Room(new Point(3, 20), 9, 4);
     roomList.add(room1);
     roomList.add(room2);
+    roomList.add(room3);
   }
 
   private void copyRoomsToGrid()
@@ -106,8 +109,8 @@ public class House extends Entity
     {
       for(int j = 0; j < gridWidth; j++)
       {
-        if(fullGrid[i][j] == null) fullGrid[i][j] = new Tile("tileset/outofbounds");
-        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), i*tileSize, j*tileSize, null);
+        if(fullGrid[i][j] == null) fullGrid[i][j] = new Tile("tileset/outofbounds1");
+        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
       }
     }
   }
