@@ -19,6 +19,11 @@ public class ResourceManager
     tilePaths.add("tileset/nonwall.png");
     tilePaths.add("tileset/wall.png");
     tilePaths.add("tileset/outofbounds.png");
+    for (int i = 0; i <= 16; i++)
+    {
+      tilePaths.add("animation/zombie/idle_" + i + ".png");
+      tilePaths.add("animation/zombie/move_" + i + ".png");
+    }
   }
 
   public static void populateImageHashMap()

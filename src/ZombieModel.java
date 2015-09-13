@@ -1,11 +1,13 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Rashid on 07/09/15.
  * The Template for zombies.
  */
+
 abstract class ZombieModel extends Entity
 {
   protected float speed; // displacement = speed * tiles
@@ -14,11 +16,11 @@ abstract class ZombieModel extends Entity
   protected int updateCount = 0; // Used in decision making. New decision when updateCount % (decitionRate * frameRate) == 0
   protected Player player; // Reference to the player on the current board.
   protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
-  protected Point2D.Float position; // Top Left Corner.
+  protected Point2D.Float position = new Point2D.Float(); // Top Left Corner.
   protected double directionAngle; // 0 - 2 * PI
   protected boolean collision;
   protected double minAngle;
-
+  protected BufferedImage frame;
   ZombieModel (Player player, Point2D.Float position)
   {
     speed = Settings.zombieSpeed;
