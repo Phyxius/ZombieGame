@@ -11,8 +11,7 @@ public class Tile extends Entity
 
   public Tile(String imgName, boolean isSolid)
   {
-    ResourceManager manager = new ResourceManager();
-    tileImg = manager.getImageHashMap().get(imgName + ".png");
+    tileImg = ResourceManager.getImage(imgName + ".png");
     this.isSolid = isSolid;
   }
 

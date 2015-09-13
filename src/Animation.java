@@ -10,23 +10,20 @@ public class Animation
   private int maxFrame;
   private int offset;
   private BufferedImage img;
-  private HashMap<String, BufferedImage> imageHashMap;
   private String filePath;
 
   public Animation(String truncatedFilePath, int maxFrame)
   {
-    ResourceManager manager = new ResourceManager();
     filePath = "resources/" + truncatedFilePath;
     offset = 0;
     this.maxFrame = maxFrame;
-    this.imageHashMap = manager.getImageHashMap();
-    img = imageHashMap.get(filePath + offset + ".png");
+    img = ResourceManager.getImage(filePath + offset + ".png");
   }
 
   public BufferedImage nextFrame(boolean reset)
   {
     if(reset) offset = 0;
-    img = imageHashMap.get(filePath + offset + ".png");
+    img = ResourceManager.getImage(filePath + offset + ".png");
     offset = (offset+1) % (maxFrame+1);
     return img;
   }

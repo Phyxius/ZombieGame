@@ -16,7 +16,7 @@ public class Fire extends Entity
     ResourceManager manager = new ResourceManager();
     this.explosionArea = explosionArea;
     numFireFrames = 15;
-    frame = manager.getImageHashMap().get("fire_1");
+    frame = ResourceManager.getImage("fire_1");
     fireAnimation = new Animation("fireAnimation", numFireFrames);
   }
 
