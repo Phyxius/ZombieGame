@@ -47,11 +47,14 @@ public class EntityManager
     CollisionManager collisionManager = new CollisionManager(this);
     for (Entity entity : entities)
     {
-      Rectangle2D.Float boundingBox = entity.getBoundingBox();
+      final Rectangle2D.Float boundingBox = entity.getBoundingBox();
+      if (boundingBox == null) continue;
       for (Entity other : entities)
       {
         if (entity == other) continue;
-        if (other.getBoundingBox().intersects(boundingBox))
+        final Rectangle2D.Float otherBoundingBox = other.getBoundingBox();
+        if (otherBoundingBox == null) continue;
+        if (otherBoundingBox.intersects(boundingBox))
         {
           entity.onCollision(other, collisionManager);
         }
@@ -65,8 +68,12 @@ public class EntityManager
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
-      entity.draw((Graphics2D)g.create((int)boundingBox.x, (int)boundingBox.y,
-          ((int) boundingBox.width), ((int) boundingBox.height)), (Graphics2D)g.create());
+      if (boundingBox != null)
+      {
+        entity.draw((Graphics2D)g.create((int)boundingBox.x, (int)boundingBox.y,
+            ((int) boundingBox.width), ((int) boundingBox.height)), (Graphics2D)g.create());
+      }
+      else entity.draw(null, (Graphics2D)g.create());
     }
   }
 
@@ -128,7 +135,7 @@ public class EntityManager
 
   public Collection<Entity> getCollidingEntities(Rectangle2D.Float boundingBox)
   {
-    return entities.parallelStream().filter(e -> e.getBoundingBox()
+    return entities.parallelStream().filter(e -> e.getBoundingBox() != null && e.getBoundingBox()
         .intersects(boundingBox)).collect(Collectors.toList());
   }
 
