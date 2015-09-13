@@ -12,6 +12,7 @@ public class House extends Entity
 {
   public static Tile[][] fullGrid;
   private ArrayList<Room> roomList;
+  private ArrayList<Hallway> hallList;
   public static BufferedImage houseImg;
   private int gridHeight, gridWidth;
 
@@ -20,11 +21,12 @@ public class House extends Entity
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
     int tileSize = Settings.tileSize;
-    roomList  = new ArrayList<>();
+    roomList = new ArrayList<>();
+    hallList = new ArrayList<>();
     fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_3BYTE_BGR);
     generateRoomList();
-    copyRoomsToGrid();
+    copyObjectsToGrid();
     //TODO: Hallways
     generateBuffImgHouse();
   }
@@ -74,13 +76,13 @@ public class House extends Entity
   {
     Room room1 = new Room(new Point(0,0), 8, 8);
     Room room2 = new Room(new Point(9,12), 4, 4);
-    Room room3 = new Room(new Point(3, 20), 9, 4);
+    Hallway hall1 = new Hallway(new Point(3,20) ,6, 4);
     roomList.add(room1);
     roomList.add(room2);
-    roomList.add(room3);
+    hallList.add(hall1);
   }
 
-  private void copyRoomsToGrid()
+  private void copyObjectsToGrid()
   {
     int startX, startY;
     int width, height;
@@ -96,6 +98,21 @@ public class House extends Entity
         for(int j = startX; j < width; j++)
         {
           fullGrid[i][j] = room.getTileAt(i,j);
+        }
+      }
+    }
+    for(Hallway hall: hallList)
+    {
+      startX = (int)hall.getStartPoint().getX();
+      startY = (int)hall.getStartPoint().getY();
+      width = hall.getWidth()+startX;
+      height = hall.getHeight()+startY;
+
+      for(int i = startY; i < height; i++)
+      {
+        for(int j = startX; j < width; j++)
+        {
+          fullGrid[i][j] = hall.getTileAt(i,j);
         }
       }
     }

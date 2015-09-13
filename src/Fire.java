@@ -13,9 +13,10 @@ public class Fire extends Entity
   Animation fireAnimation;
   public Fire(Rectangle2D.Float explosionArea)
   {
+    ResourceManager manager = new ResourceManager();
     this.explosionArea = explosionArea;
     numFireFrames = 15;
-    frame = ResourceManager.imageHashMap.get("fire_1");
+    frame = manager.imageHashMap.get("fire_1");
     fireAnimation = new Animation("fireAnimation", numFireFrames);
   }
 
