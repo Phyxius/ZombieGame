@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Created by Rashid on 07/09/15.
@@ -10,13 +11,13 @@ abstract class ZombieModel extends Entity
   protected float speed; // displacement = speed * tiles
   protected int decisionRate; // New decision every decisionRate updates.
   protected float smell; // smell radius = smell * tiles
-  protected float stamina;
-  protected int updateCount = 0;
-  protected Player player;
-  protected Point2D.Float playerPosition = null;
-  protected Point2D.Float position; // Center of the object
+  protected int updateCount = 0; // Used in decision making. New decision when updateCount % (decitionRate * frameRate) == 0
+  protected Player player; // Reference to the player on the current board.
+  protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
+  protected Point2D.Float position; // Top Left Corner.
   protected double directionAngle; // 0 - 2 * PI
   protected boolean collision;
+  protected double minAngle;
 
   ZombieModel (Player player, Point2D.Float position)
   {
@@ -25,14 +26,18 @@ abstract class ZombieModel extends Entity
     smell = Settings.zombieSmellRadius;
     this.position.setLocation(position.getX(), position.getY());
     this.player = player;
+    this.minAngle = Settings.minAngle;
+    this.directionAngle = 2 * Util.rng.nextDouble() * Math.PI;
   }
 
-  ZombieModel (Player player, float speed, float decisionRate, float smell, Point2D.Float position)
+  ZombieModel (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
     this(player, position);
     this.speed = speed;
     this.decisionRate = (int) (decisionRate * Settings.frameRate);
     this.smell = smell;
+    this.minAngle = minAngle;
+    this.directionAngle = 2 * Util.rng.nextDouble() * Math.PI;
   }
 
   @Override
@@ -51,9 +56,14 @@ abstract class ZombieModel extends Entity
 
   void detectPlayer()
   {
-    if (player.getPosition().distance(this.position) <= smell)
+    Rectangle2D.Float playerBox = player.getBoundingBox();
+    Rectangle2D.Float zombieBox = this.getBoundingBox();
+    Point2D.Double playerCenter = new Point2D.Double(playerBox.getCenterX(), playerBox.getCenterY());
+    Point2D.Double zombieCenter = new Point2D.Double(zombieBox.getCenterX(), zombieBox.getCenterY());
+
+    if (playerCenter.distance(zombieCenter) <= smell)
     {
-      playerPosition = new Point2D.Float(player.getPosition().x, player.getPosition().y);
+      playerPosition = new Point2D.Float((float) playerCenter.x, (float) playerCenter.y);
     }
     else
     {

@@ -12,22 +12,23 @@ class LineZombie extends ZombieModel
     super(player, position);
   }
 
-  LineZombie (Player player, float speed, float decisionRate, float smell, Point2D.Float position)
+  LineZombie (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
-    super (player, speed, decisionRate, smell, position);
+    super (player, speed, decisionRate, smell, position, minAngle);
   }
 
   @Override
   public void update (UpdateManager e)
   {
+    float speed = this.speed;
     if (updateCount % decisionRate == 0)
     {
-      speed = 0.5f;
+
       if (playerPosition == null)
       {
         if (collision)
         {
-          directionAngle += Math.PI/4 + Util.rng.nextDouble() * 1.5 * Math.PI;
+          directionAngle += Math.PI * minAngle + Util.rng.nextDouble() * 2 * (1 - minAngle) * Math.PI;
         }
       }
       else
@@ -50,11 +51,15 @@ class LineZombie extends ZombieModel
     collisions.forEach((Entity entity) -> {
       if (entity.isSolid())
       {
+        if (entity instanceof Fire)
+        {
+          e.remove(this);
+          return;
+        }
         position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
         collision = true;
       }
-    }) ;
-    // update collision status
+    });
     updateCount++;
   }
 
