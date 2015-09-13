@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
  * Created by Rashid on 07/09/15.
  * The Template for zombies.
  */
+
 abstract class ZombieModel extends Entity
 {
   protected float speed; // displacement = speed * tiles

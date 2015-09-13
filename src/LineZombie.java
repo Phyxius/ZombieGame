@@ -16,13 +16,13 @@ class LineZombie extends ZombieModel
   LineZombie (Player player, Point2D.Float position)
   {
     super(player, position);
-    frame = idleAnimation.nextFrame(true);
+    idleAnimation.nextFrame(true);
   }
 
   LineZombie (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
     super (player, speed, decisionRate, smell, position, minAngle);
-    frame = idleAnimation.nextFrame(true);
+    idleAnimation.nextFrame(true);
   }
 
   @Override

@@ -8,7 +8,7 @@ public class Settings
   public static int floorDepth = -1;
   public static int playerDepth = 1;
   public static int zombieDepth = 2;
-  public static float zombieSpeed = 0.05f; //tiles/sec
+  public static float zombieSpeed = 0.5f; //tiles/sec
   public static float zombieDecisionRate = 2.0f; //sec
   public static float zombieSmellRadius = 7f; //tiles
   public static int tileSize; //pixels
