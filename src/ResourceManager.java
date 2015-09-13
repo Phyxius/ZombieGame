@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 /**
  * Created by arirappaport on 9/8/15.
+ * Class name and description go here.
  */
 public class ResourceManager
 {
@@ -28,11 +29,7 @@ public class ResourceManager
 
   public static void populateImageHashMap()
   {
-
-    for(String imagePath: tilePaths)
-    {
-      getImage(imagePath);
-    }
+    tilePaths.forEach(ResourceManager::getImage);
   }
 
   public static BufferedImage getImage(String path)

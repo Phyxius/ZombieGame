@@ -14,7 +14,7 @@ public class Animation
 
   public Animation(String truncatedFilePath, int maxFrame)
   {
-    filePath = "resources/" + truncatedFilePath;
+    filePath = truncatedFilePath;
     offset = 0;
     this.maxFrame = maxFrame;
     img = ResourceManager.getImage(filePath + offset + ".png");
