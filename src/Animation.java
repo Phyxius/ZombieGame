@@ -8,24 +8,22 @@ import java.util.HashMap;
 public class Animation
 {
   int maxFrame;
+  int offset;
   HashMap<String, BufferedImage> imageHashMap;
   String filePath;
   public Animation(String truncatedFilePath, int maxFrame)
   {
     filePath = "resources/" + truncatedFilePath;
+    offset = 0;
     this.maxFrame = maxFrame;
     this.imageHashMap = ResourceManager.imageHashMap;
   }
 
-  public void animate(Graphics2D local)
+  public BufferedImage nextFrame(boolean reset)
   {
-    BufferedImage img;
-    for(int i = 0; i < maxFrame; i++)
-    {
-      //if(i < 10)
-      img = imageHashMap.get(filePath + "_" + i + ".png");
-      //else img = imageHashMap.get(filePath + i + ".png");
-      local.drawImage(img, 0 , 0, img.getWidth(), img.getHeight(), null);
-    }
+    if(reset) offset = 0;
+    BufferedImage img = imageHashMap.get(filePath + "_" + offset + ".png");
+    offset = offset%maxFrame + 1;
+    return img;
   }
 }
