@@ -71,12 +71,12 @@ class LineZombie extends ZombieModel
 
     if (speed == 0)
     {
-      frame = idleAnimation.nextFrame(moving);
+      idleAnimation.nextFrame(moving);
       moving = false;
     }
     else
     {
-      frame = moveAnimation.nextFrame(!moving);
+      moveAnimation.nextFrame(!moving);
       moving = true;
     }
 
@@ -88,7 +88,7 @@ class LineZombie extends ZombieModel
   {
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle);
-    local.drawImage(frame, transformer,null);
+    local.drawImage((speed == 0 ? idleAnimation.getFrame() : moveAnimation.getFrame()), transformer,null);
   }
 
   @Override
