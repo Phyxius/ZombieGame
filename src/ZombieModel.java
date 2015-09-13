@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 /**
  * Created by Rashid on 07/09/15.
@@ -20,7 +19,7 @@ abstract class ZombieModel extends Entity
   protected double directionAngle; // 0 - 2 * PI
   protected boolean collision;
   protected double minAngle;
-  protected BufferedImage frame;
+
   ZombieModel (Player player, Point2D.Float position)
   {
     speed = Settings.zombieSpeed;

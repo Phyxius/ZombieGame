@@ -11,32 +11,29 @@ class LineZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16);
-  private boolean moving = false;
+  private boolean moving = true;
 
   LineZombie (Player player, Point2D.Float position)
   {
     super(player, position);
-    idleAnimation.nextFrame(true);
   }
 
   LineZombie (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
-    super (player, speed, decisionRate, smell, position, minAngle);
-    idleAnimation.nextFrame(true);
+    super(player, speed, decisionRate, smell, position, minAngle);
   }
 
   @Override
   public void update (UpdateManager e)
   {
-    float speed = this.speed;
     if (updateCount % decisionRate == 0)
     {
-
       if (playerPosition == null)
       {
         if (collision)
         {
           directionAngle += Math.PI * minAngle + Util.rng.nextDouble() * 2 * (1 - minAngle) * Math.PI;
+          moving = true;
         }
       }
       else
@@ -44,32 +41,34 @@ class LineZombie extends ZombieModel
         // A* to player
       }
     }
-    else
+
+    if (moving)
     {
-       if (collision) speed = 0;
-    }
-    float lastX = position.x;
-    float lastY = position.y;
+      float lastX = position.x;
+      float lastY = position.y;
 
-    // Change Position
-    position.setLocation((float) (lastX + Math.cos(directionAngle) * speed * Settings.tileSize),(float)(lastY + Math.sin(directionAngle) * speed * Settings.tileSize));
+      // Change Position
+      position.setLocation((float) (lastX + Math.cos(directionAngle) * speed / Settings.frameRate * Settings.tileSize), (float) (lastY + Math.sin(directionAngle) * speed / Settings.frameRate * Settings.tileSize));
 
-    // Check for collisions after moving
-    Collection<Entity> collisions = e.getCollidingEntities(this.getBoundingBox());
-    collisions.forEach((Entity entity) -> {
-      if (entity.isSolid())
-      {
-        if (entity instanceof Fire)
+      // Check for collisions after moving
+      Collection<Entity> collisions = e.getCollidingEntities(this.getBoundingBox());
+      collisions.forEach((Entity entity) -> {
+        if (entity != this && entity.isSolid())
         {
-          e.remove(this);
-          return;
+          if (entity instanceof Fire)
+          {
+            e.remove(this);
+            return;
+          }
+          position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
+          collision = true;
+          moving = false;
         }
-        position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
-        collision = true;
-      }
-    });
+      });
+    }
 
-    if (speed == 0)
+
+    if (!moving)
     {
       idleAnimation.nextFrame(moving);
       moving = false;
@@ -87,14 +86,25 @@ class LineZombie extends ZombieModel
   public void draw (Graphics2D local, Graphics2D global)
   {
     AffineTransform transformer = new AffineTransform();
-    transformer.rotate(directionAngle);
-    local.drawImage((speed == 0 ? idleAnimation.getFrame() : moveAnimation.getFrame()), transformer,null);
+    transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+    transformer.rotate(directionAngle, getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
+    local.drawImage(( moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
 
   @Override
   public void onCollision (Entity other, CollisionManager collisionManager)
   {
-    collision = true;
+    if (other.isSolid())
+    {
+      collision = true;
+      moving = false;
+    }
     if (other instanceof Fire) collisionManager.remove(this);
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return 100;
   }
 }
