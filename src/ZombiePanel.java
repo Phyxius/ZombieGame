@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
@@ -26,7 +27,10 @@ public class ZombiePanel extends JPanel
     manager.populateImageHashMap();
     repaint();
     frame.addKeyListener(new KeyboardHandler());
-    entityManager.add(new Player());
+    Player player = new Player();
+    entityManager.add(player);
+
+    entityManager.add(new LineZombie(player, new Point2D.Float (240, 240)));
     entityManager.add(new House(32, 32));
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }

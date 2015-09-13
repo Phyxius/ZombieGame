@@ -1,3 +1,5 @@
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
@@ -7,14 +9,20 @@ import java.util.Collection;
  */
 class LineZombie extends ZombieModel
 {
+  private Animation idleAnimation = new Animation("animation/zombie/idle_", 16);
+  private Animation moveAnimation = new Animation("animation/zombie/move_", 16);
+  private boolean moving = false;
+
   LineZombie (Player player, Point2D.Float position)
   {
     super(player, position);
+    frame = idleAnimation.nextFrame(true);
   }
 
   LineZombie (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
     super (player, speed, decisionRate, smell, position, minAngle);
+    frame = idleAnimation.nextFrame(true);
   }
 
   @Override
@@ -60,7 +68,27 @@ class LineZombie extends ZombieModel
         collision = true;
       }
     });
+
+    if (speed == 0)
+    {
+      frame = idleAnimation.nextFrame(moving);
+      moving = false;
+    }
+    else
+    {
+      frame = moveAnimation.nextFrame(!moving);
+      moving = true;
+    }
+
     updateCount++;
+  }
+
+  @Override
+  public void draw (Graphics2D local, Graphics2D global)
+  {
+    AffineTransform transformer = new AffineTransform();
+    transformer.rotate(directionAngle);
+    local.drawImage(frame, transformer,null);
   }
 
   @Override
