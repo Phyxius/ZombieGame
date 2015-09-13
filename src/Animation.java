@@ -15,10 +15,11 @@ public class Animation
 
   public Animation(String truncatedFilePath, int maxFrame)
   {
-    filePath = truncatedFilePath;
+    ResourceManager manager = new ResourceManager();
+    filePath = "resources/" + truncatedFilePath;
     offset = 0;
     this.maxFrame = maxFrame;
-    this.imageHashMap = ResourceManager.imageHashMap;
+    this.imageHashMap = manager.getImageHashMap();
     img = imageHashMap.get(filePath + offset + ".png");
   }
 

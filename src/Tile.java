@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 /**
  * Created by arirappaport on 9/10/15.
  */
-public class Tile
+public class Tile extends Entity
 {
   private BufferedImage tileImg;
   private boolean isSolid;
@@ -12,7 +12,7 @@ public class Tile
   public Tile(String imgName, boolean isSolid)
   {
     ResourceManager manager = new ResourceManager();
-    tileImg = manager.imageHashMap.get(imgName + ".png");
+    tileImg = manager.getImageHashMap().get(imgName + ".png");
     this.isSolid = isSolid;
   }
 
@@ -21,4 +21,9 @@ public class Tile
     return tileImg;
   }
 
+  @Override
+  public boolean isSolid()
+  {
+    return isSolid;
+  }
 }
