@@ -12,7 +12,7 @@ public class ResourceManager
 {
   public static HashMap<String, BufferedImage> imageHashMap;
   public static ArrayList<String> tilePaths;
-  public ResourceManager()
+  static
   {
     imageHashMap = new HashMap<>();
     tilePaths = new ArrayList<>();
@@ -21,23 +21,29 @@ public class ResourceManager
     tilePaths.add("tileset/outofbounds.png");
   }
 
-  public void populateImageHashMap()
+  public static void populateImageHashMap()
   {
-    BufferedImage img = null;
-    ClassLoader c1;
-    InputStream in;
+
     for(String imagePath: tilePaths)
     {
-      try
-      {
-        c1 = this.getClass().getClassLoader();
-        in = c1.getResourceAsStream(imagePath);
-        img = ImageIO.read(in);
-      } catch (IOException ex)
-      {
-        ex.printStackTrace();
-      }
-      imageHashMap.put(imagePath, img);
+      getImage(imagePath);
     }
+  }
+
+  public static BufferedImage getImage(String path)
+  {
+    if (imageHashMap.containsKey(path)) return imageHashMap.get(path);
+    BufferedImage image = null;
+    ClassLoader classLoader = ResourceManager.class.getClassLoader();
+    try
+    {
+      image = ImageIO.read(classLoader.getResourceAsStream(path));
+    }
+    catch (IOException ex)
+    {
+      ex.printStackTrace();
+    }
+    imageHashMap.put(path, image);
+    return image;
   }
 }

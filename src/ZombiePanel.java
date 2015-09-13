@@ -22,8 +22,7 @@ public class ZombiePanel extends JPanel
   public void init()
   {
     setSize(frame.getSize());
-    ResourceManager manager = new ResourceManager();
-    manager.populateImageHashMap();
+    ResourceManager.populateImageHashMap();
     repaint();
     frame.addKeyListener(new KeyboardHandler());
     entityManager.add(new Player());
