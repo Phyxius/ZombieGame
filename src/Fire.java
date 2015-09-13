@@ -35,7 +35,8 @@ public class Fire extends Entity
     local.drawImage(frame, 0,0, Settings.tileSize, Settings.tileSize, null);
     //Draw ash
   }
-  public void update()
+  @Override
+  public void update(UpdateManager updateManager)
   {
     fireAnimation.nextFrame(false);
   }
