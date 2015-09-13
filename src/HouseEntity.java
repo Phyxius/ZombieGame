@@ -28,10 +28,7 @@ public abstract class HouseEntity
     return width;
   }
 
-  public int getHeight()
-  {
-    return height;
-  }
+  public int getHeight() {return height;}
 
   public void setWidth(int width)
   {
