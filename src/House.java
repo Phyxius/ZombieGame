@@ -11,15 +11,17 @@ import java.util.ArrayList;
 public class House extends Entity
 {
   public static Tile[][] fullGrid;
+  private EntityManager entityManager;
   private ArrayList<Room> roomList;
   private ArrayList<Hallway> hallList;
   public static BufferedImage houseImg;
   private int gridHeight, gridWidth;
 
-  public House(int gridWidth, int gridHeight)
+  public House(int gridWidth, int gridHeight, EntityManager entityManager)
   {
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
+    this.entityManager = entityManager;
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     hallList = new ArrayList<>();
@@ -74,8 +76,8 @@ public class House extends Entity
   //Will be very sophisticated at some point
   private void generateRoomList()
   {
-    Room room1 = new Room(new Point(0,0), 8, 8);
-    Room room2 = new Room(new Point(9,12), 4, 4);
+    Room room1 = new Room(new Point(0,0), 8, 8, entityManager);
+    Room room2 = new Room(new Point(9,12), 4, 4, entityManager);
     Hallway hall1 = new Hallway(new Point(3,20) ,6, 4);
     roomList.add(room1);
     roomList.add(room2);
