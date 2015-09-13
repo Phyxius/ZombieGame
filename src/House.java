@@ -109,7 +109,7 @@ public class House extends Entity
     {
       for(int j = 0; j < gridWidth; j++)
       {
-        if(fullGrid[i][j] == null) fullGrid[i][j] = new Tile("tileset/outofbounds1");
+        if(fullGrid[i][j] == null) fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
         houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
       }
     }

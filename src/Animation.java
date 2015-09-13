@@ -7,23 +7,32 @@ import java.util.HashMap;
  */
 public class Animation
 {
-  int maxFrame;
-  int offset;
-  HashMap<String, BufferedImage> imageHashMap;
-  String filePath;
+  private int maxFrame;
+  private int offset;
+  private BufferedImage img;
+  private HashMap<String, BufferedImage> imageHashMap;
+  private String filePath;
+
   public Animation(String truncatedFilePath, int maxFrame)
   {
     filePath = "resources/" + truncatedFilePath;
     offset = 0;
     this.maxFrame = maxFrame;
     this.imageHashMap = ResourceManager.imageHashMap;
+    img = imageHashMap.get(filePath + offset + ".png");
   }
 
   public BufferedImage nextFrame(boolean reset)
   {
     if(reset) offset = 0;
-    BufferedImage img = imageHashMap.get(filePath + "_" + offset + ".png");
+    img = imageHashMap.get(filePath + offset + ".png");
     offset = (offset+1) % (maxFrame+1);
     return img;
   }
+
+  public BufferedImage getFrame()
+  {
+    return img;
+  }
+
 }

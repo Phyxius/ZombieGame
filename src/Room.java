@@ -24,8 +24,8 @@ public class Room extends HouseEntity
     {
       for(int j = startX; j < getWidth()+startX; j++)
       {
-        if(i == startY || j == startX || i == getHeight()+startY-1 || j == getWidth()+startX-1) setTilesAt(i,j,new Tile("tileset/wall"));
-        else setTilesAt(i,j, new Tile("tileset/nonwall"));
+        if(i == startY || j == startX || i == getHeight()+startY-1 || j == getWidth()+startX-1) setTilesAt(i,j,new Tile("tileset/wall", true));
+        else setTilesAt(i,j, new Tile("tileset/nonwall", false));
       }
     }
     return getTiles();
