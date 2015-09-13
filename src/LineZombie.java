@@ -48,7 +48,8 @@ class LineZombie extends ZombieModel
       float lastY = position.y;
 
       // Change Position
-      position.setLocation((float) (lastX + Math.cos(directionAngle) * speed / Settings.frameRate * Settings.tileSize), (float) (lastY + Math.sin(directionAngle) * speed / Settings.frameRate * Settings.tileSize));
+      float velocity = Util.tilesPerSecondToPixelsPerFrame(speed);
+      position.setLocation((float) (lastX + Math.cos(directionAngle) * velocity), (float) (lastY + Math.sin(directionAngle) * velocity));
 
       // Check for collisions after moving
       Collection<Entity> collisions = e.getCollidingEntities(this.getBoundingBox());
