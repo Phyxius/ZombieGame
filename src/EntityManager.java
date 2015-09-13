@@ -19,6 +19,7 @@ public class EntityManager
   private ArrayList<Entity> entitiesToAdd = new ArrayList<>();
   private Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
   private HashMap<Integer, Boolean> keyDict = new HashMap<>();
+  public boolean debugModeEnabled = true;
 
   public EntityManager()
   {
@@ -72,6 +73,8 @@ public class EntityManager
       {
         entity.draw((Graphics2D)g.create((int)boundingBox.x, (int)boundingBox.y,
             ((int) boundingBox.width), ((int) boundingBox.height)), (Graphics2D)g.create());
+        g.setColor(Color.GREEN);
+        g.drawRect((int)boundingBox.x, ((int) boundingBox.y), (int)boundingBox.width, (int)boundingBox.height);
       }
       else entity.draw(null, (Graphics2D)g.create());
     }
