@@ -23,7 +23,7 @@ public class Animation
   {
     if(reset) offset = 0;
     BufferedImage img = imageHashMap.get(filePath + "_" + offset + ".png");
-    offset = offset%maxFrame + 1;
+    if((offset = (offset%(maxFrame+1))) != 0) offset++;
     return img;
   }
 }
