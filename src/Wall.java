@@ -12,6 +12,12 @@ public class Wall extends Entity
   }
 
   @Override
+  public boolean isSolid()
+  {
+    return true;
+  }
+
+  @Override
   public Rectangle2D.Float getBoundingBox()
   {
     return box;
