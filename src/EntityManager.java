@@ -69,14 +69,18 @@ public class EntityManager
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
+      Graphics2D screen = (Graphics2D) g.create();
       if (boundingBox != null)
       {
-        entity.draw((Graphics2D)g.create((int)boundingBox.x, (int)boundingBox.y,
-            ((int) boundingBox.width), ((int) boundingBox.height)), (Graphics2D)g.create());
+        Graphics2D local = (Graphics2D) g.create((int) boundingBox.x, (int) boundingBox.y,
+            ((int) boundingBox.width), ((int) boundingBox.height));
+        entity.draw(local, screen);
         g.setColor(Color.GREEN);
         g.drawRect((int)boundingBox.x, ((int) boundingBox.y), (int)boundingBox.width, (int)boundingBox.height);
+        local.dispose();
       }
-      else entity.draw(null, (Graphics2D)g.create());
+      else entity.draw(null, screen);
+      screen.dispose();
     }
   }
 
