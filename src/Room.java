@@ -6,7 +6,6 @@ import java.util.ArrayList;
  */
 public class Room extends HouseEntity
 {
-  int width, height;
   private EntityManager entityManager;
   public Room(Point2D startPoint, int width, int height, EntityManager entityManager)
   {
@@ -43,8 +42,8 @@ public class Room extends HouseEntity
     int tileSize = Settings.tileSize;
     int startX = (int) startPoint.getX()*tileSize;
     int startY = (int) startPoint.getY()*tileSize;
-    int endX = (getWidth()-1)*tileSize;
-    int endY = (getHeight()-1)*tileSize;
+    int endX = startX+(getWidth()-1)*tileSize;
+    int endY = startY+(getHeight()-1)*tileSize;
 
     Wall wall1 = new Wall(startX,startX + tileSize,startY, endY);
     Wall wall2 = new Wall(startX,endX,startY, startY + tileSize);

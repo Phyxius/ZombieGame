@@ -78,10 +78,10 @@ public class House extends Entity
   {
     Room room1 = new Room(new Point(0,0), 8, 8, entityManager);
     Room room2 = new Room(new Point(9,12), 4, 4, entityManager);
-    Hallway hall1 = new Hallway(new Point(3,20) ,6, 4);
+    Room room3 = new Room(new Point(3,20) ,6, 4, entityManager);
     roomList.add(room1);
     roomList.add(room2);
-    hallList.add(hall1);
+    roomList.add(room3);
   }
 
   private void copyObjectsToGrid()
