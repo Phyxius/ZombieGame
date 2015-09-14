@@ -34,6 +34,7 @@ class LineZombie extends ZombieModel
         {
           directionAngle += Math.PI * minAngle + Util.rng.nextDouble() * 2 * (1 - minAngle) * Math.PI;
           moving = true;
+          collision = false;
         }
       }
       else
@@ -48,7 +49,8 @@ class LineZombie extends ZombieModel
       float lastY = position.y;
 
       // Change Position
-      position.setLocation((float) (lastX + Math.cos(directionAngle) * speed / Settings.frameRate * Settings.tileSize), (float) (lastY + Math.sin(directionAngle) * speed / Settings.frameRate * Settings.tileSize));
+      float velocity = Util.tilesPerSecondToPixelsPerFrame(speed);
+      position.setLocation((float) (lastX + Math.cos(directionAngle) * velocity), (float) (lastY + Math.sin(directionAngle) * velocity));
 
       // Check for collisions after moving
       Collection<Entity> collisions = e.getCollidingEntities(this.getBoundingBox());
@@ -86,7 +88,7 @@ class LineZombie extends ZombieModel
   public void draw (Graphics2D local, Graphics2D global)
   {
     AffineTransform transformer = new AffineTransform();
-    transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
     transformer.rotate(directionAngle, getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
     local.drawImage(( moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
