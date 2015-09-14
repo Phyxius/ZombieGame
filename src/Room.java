@@ -7,9 +7,11 @@ import java.util.ArrayList;
 public class Room extends HouseEntity
 {
   int width, height;
-  public Room(Point2D startPoint, int width, int height)
+  private EntityManager entityManager;
+  public Room(Point2D startPoint, int width, int height, EntityManager entityManager)
   {
     super(startPoint);
+    this.entityManager = entityManager;
     tiles = new Tile[(int)startPoint.getY()+height][(int)startPoint.getX()+width];
     setWidth(width);
     setHeight(height);
@@ -48,5 +50,9 @@ public class Room extends HouseEntity
     Wall wall2 = new Wall(startX,endX,startY, startY + tileSize);
     Wall wall3 = new Wall(endX,endX + tileSize,startY,endY);
     Wall wall4 = new Wall(startX,endX,endY,endY+tileSize);
+    entityManager.add(wall1);
+    entityManager.add(wall2);
+    entityManager.add(wall3);
+    entityManager.add(wall4);
   }
 }

@@ -21,7 +21,7 @@ public abstract class Entity
     Point2D.Float position = getPosition();
     if (position == null) return null;
     return new Rectangle2D.Float(position.x, position.y,
-        position.x + Settings.tileSize, position.y + Settings.tileSize);
+        Settings.tileSize, Settings.tileSize);
   }
   public boolean isSolid() //solid objects cannot move into each other
   {
