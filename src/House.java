@@ -49,7 +49,7 @@ public class House extends Entity
     Point2D.Float position = getPosition();
     if (position == null) return null;
     return new Rectangle2D.Float(position.x, position.y,
-            position.x + gridWidth, position.y + gridHeight);
+            position.x + gridWidth*Settings.tileSize, position.y + gridHeight*Settings.tileSize);
   }
   public boolean isSolid() //solid objects cannot move into each other
   {

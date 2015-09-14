@@ -25,6 +25,6 @@ public class Wall extends Entity
 
   private void makeBoundingBox(int startX, int endX,int startY, int endY)
   {
-    box = new Rectangle2D.Float(startX, endX, startY, endY);
+    box = new Rectangle2D.Float(startX, startY, endX-startX, endY-startY);
   }
 }
