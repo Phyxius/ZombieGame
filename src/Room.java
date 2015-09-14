@@ -46,9 +46,9 @@ public class Room extends HouseEntity
     int endY = startY+(getHeight()-1)*tileSize;
 
     Wall wall1 = new Wall(startX,startX + tileSize,startY, endY);
-    Wall wall2 = new Wall(startX,endX,startY, startY + tileSize);
+    Wall wall2 = new Wall(startX+tileSize,endX,startY, startY + tileSize);
     Wall wall3 = new Wall(endX,endX + tileSize,startY,endY);
-    Wall wall4 = new Wall(startX,endX,endY,endY+tileSize);
+    Wall wall4 = new Wall(startX,endX+tileSize,endY,endY+tileSize);
     entityManager.add(wall1);
     entityManager.add(wall2);
     entityManager.add(wall3);
