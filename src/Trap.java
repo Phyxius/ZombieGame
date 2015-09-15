@@ -11,39 +11,45 @@ public class Trap extends Entity
   protected Point2D.Float position;
   protected Point2D.Float center;
   protected Rectangle2D boundingRect;
+  private EntityManager entityManager;
+  private int[] dx = {-1, 0, 1,-1, 0, 1,-1, 0, 1};
+  private int[] dy = {-1,-1,-1, 0, 0, 0, 1, 1, 1};
 
-  public Trap(Point2D.Float position)
+  public Trap(Point2D.Float position, EntityManager entityManager)
   {
     this.position = position;
+    this.entityManager = entityManager;
     tileSize = Settings.tileSize;
-    boundingRect = new Rectangle((int) position.getX(), (int) position.getY(), tileSize, tileSize);
-    int centerX = (int) position.getX() + (tileSize / 2);
-    int centerY = (int) position.getY() + (tileSize / 2);
-    center.setLocation(centerX, centerY);
   }
 
   @Override
   public void draw(Graphics2D local, Graphics2D screen)
   {
     local.setColor(Color.red);
-    local.drawRect((int) position.getX(), (int) position.getY(), tileSize, tileSize);
+    local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
   }
 
   @Override
   public Point2D.Float getPosition() //returns center point of object
   {
-    return center;
+    return position;
   }
 
   @Override
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
-    return (Rectangle2D.Float) boundingRect;
+    return super.getBoundingBox();
   }
 
   public boolean isSolid() //solid objects cannot move into each other
   {
-    return true;
+    return false;
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return 100;
   }
 
   @Override
@@ -52,25 +58,32 @@ public class Trap extends Entity
     if (other instanceof LineZombie)
     {
       detonate();
+      c.remove(this);
     }
     if (other instanceof Player)
     {
-      Player player = (Player) other;
-      if (player.isRunning())
-      {
+      //Player player = (Player) other;
+      //if (player.isRunning())
+      //{
         detonate();
-      } else if (player.isPickingUp())
-      {
+      //} else if (player.isPickingUp())
+      //{
         c.remove(this);
-      }
+      //}
     }
   }
 
   private void detonate()
   {
-    int fireX = (int) position.getX() - tileSize;
-    int fireY = (int) position.getY() - tileSize;
-    Rectangle2D.Float explosionArea = new Rectangle2D.Float(fireX, fireY, 3 * tileSize, 3 * tileSize);
-    new Fire(explosionArea);
+    for(int i = 0; i < 9; i++)
+    {
+      int curDx = dx[i];
+      int curDy = dy[i];
+      Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x+tileSize*curDx, position.y+tileSize*curDy, tileSize, tileSize);
+      entityManager.add(new Fire(explosionArea));
+    }
+    //Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x-tileSize, position.y-tileSize, tileSize*3, tileSize*3);
+    //entityManager.add(new Fire(explosionArea));
+
   }
 }

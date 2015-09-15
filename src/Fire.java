@@ -31,13 +31,12 @@ public class Fire extends Entity
   public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
     //Animate fire
-    frame = fireAnimation.nextFrame(false);
-    local.drawImage(frame, 0, 0, Settings.tileSize * 3, Settings.tileSize * 3, null);
+    local.drawImage(frame, 0, 0, Settings.tileSize, Settings.tileSize, null);
     //Draw ash
   }
   @Override
   public void update(UpdateManager updateManager)
   {
-    fireAnimation.nextFrame(false);
+    frame = fireAnimation.nextFrame(false);
   }
 }

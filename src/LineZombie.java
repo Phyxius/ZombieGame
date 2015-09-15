@@ -89,7 +89,7 @@ class LineZombie extends ZombieModel
   {
     AffineTransform transformer = new AffineTransform();
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    transformer.rotate(directionAngle, getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
+    //transformer.rotate(directionAngle, getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
     local.drawImage(( moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
 

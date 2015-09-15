@@ -17,7 +17,7 @@ public class Settings
 
   static
   {
-    tileSize = 20;
+    tileSize = 80;
     frameRate = 60;
     playerSpeed = Util.tilesPerSecondToPixelsPerFrame(1);
     minAngle = 0.25;
