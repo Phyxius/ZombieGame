@@ -13,11 +13,9 @@ public class Fire extends Entity
   Animation fireAnimation;
   public Fire(Rectangle2D.Float explosionArea)
   {
-    ResourceManager manager = new ResourceManager();
     this.explosionArea = explosionArea;
-    numFireFrames = 15;
-    frame = ResourceManager.getImage("fire_1");
-    fireAnimation = new Animation("fireAnimation", numFireFrames);
+    numFireFrames = 318;
+    fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
   }
 
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
@@ -33,7 +31,8 @@ public class Fire extends Entity
   public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
     //Animate fire
-    local.drawImage(frame, 0,0, Settings.tileSize, Settings.tileSize, null);
+    frame = fireAnimation.nextFrame(false);
+    local.drawImage(frame, 0, 0, Settings.tileSize * 3, Settings.tileSize * 3, null);
     //Draw ash
   }
   @Override

@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
@@ -30,6 +31,7 @@ public class ZombiePanel extends JPanel
     entityManager.add(player);
     entityManager.add(new LineZombie(player, new Point2D.Float(40, 40)));
     entityManager.add(new House(32, 32, entityManager));
+    entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize,Settings.tileSize, Settings.tileSize*3, Settings.tileSize*3)));
     entityManager.add(new UpdateCounter());
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
