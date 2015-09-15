@@ -7,10 +7,10 @@ import java.util.HashMap;
  */
 public class Animation
 {
-  private int maxFrame;
-  private int offset;
-  private BufferedImage img;
-  private String filePath;
+  protected int maxFrame;
+  protected int offset;
+  protected BufferedImage img;
+  protected String filePath;
 
   public Animation(String truncatedFilePath, int maxFrame)
   {

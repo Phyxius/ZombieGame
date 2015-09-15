@@ -13,18 +13,18 @@ class LineZombie extends ZombieModel
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16);
   private boolean moving = true;
 
-  LineZombie (Player player, Point2D.Float position)
+  LineZombie(Player player, Point2D.Float position)
   {
     super(player, position);
   }
 
-  LineZombie (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
+  LineZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
     super(player, speed, decisionRate, smell, position, minAngle);
   }
 
   @Override
-  public void update (UpdateManager e)
+  public void update(UpdateManager e)
   {
     if (updateCount % decisionRate == 0)
     {
@@ -33,6 +33,7 @@ class LineZombie extends ZombieModel
         if (collision)
         {
           directionAngle += Math.PI * minAngle + Util.rng.nextDouble() * 2 * (1 - minAngle) * Math.PI;
+          directionAngle %= 2 * Math.PI;
           moving = true;
           collision = false;
         }
@@ -69,7 +70,6 @@ class LineZombie extends ZombieModel
       });
     }
 
-
     if (!moving)
     {
       idleAnimation.nextFrame(moving);
@@ -85,16 +85,16 @@ class LineZombie extends ZombieModel
   }
 
   @Override
-  public void draw (Graphics2D local, Graphics2D global)
+  public void draw(Graphics2D local, Graphics2D global)
   {
     AffineTransform transformer = new AffineTransform();
-    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    //transformer.rotate(directionAngle, getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
-    local.drawImage(( moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
+    transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+    transformer.rotate(directionAngle, getBoundingBox().getCenterX() - position.getX(), getBoundingBox().getCenterY() - position.getY());
+    local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
 
   @Override
-  public void onCollision (Entity other, CollisionManager collisionManager)
+  public void onCollision(Entity other, CollisionManager collisionManager)
   {
     if (other.isSolid())
     {

@@ -1,0 +1,10 @@
+Step 1, Generate a room.
+Step 2, Connect the room to the last room generated
+        connection should be center to center using single horizontal and vertical hallways
+
+repeat the process until all rooms and hallways are made
+
+Step 3, Spread the rooms until
+        No hallways intersect rooms
+        Hallway length requirements are met
+
