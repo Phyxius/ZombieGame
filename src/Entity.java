@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
  */
 public abstract class Entity
 {
-  public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
   }
   public Point2D.Float getPosition() //returns upper left point of the object

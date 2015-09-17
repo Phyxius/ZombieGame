@@ -85,7 +85,7 @@ class LineZombie extends ZombieModel
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D global)
+  public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     AffineTransform transformer = new AffineTransform();
     transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);

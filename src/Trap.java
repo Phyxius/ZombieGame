@@ -23,7 +23,7 @@ public class Trap extends Entity
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D screen)
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     local.setColor(Color.red);
     local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);

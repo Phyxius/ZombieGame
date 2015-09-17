@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +65,7 @@ public class EntityManager
 
   public void draw(Graphics2D g)
   {
+    DrawingManager drawingManager = new DrawingManager(this);
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
@@ -74,12 +74,12 @@ public class EntityManager
       {
         Graphics2D local = (Graphics2D) g.create((int) boundingBox.x, (int) boundingBox.y,
             ((int) boundingBox.width), ((int) boundingBox.height));
-        entity.draw(local, screen);
+        entity.draw(local, screen, drawingManager);
         g.setColor(Color.GREEN);
         g.drawRect((int)boundingBox.x, ((int) boundingBox.y), (int)boundingBox.width, (int)boundingBox.height);
         local.dispose();
       }
-      else entity.draw(null, screen);
+      else entity.draw(null, screen, drawingManager);
       screen.dispose();
     }
   }

@@ -28,7 +28,7 @@ public class Fire extends Entity
     return 3;
   }
 
-  public void draw(Graphics2D local, Graphics2D screen) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
     //Animate fire
     local.drawImage(frame, 0, 0, Settings.tileSize, Settings.tileSize, null);

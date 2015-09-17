@@ -34,7 +34,7 @@ public class House extends Entity
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D screen)
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     screen.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
   }

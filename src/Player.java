@@ -26,7 +26,7 @@ public class Player extends Entity
   }
 
   @Override
-  public void draw (Graphics2D local, Graphics2D global)
+  public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     int tileSize = Settings.tileSize;
     local.setColor(Color.YELLOW);
