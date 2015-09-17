@@ -15,7 +15,7 @@ public class UpdateCounter extends Entity
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D screen)
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     screen.setColor(Color.green);
     screen.drawString("" + updates, 100, 100);

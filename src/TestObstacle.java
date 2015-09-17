@@ -24,7 +24,7 @@ public class TestObstacle extends Entity
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D screen)
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     local.setColor(Color.red);
     local.fillRect(0, 0, (int) getBoundingBox().width, (int) getBoundingBox().height);
