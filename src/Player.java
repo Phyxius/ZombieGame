@@ -9,11 +9,15 @@ import java.awt.geom.Point2D;
 public class Player extends Entity
 {
   private Point2D.Float position = new Point2D.Float(100, 100);
+  private SoundEffect playerFootsteps;
   private boolean isRunning;
   private boolean isPickingUp;
+  private int soundCounter;
 
   public Player()
   {
+    playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
+    soundCounter = 0;
   }
 
   void setPosition(Point2D.Float position)
@@ -51,9 +55,11 @@ public class Player extends Entity
     float magnitude = horizontalSpeed * horizontalSpeed + veriticalSpeed * veriticalSpeed;
     if (magnitude != 0)
     {
+      if(soundCounter % 10 == 0)playerFootsteps.play(0.0,10);
       horizontalSpeed /= magnitude;
       veriticalSpeed /= magnitude;
       position.setLocation(position.x + horizontalSpeed * Settings.playerSpeed, position.y + veriticalSpeed * Settings.playerSpeed);
+      soundCounter++;
     }
   }
 
