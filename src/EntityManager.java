@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
@@ -108,6 +109,7 @@ public class EntityManager
 
   private void ProcessAdditionsAndRemovals()
   {
+
     entities.removeAll(entitiesToRemove);
     entitiesToRemove.clear();
     entities.addAll(entitiesToAdd);
@@ -152,14 +154,20 @@ public class EntityManager
 
   public Collection<Entity> getCollidingEntities(Rectangle2D.Float boundingBox)
   {
-    return entities.parallelStream().filter(e -> e.getBoundingBox() != null && e.getBoundingBox()
-        .intersects(boundingBox)).collect(Collectors.toList());
+    return entities.parallelStream().filter(e -> e.getBoundingBox() != null)
+        .filter(e -> e.getBoundingBox().intersects(boundingBox)).collect(Collectors.toList());
   }
 
   public Collection<Entity> getIntersectingEntities(Point2D.Float point)
   {
-    return entities.parallelStream().filter(e -> e.getBoundingBox()
-        .contains(point)).collect(Collectors.toList());
+    return entities.parallelStream().filter(e -> e.getBoundingBox() != null)
+        .filter(e -> e.getBoundingBox().contains(point)).collect(Collectors.toList());
+  }
+
+  public Collection<Entity> getIntersectingEntities(Line2D line)
+  {
+    return entities.parallelStream().filter(e -> e.getBoundingBox() != null)
+        .filter(e -> e.getBoundingBox().intersectsLine(line)).collect(Collectors.toList());
   }
 
   public boolean isKeyPressed(int keyCode)
