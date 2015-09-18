@@ -108,6 +108,7 @@ public class EntityManager
 
   private void ProcessAdditionsAndRemovals()
   {
+
     entities.removeAll(entitiesToRemove);
     entitiesToRemove.clear();
     entities.addAll(entitiesToAdd);
