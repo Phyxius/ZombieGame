@@ -49,7 +49,7 @@ public class ZombiePanel extends JPanel
   // all the tiles
   public void paintComponent(Graphics g)
   {
-    g.setColor(Color.WHITE);
+    g.setColor(Color.BLACK);
     g.fillRect(0, 0, getWidth(), getHeight());
     //House house = new House(32,32);
     //g.drawImage(house.houseImg, 0, 0, house.houseImg.getWidth(), house.houseImg.getHeight(), null);
