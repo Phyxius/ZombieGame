@@ -29,8 +29,8 @@ public class Room
       doorways[y][x] = true;
 
     }
-    makeRoom();
     makeWalls();
+    makeRoom();
   }
 
   public void setTileAt(int y, int x, Tile tile) {tiles[y][x] = tile;}
@@ -57,6 +57,23 @@ public class Room
     return tiles;
   }
 
+  //private void makeWall(int startX, int startY, int i, int end, int tmpStart, int tmpEnd)
+  //{
+  //  int tileSize = Settings.tileSize;
+  //  if(doorways[startY][startX])
+  //   {
+  //     tmpEnd = (i)*tileSize;
+  //     Wall northWall = new Wall(tmpStart, tmpEnd, tmpStart, tmpStart+tileSize);
+  //     entityManager.add(northWall);
+  //     tmpStart = (i+1)*tileSize;
+  //   }
+  //   if(i == end)
+  //   {
+  //     Wall northWall = new Wall(tmpStart, (end+1)*tileSize, tmpStart, tmpStart+tileSize);
+  //     entityManager.add(northWall);
+  //   }
+  //}
+
   //Make walls, taking into account
   //the doorways
   private void makeWalls()
@@ -66,8 +83,9 @@ public class Room
     int endY = startY+(height-1);
     int tmpStartX = startX*tileSize;
     int tmpStartY = startY*tileSize;
-    int tmpEndX;
     int tmpEndY;
+    int tmpEndX;
+
 
     for (int i = startX; i <= endX; i++)
     {
