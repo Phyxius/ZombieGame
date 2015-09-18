@@ -19,6 +19,8 @@ public class EntityManager
   private Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
   private HashMap<Integer, Boolean> keyDict = new HashMap<>();
   public boolean debugModeEnabled = true;
+  private Entity entityToFollow = null;
+  private Point2D.Float cameraOrigin = new Point2D.Float(0, 0);
 
   public EntityManager()
   {
@@ -65,23 +67,31 @@ public class EntityManager
 
   public void draw(Graphics2D g)
   {
+    if (entityToFollow != null) updateCameraOrigin(g.getClipBounds());
     DrawingManager drawingManager = new DrawingManager(this);
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
       Graphics2D screen = (Graphics2D) g.create();
+      screen.translate(cameraOrigin.getX(), cameraOrigin.getY());
       if (boundingBox != null)
       {
         Graphics2D local = (Graphics2D) g.create((int) boundingBox.x, (int) boundingBox.y,
             ((int) boundingBox.width), ((int) boundingBox.height));
         entity.draw(local, screen, drawingManager);
-        g.setColor(Color.GREEN);
-        g.drawRect((int)boundingBox.x, ((int) boundingBox.y), (int)boundingBox.width, (int)boundingBox.height);
+        local.setColor(Color.GREEN);
+        local.drawRect(0, 0, (int)boundingBox.width-1, (int)boundingBox.height-1);
         local.dispose();
       }
       else entity.draw(null, screen, drawingManager);
       screen.dispose();
     }
+  }
+
+  private void updateCameraOrigin(Rectangle cameraBounds)
+  {
+    cameraOrigin.setLocation(entityToFollow.getBoundingBox().getCenterX() - cameraBounds.getWidth() / 2,
+        entityToFollow.getBoundingBox().getCenterY() - cameraBounds.getHeight() / 2);
   }
 
   public void keyPressed(KeyEvent e)
@@ -155,5 +165,25 @@ public class EntityManager
   public boolean isKeyPressed(int keyCode)
   {
     return keyDict.get(keyCode);
+  }
+
+  public Point2D.Float getCameraOrigin()
+  {
+    return new Point2D.Float(cameraOrigin.x, cameraOrigin.y);
+  }
+
+  public void setCameraOrigin(Point2D.Float cameraOrigin)
+  {
+    this.cameraOrigin = cameraOrigin;
+  }
+
+  public Entity getEntityToFollow()
+  {
+    return entityToFollow;
+  }
+
+  public void setEntityToFollow(Entity entityToFollow)
+  {
+    this.entityToFollow = entityToFollow;
   }
 }

@@ -34,6 +34,7 @@ public class ZombiePanel extends JPanel
     entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
     //entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
     entityManager.add(new UpdateCounter());
+    entityManager.setEntityToFollow(player);
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 

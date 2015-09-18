@@ -64,4 +64,24 @@ public class UpdateManager
   {
     return entityManager.isKeyPressed(keyCode);
   }
+
+  public Point2D.Float getCameraOrigin()
+  {
+    return entityManager.getCameraOrigin();
+  }
+
+  public void setCameraOrigin(Point2D.Float cameraOrigin)
+  {
+    entityManager.setCameraOrigin(cameraOrigin);
+  }
+
+  public Entity getEntityToFollow()
+  {
+    return entityManager.getEntityToFollow();
+  }
+
+  public void setEntityToFollow(Entity entityToFollow)
+  {
+    entityManager.setEntityToFollow(entityToFollow);
+  }
 }
