@@ -57,36 +57,13 @@ public class Room
     return tiles;
   }
 
-  //private void makeWall(int startX, int startY, int i, int end, int tmpStart, int tmpEnd)
-  //{
-  //  int tileSize = Settings.tileSize;
-  //  if(doorways[startY][startX])
-  //   {
-  //     tmpEnd = (i)*tileSize;
-  //     Wall northWall = new Wall(tmpStart, tmpEnd, tmpStart, tmpStart+tileSize);
-  //     entityManager.add(northWall);
-  //     tmpStart = (i+1)*tileSize;
-  //   }
-  //   if(i == end)
-  //   {
-  //     Wall northWall = new Wall(tmpStart, (end+1)*tileSize, tmpStart, tmpStart+tileSize);
-  //     entityManager.add(northWall);
-  //   }
-  //}
-
-  //Make walls, taking into account
-  //the doorways
-  private void makeWalls()
+  private void makeWallHoriz(int startY)
   {
     int tileSize = Settings.tileSize;
     int endX = startX+(width-1);
-    int endY = startY+(height-1);
     int tmpStartX = startX*tileSize;
     int tmpStartY = startY*tileSize;
-    int tmpEndY;
     int tmpEndX;
-
-
     for (int i = startX; i <= endX; i++)
     {
       if(doorways[startY][i])
@@ -102,24 +79,14 @@ public class Room
         entityManager.add(northWall);
       }
     }
-    tmpStartX = startX*tileSize;
+  }
 
-    for (int i = startX; i <= endX; i++)
-    {
-      if(doorways[endY][i])
-      {
-        tmpEndX = (i)*tileSize;
-        Wall southWall = new Wall(tmpStartX, tmpEndX, endY*tileSize, (endY+1)*tileSize);
-        entityManager.add(southWall);
-        tmpStartX = (i+1)*tileSize;
-      }
-      if(i == endX)
-      {
-        Wall southWall = new Wall(tmpStartX, (endX+1)*tileSize, endY*tileSize, (endY+1)*tileSize);
-        entityManager.add(southWall);
-      }
-    }
-
+  private void makeWallVert(int startX)
+  {
+    int tileSize = Settings.tileSize;
+    int endY = startY+(height-1);
+    int tmpStartY = startY*tileSize;
+    int tmpEndY;
     for (int i = startY; i <= endY; i++)
     {
       if(doorways[i][startX])
@@ -135,23 +102,17 @@ public class Room
         entityManager.add(westWall);
       }
     }
-    tmpStartY = startY*tileSize;
+  }
 
-    for (int i = startY; i <= endY; i++)
-    {
-      if(doorways[i][endX])
-      {
-        tmpEndY = (i)*tileSize;
-        Wall westWall = new Wall(endX*tileSize,(endX+1)*tileSize, tmpStartY, tmpEndY);
-        entityManager.add(westWall);
-        tmpStartY = (i+1)*tileSize;
-      }
-      if(i == endY)
-      {
-        Wall westWall = new Wall(endX*tileSize, (endX+1)*tileSize, tmpStartY, (endY+1)*tileSize);
-        entityManager.add(westWall);
-      }
-    }
-
+  //Make walls, taking into account
+  //the doorways
+  private void makeWalls()
+  {
+    int endX = startX+(width-1);
+    int endY = startY+(height-1);
+    makeWallHoriz(startY);
+    makeWallHoriz(endY);
+    makeWallVert(startX);
+    makeWallVert(endX);
   }
 }

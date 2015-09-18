@@ -60,16 +60,6 @@ public class House extends Entity
   }
   public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
   {
-    //Get rid of tiny bounding boxes in between
-    //consecutive doorway tiles
-    for (Entity ent: entityManager.getAllEntities())
-    {
-      if(ent instanceof Wall)
-      {
-        if (ent.getBoundingBox().getHeight() - Settings.tileSize < 0) entityManager.remove(ent);
-        if (ent.getBoundingBox().getWidth() - Settings.tileSize < 0) entityManager.remove(ent);
-      }
-    }
   }
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
