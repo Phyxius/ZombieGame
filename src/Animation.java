@@ -12,7 +12,7 @@
  * @param frame Current animation frame.
  * @param frameIndex Index of the current frame.
  * @param synchronize Indicates if the frames should synchronize with Settings.frameRate. Where maxFrameIndex > Settings.frameRate the synchronization is turned off.
- * @param syncOffset Used for synchronization of the frameRate. When syncOffset % syncTarget == 0 update framIndex.
+ * @param syncOffset Used for synchronization of the frameRate. When syncOffset % syncTarget == 0 update frameIndex.
  * @param syncTarget Used for synchronization of the frameRate. syncTarget = Settings.frameRate / (maxFrameIndex + 1) && syncTarget > 1 otherwise synchronization is turned off.
  */
 import java.awt.image.BufferedImage;
@@ -22,7 +22,7 @@ public class Animation // Modified 9-17 FrameRateSync
   protected final String filePath;
   protected final int maxFrameIndex;
   private BufferedImage frame;
-  private int frameIndex;
+  private int frameIndex = 0;
   private boolean synchronize = false;
   private int syncOffset;
   private int syncTarget;
@@ -36,7 +36,6 @@ public class Animation // Modified 9-17 FrameRateSync
   {
     filePath = truncatedFilePath;
     this.maxFrameIndex = maxFrameIndex;
-    frameIndex = 0;
     frame = ResourceManager.getImage(filePath + frameIndex + ".png");
   }
 
