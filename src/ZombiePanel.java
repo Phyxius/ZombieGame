@@ -31,7 +31,7 @@ public class ZombiePanel extends JPanel
     entityManager.add(player);
     entityManager.add(new LineZombie(player, new Point2D.Float(2 * Settings.tileSize, 2 * Settings.tileSize)));
     entityManager.add(new House(32, 32, entityManager));
-    entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
+    //entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
     //entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
     entityManager.add(new UpdateCounter());
     entityManager.setEntityToFollow(player);
@@ -49,7 +49,7 @@ public class ZombiePanel extends JPanel
   // all the tiles
   public void paintComponent(Graphics g)
   {
-    g.setColor(Color.WHITE);
+    g.setColor(Color.BLACK);
     g.fillRect(0, 0, getWidth(), getHeight());
     //House house = new House(32,32);
     //g.drawImage(house.houseImg, 0, 0, house.houseImg.getWidth(), house.houseImg.getHeight(), null);
