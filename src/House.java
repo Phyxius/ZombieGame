@@ -13,7 +13,6 @@ public class House extends Entity
   public static Tile[][] fullGrid;
   private EntityManager entityManager;
   private ArrayList<Room> roomList;
-  private ArrayList<Hallway> hallList;
   public static BufferedImage houseImg;
   private int gridHeight, gridWidth;
 
@@ -24,7 +23,6 @@ public class House extends Entity
     this.entityManager = entityManager;
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
-    hallList = new ArrayList<>();
     fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_3BYTE_BGR);
     generateRoomList();
@@ -62,7 +60,16 @@ public class House extends Entity
   }
   public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
   {
-
+    //Get rid of tiny bounding boxes in between
+    //consecutive doorway tiles
+    for (Entity ent: entityManager.getAllEntities())
+    {
+      if(ent instanceof Wall)
+      {
+        if (ent.getBoundingBox().getHeight() - Settings.tileSize < 0) entityManager.remove(ent);
+        if (ent.getBoundingBox().getWidth() - Settings.tileSize < 0) entityManager.remove(ent);
+      }
+    }
   }
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
@@ -76,12 +83,14 @@ public class House extends Entity
   //Will be very sophisticated at some point
   private void generateRoomList()
   {
-    Room room1 = new Room(new Point(0,0), 8, 8, entityManager);
-    Room room2 = new Room(new Point(9,12), 4, 4, entityManager);
-    Room room3 = new Room(new Point(3,20) ,6, 4, entityManager);
+    Point2D.Float doorList[] = {new Point2D.Float(4,0), new Point2D.Float(6,0), new Point2D.Float(0,1),new Point2D.Float(0,5) };
+    Room room1 = new Room(0,0, 8, 8,doorList, entityManager);
+    Point2D.Float doorList2[] = {new Point2D.Float(10,12), new Point2D.Float(14,12), new Point2D.Float(9,13),new Point2D.Float(9,14) };
+    Room room2 = new Room(9,12, 7, 4, doorList2 ,entityManager);
+    //Room room3 = new Room(3,20 ,6, 4, entityManager);
     roomList.add(room1);
     roomList.add(room2);
-    roomList.add(room3);
+    //roomList.add(room3);
   }
 
   private void copyObjectsToGrid()
@@ -90,8 +99,8 @@ public class House extends Entity
     int width, height;
     for(Room room: roomList)
     {
-      startX = (int)room.getStartPoint().getX();
-      startY = (int)room.getStartPoint().getY();
+      startX = room.getStartX();
+      startY = room.getStartY();
       width = room.getWidth()+startX;
       height = room.getHeight()+startY;
 
@@ -100,21 +109,6 @@ public class House extends Entity
         for(int j = startX; j < width; j++)
         {
           fullGrid[i][j] = room.getTileAt(i,j);
-        }
-      }
-    }
-    for(Hallway hall: hallList)
-    {
-      startX = (int)hall.getStartPoint().getX();
-      startY = (int)hall.getStartPoint().getY();
-      width = hall.getWidth()+startX;
-      height = hall.getHeight()+startY;
-
-      for(int i = startY; i < height; i++)
-      {
-        for(int j = startX; j < width; j++)
-        {
-          fullGrid[i][j] = hall.getTileAt(i,j);
         }
       }
     }

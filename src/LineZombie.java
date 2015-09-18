@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 
 /**
@@ -9,8 +10,8 @@ import java.util.Collection;
  */
 class LineZombie extends ZombieModel
 {
-  private Animation idleAnimation = new Animation("animation/zombie/idle_", 16);
-  private Animation moveAnimation = new Animation("animation/zombie/move_", 16);
+  private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
+  private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private boolean moving = true;
 
   LineZombie(Player player, Point2D.Float position)
