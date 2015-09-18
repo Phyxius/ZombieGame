@@ -15,4 +15,17 @@ public class Util
   {
     return tilesPerSec * Settings.tileSize / Settings.frameRate;
   }
+
+  /**
+   * Clamps a given value to be at most max, and at least min.
+   * Assumes min < max
+   * @param value the value to clamp
+   * @param min the minimum value
+   * @param max the maximum value
+   * @return min if value < min, max if value > max, value otherwise
+   */
+  public static int clampInteger(int value, int min, int max)
+  {
+    return Math.min(max, Math.max(min, value));
+  }
 }
