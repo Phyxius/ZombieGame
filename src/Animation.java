@@ -71,7 +71,7 @@ public class Animation // Modified 9-17 FrameRateSync
     if (synchronize)
     {
       syncOffset = (syncOffset + 1) % syncTarget;
-      if (syncOffset % syncTarget == 0) frameIndex++;
+      if (syncOffset == 0) frameIndex++;
     }
     else
     {
