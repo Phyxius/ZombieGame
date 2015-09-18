@@ -1,67 +1,99 @@
-import java.awt.image.BufferedImage;
+// Maybe we should change the maxFrameIndex to totalFrames and save number of the frames instead of index.
+// The value of the maxFrameIndex is never used without + 1.
+
+// Do we want to have an animation duration for one time animations such as the trap?
 
 /**
  * Created by arirappaport on 9/10/15.
  *
+ * @param filePath The path to the frames for the animation.
+ * The animation frame is given by the ResourceManager using concatenated string, resources/ + filePath + index[0 - maxFrameIndex] + .png
+ * @param maxFrameIndex Greatest index of the animation frames.
+ * @param frame Current animation frame.
+ * @param frameIndex Index of the current frame.
+ * @param synchronize Indicates if the frames should synchronize with Settings.frameRate. Where maxFrameIndex > Settings.frameRate the synchronization is turned off.
+ * @param syncOffset Used for synchronization of the frameRate. When syncOffset % syncTarget == 0 update frameIndex.
+ * @param syncTarget Used for synchronization of the frameRate. syncTarget = Settings.frameRate / (maxFrameIndex + 1) && syncTarget > 1 otherwise synchronization is turned off.
  */
+import java.awt.image.BufferedImage;
+
 public class Animation // Modified 9-17 FrameRateSync
 {
-  protected int maxFrame;
-  protected int offset;
-  protected int syncCount;
-  protected int syncTarget;
-  protected boolean syncRate = false;
-  protected BufferedImage img;
-  protected String filePath;
+  protected final String filePath;
+  protected final int maxFrameIndex;
+  private BufferedImage frame;
+  private int frameIndex = 0;
+  private boolean synchronize = false;
+  private int syncOffset;
+  private int syncTarget;
 
-
-  public Animation(String truncatedFilePath, int maxFrame)
+  /**
+   * Creates an animation object with no synchronization.
+   * @param truncatedFilePath The filePath for the animation.
+   * @param maxFrameIndex The maxFrameIndex for the animation.
+   */
+  public Animation(String truncatedFilePath, int maxFrameIndex)
   {
     filePath = truncatedFilePath;
-    offset = 0;
-    this.maxFrame = maxFrame;
-    img = ResourceManager.getImage(filePath + offset + ".png");
+    this.maxFrameIndex = maxFrameIndex;
+    frame = ResourceManager.getImage(filePath + frameIndex + ".png");
   }
 
-  public Animation(String truncatedFilePath, int maxFrame, boolean syncRate)
+  /**
+   * Creates an animation object with no synchronization.
+   * @param truncatedFilePath The filePath for the animation.
+   * @param maxFrameIndex The maxFrameIndex for the animation.
+   * @param synchronize The frame rate synchronization state for the animation.
+   */
+  public Animation(String truncatedFilePath, int maxFrameIndex, boolean synchronize)
   {
-    this(truncatedFilePath, maxFrame);
-    syncFrameRate(syncRate);
+    this(truncatedFilePath, maxFrameIndex);
+    syncFrameRate(synchronize);
   }
 
+  /**
+   * @return The current animation frame.
+   */
+  public BufferedImage getFrame()
+  {
+    return frame;
+  }
+
+  /**
+   * Updates the animation frame.
+   * @param reset Resets the animation to the first frame.
+   * @return The current frame.
+   */
   public BufferedImage nextFrame(boolean reset)
   {
-    if (reset) offset = 0;
-    img = ResourceManager.getImage(filePath + offset + ".png");
-    if (syncRate)
+    if (reset) frameIndex = 0;
+    frame = ResourceManager.getImage(filePath + frameIndex + ".png");
+    if (synchronize)
     {
-      if (reset) syncCount = 0;
-      syncCount = (syncCount + 1) % syncTarget;
-      if (syncCount == 0) offset ++;
+      syncOffset = (syncOffset + 1) % syncTarget;
+      if (syncOffset == 0) frameIndex++;
     }
     else
     {
-      offset++;
+      frameIndex++;
     }
-    offset %= maxFrame + 1;
-    return img;
+    frameIndex %= maxFrameIndex + 1;
+    return frame;
   }
 
-  public BufferedImage getFrame()
+  /**
+   * @param synchronize The frame rate synchronization state for the animation.
+   */
+  private void syncFrameRate(boolean synchronize)
   {
-    return img;
-  }
-
-  private void syncFrameRate(boolean syncRate)
-  {
-    this.syncRate = syncRate;
-    if (syncRate)
+    this.synchronize = synchronize;
+    if (synchronize)
     {
-      syncTarget = Settings.frameRate / (maxFrame + 1);
+      syncTarget = Settings.frameRate / (maxFrameIndex + 1);
       if (syncTarget <= 1)
       {
         syncTarget = 1;
-        this.syncRate = false;
+        this.synchronize = false;
       }
     }
   }

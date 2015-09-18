@@ -89,8 +89,8 @@ class LineZombie extends ZombieModel
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     AffineTransform transformer = new AffineTransform();
-    transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    transformer.rotate(directionAngle, getBoundingBox().getCenterX() - position.getX(), getBoundingBox().getCenterY() - position.getY());
+    transformer.rotate(directionAngle, Settings.tileSize /2, Settings.tileSize /2); // must rotate first then scale otherwise it will cause a bug
+    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
     local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
 
