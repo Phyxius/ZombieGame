@@ -10,14 +10,17 @@ public class Player extends Entity
 {
   private Point2D.Float position = new Point2D.Float(100, 100);
   private SoundEffect playerFootsteps;
-  private boolean isRunning;
+  private boolean isRunning = false;
+  private float stamina;
+  private boolean staminaDepleted = false;
   private boolean isPickingUp;
-  private int soundCounter;
+  private int soundCounter = 0;
+  private int trapsInInventory = 0;
 
   public Player()
   {
     playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
-    soundCounter = 0;
+    stamina = Settings.playerStamina;
   }
 
   void setPosition(Point2D.Float position)
@@ -30,7 +33,7 @@ public class Player extends Entity
   {
     int tileSize = Settings.tileSize;
     local.setColor(Color.YELLOW);
-    local.fillRoundRect(0, 0, tileSize, tileSize, tileSize/10, tileSize/10);
+    local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
   }
 
   @Override
@@ -47,24 +50,66 @@ public class Player extends Entity
   @Override
   public void update(UpdateManager e)
   {
-    float horizontalSpeed = 0, veriticalSpeed = 0;
-    if (e.isKeyPressed(KeyEvent.VK_LEFT)) horizontalSpeed -= 1;
-    if (e.isKeyPressed(KeyEvent.VK_RIGHT)) horizontalSpeed += 1;
-    if (e.isKeyPressed(KeyEvent.VK_UP)) veriticalSpeed -= 1;
-    if (e.isKeyPressed(KeyEvent.VK_DOWN)) veriticalSpeed += 1;
-    float magnitude = horizontalSpeed * horizontalSpeed + veriticalSpeed * veriticalSpeed;
-    if (magnitude != 0)
+    if (isPickingUp())
     {
-      if(soundCounter % 10 == 0)playerFootsteps.play(0.0,10);
-      horizontalSpeed /= magnitude;
-      veriticalSpeed /= magnitude;
-      position.setLocation(position.x + horizontalSpeed * Settings.playerSpeed, position.y + veriticalSpeed * Settings.playerSpeed);
-      soundCounter++;
+
+    }
+    else
+    {
+      float xMovement = 0, yMovement = 0;
+      if (e.isKeyPressed(KeyEvent.VK_LEFT) || e.isKeyPressed(KeyEvent.VK_A)) xMovement -= 1;
+      if (e.isKeyPressed(KeyEvent.VK_RIGHT) || e.isKeyPressed(KeyEvent.VK_D)) xMovement += 1;
+      if (e.isKeyPressed(KeyEvent.VK_UP) || e.isKeyPressed(KeyEvent.VK_W)) yMovement -= 1;
+      if (e.isKeyPressed(KeyEvent.VK_DOWN) || e.isKeyPressed(KeyEvent.VK_S)) yMovement += 1;
+
+      // Normalize movement vector.
+      double movementMagnitude = Math.sqrt(xMovement * xMovement + yMovement * yMovement);
+      xMovement /= movementMagnitude;
+      yMovement /= movementMagnitude;
+
+      if (movementMagnitude != 0)
+      {
+        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !isStaminaDepleted();
+        if (isRunning)
+        {
+          stamina--;
+          position.setLocation(position.x + xMovement * Settings.playerRun, position.y + yMovement * Settings.playerRun);
+          if (soundCounter % (Settings.frameRate / 4) == 0) playerFootsteps.play(0.0, 10);
+        }
+        else
+        {
+          replenishStamina();
+          position.setLocation(position.x + xMovement * Settings.playerWalk, position.y + yMovement * Settings.playerWalk);
+          if (soundCounter % (Settings.frameRate / 2) == 0) playerFootsteps.play(0.0, 10);
+        }
+        soundCounter++;
+      }
+      else
+      {
+        replenishStamina();
+      }
     }
   }
 
   public boolean isPickingUp()
   {
     return isPickingUp;
+  }
+
+  /**
+   * Used to indicate that stamina was recently depleted.
+   *
+   * @return Returns a true value while stamina < Settings.frameRate * 2 (2 seconds) after the player stamina reaches zero.
+   */
+  public boolean isStaminaDepleted()
+  {
+    if (stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2)) staminaDepleted = true;
+    else staminaDepleted = false;
+    return staminaDepleted;
+  }
+
+  private void replenishStamina()
+  {
+    if (stamina < Settings.playerStamina) stamina++;
   }
 }

@@ -64,13 +64,13 @@ public class Trap extends Entity
     if (other instanceof Player)
     {
       //Player player = (Player) other;
-      //if (player.isRunning())
-      //{
+      if (((Player) other).isRunning())
+      {
         detonate();
       //} else if (player.isPickingUp())
       //{
         c.remove(this);
-      //}
+      }
     }
   }
 
