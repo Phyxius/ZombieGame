@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by arirappaport on 9/7/15.
@@ -9,8 +10,7 @@ public class Trap extends Entity
 {
   protected int tileSize;
   protected Point2D.Float position;
-  protected Point2D.Float center;
-  protected Rectangle2D boundingRect;
+  private BufferedImage trapImg;
   private EntityManager entityManager;
   private int[] dx = {-1, 0, 1,-1, 0, 1,-1, 0, 1};
   private int[] dy = {-1,-1,-1, 0, 0, 0, 1, 1, 1};
@@ -20,13 +20,14 @@ public class Trap extends Entity
     this.position = position;
     this.entityManager = entityManager;
     tileSize = Settings.tileSize;
+    trapImg = ResourceManager.getImage("stills/firetrap.png");
   }
 
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     local.setColor(Color.red);
-    local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
+    local.drawImage(trapImg, 0,0, tileSize, tileSize, null);
   }
 
   @Override

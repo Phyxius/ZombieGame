@@ -2,7 +2,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.io.InputStream;
 import java.util.HashMap;
 
 /**
@@ -12,24 +11,25 @@ import java.util.HashMap;
 public class ResourceManager
 {
   public static HashMap<String, BufferedImage> imageHashMap;
-  public static ArrayList<String> tilePaths;
+  public static ArrayList<String> imagePaths;
   static
   {
     imageHashMap = new HashMap<>();
-    tilePaths = new ArrayList<>();
-    tilePaths.add("tileset/nonwall.png");
-    tilePaths.add("tileset/wall.png");
-    tilePaths.add("tileset/outofbounds.png");
+    imagePaths = new ArrayList<>();
+    imagePaths.add("tileset/nonwall.png");
+    imagePaths.add("tileset/wall.png");
+    imagePaths.add("tileset/outofbounds.png");
+    imagePaths.add("stills/firetrap.png");
     for (int i = 0; i <= 16; i++)
     {
-      tilePaths.add("animation/zombie/idle_" + i + ".png");
-      tilePaths.add("animation/zombie/move_" + i + ".png");
+      imagePaths.add("animation/zombie/idle_" + i + ".png");
+      imagePaths.add("animation/zombie/move_" + i + ".png");
     }
   }
 
   public static void populateImageHashMap()
   {
-    tilePaths.forEach(ResourceManager::getImage);
+    imagePaths.forEach(ResourceManager::getImage);
   }
 
   public static BufferedImage getImage(String path)

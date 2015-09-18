@@ -7,10 +7,16 @@ import java.awt.image.BufferedImage;
 public class Tile
 {
   private BufferedImage tileImg;
+  private boolean isSolid;
 
   public Tile(String imgName, boolean isSolid)
   {
     tileImg = ResourceManager.getImage(imgName + ".png");
+    this.isSolid = isSolid;
+  }
+  public boolean isSolid()
+  {
+    return isSolid;
   }
 
   public BufferedImage getTileImg()
