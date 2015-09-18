@@ -1,49 +1,57 @@
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 /**
  * Created by arirappaport on 9/11/15.
  */
-public class Room extends HouseEntity
+public class Room
 {
   private EntityManager entityManager;
-  public Room(Point2D startPoint, int width, int height, EntityManager entityManager)
+  private Entity[][] obstacles;
+  private int width, height;
+  private int startX, startY;
+  public Tile[][] tiles;
+
+  public Room(int startX, int startY, int width, int height, EntityManager entityManager)
   {
-    super(startPoint);
     this.entityManager = entityManager;
-    tiles = new Tile[(int)startPoint.getY()+height][(int)startPoint.getX()+width];
-    setWidth(width);
-    setHeight(height);
+    tiles = new Tile[startY+height][startX+width];
+    this.startX = startX;
+    this.startY = startY;
+    this.width = width;
+    this.height = height;
     makeRoom();
     makeWalls();
   }
 
+  public void setTileAt(int y, int x, Tile tile) {tiles[y][x] = tile;}
+  public Tile getTileAt(int y, int x){return tiles[y][x];}
+  public int getStartX(){return startX;}
+  public int getStartY(){return startY;}
+  public int getWidth(){return width;}
+  public int getHeight(){return height;}
+
   private Tile[][] makeRoom()
   {
-    int startX = (int) startPoint.getX();
-    int startY = (int) startPoint.getY();
-
-    for(int i = startY; i < getHeight()+startY; i++)
+    for(int i = startY; i < height+startY; i++)
     {
-      for(int j = startX; j < getWidth()+startX; j++)
+      for(int j = startX; j < width+startX; j++)
       {
-        if(i == startY || j == startX || i == getHeight()+startY-1 || j == getWidth()+startX-1)
+        if(i == startY || j == startX || i == height+startY-1 || j == width+startX-1)
         {
-          setTilesAt(i,j,new Tile("tileset/wall", true));
+          setTileAt(i,j,new Tile("tileset/wall", true));
         }
-        else setTilesAt(i,j, new Tile("tileset/nonwall", false));
+        else setTileAt(i,j, new Tile("tileset/nonwall", false));
       }
     }
-    return getTiles();
+    return tiles;
   }
 
   private void makeWalls()
   {
     int tileSize = Settings.tileSize;
-    int startX = (int) startPoint.getX()*tileSize;
-    int startY = (int) startPoint.getY()*tileSize;
-    int endX = startX+(getWidth()-1)*tileSize;
-    int endY = startY+(getHeight()-1)*tileSize;
+    startX *= tileSize;
+    startY *= tileSize;
+    int endX = startX+(width-1)*tileSize;
+    int endY = startY+(height-1)*tileSize;
 
     Wall wall1 = new Wall(startX,startX + tileSize,startY, endY);
     Wall wall2 = new Wall(startX+tileSize,endX,startY, startY + tileSize);
@@ -53,5 +61,7 @@ public class Room extends HouseEntity
     entityManager.add(wall2);
     entityManager.add(wall3);
     entityManager.add(wall4);
+    startX/=tileSize;
+    startY/=tileSize;
   }
 }
