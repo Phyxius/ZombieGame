@@ -73,10 +73,9 @@ public class EntityManager
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
       Graphics2D screen = (Graphics2D) g.create();
-      screen.translate(cameraOrigin.getX(), cameraOrigin.getY());
       if (boundingBox != null)
       {
-        Graphics2D local = (Graphics2D) g.create((int) boundingBox.x, (int) boundingBox.y,
+        Graphics2D local = (Graphics2D) g.create((int)(boundingBox.x - cameraOrigin.x), (int) (boundingBox.y - cameraOrigin.y),
             ((int) boundingBox.width), ((int) boundingBox.height));
         entity.draw(local, screen, drawingManager);
         local.setColor(Color.GREEN);
@@ -84,6 +83,7 @@ public class EntityManager
         local.dispose();
       }
       else entity.draw(null, screen, drawingManager);
+      screen.setColor(Color.green);
       screen.dispose();
     }
   }
