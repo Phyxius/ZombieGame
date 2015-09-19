@@ -1,4 +1,5 @@
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 /**
  * Created by arirappaport on 9/11/15.
@@ -12,7 +13,7 @@ public class Room
   private Tile[][] tiles;
   private boolean[][] doorways;
 
-  public Room(int startX, int startY, int width, int height, Point2D.Float[] doorWayLocations, EntityManager entityManager)
+  public Room(int startX, int startY, int width, int height, EntityManager entityManager)
   {
     this.entityManager = entityManager;
     tiles = new Tile[startY+height][startX+width];
@@ -21,16 +22,22 @@ public class Room
     this.startY = startY;
     this.width = width;
     this.height = height;
+  }
 
-    for (int i = 0; i < doorWayLocations.length; i++)
+  public void setDoorways(ArrayList<Point2D.Float> doorWayLocations)
+  {
+    for (int i = 0; i < doorWayLocations.size(); i++)
     {
-      int x = (int)doorWayLocations[i].x;
-      int y = (int)doorWayLocations[i].y;
+      int x = (int)doorWayLocations.get(i).x;
+      int y = (int)doorWayLocations.get(i).y;
       doorways[y][x] = true;
-
     }
-    makeWalls();
+  }
+
+  public void init()
+  {
     makeRoom();
+    makeWalls();
   }
 
   public void setTileAt(int y, int x, Tile tile) {tiles[y][x] = tile;}
@@ -40,7 +47,7 @@ public class Room
   public int getWidth(){return width;}
   public int getHeight(){return height;}
 
-  private Tile[][] makeRoom()
+  private void makeRoom()
   {
     for(int i = startY; i < height+startY; i++)
     {
@@ -54,7 +61,6 @@ public class Room
         else setTileAt(i,j, new Tile("tileset/nonwall", false));
       }
     }
-    return tiles;
   }
 
   private void makeWallHoriz(int startY)

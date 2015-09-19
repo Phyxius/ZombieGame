@@ -4,6 +4,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 /**
  * Created by arirappaport on 9/10/15.
@@ -25,10 +27,22 @@ public class House extends Entity
     roomList = new ArrayList<>();
     fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
-    generateRoomList();
+    int roomStartX = 15;
+    int roomStartY = 15;
+    int startWidth = 8;
+    int startHeight = 10;
+    Room startRoom = new Room(roomStartX,roomStartY,startWidth, startHeight, entityManager);
+    startRoom.init();
+    roomList.add(startRoom);
+    generateRoomList(roomStartX,roomStartY, 3, Direction.NORTH, 1);
     copyObjectsToGrid();
     //TODO: Hallways
     generateBuffImgHouse();
+  }
+
+  private enum Direction
+  {
+    NORTH,WEST,SOUTH,EAST;
   }
 
   @Override
@@ -70,29 +84,96 @@ public class House extends Entity
     return -1;
   }
 
-  //Will be very sophisticated at some point
-  private void generateRoomList()
+  private Room makeNewRoom(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom,
+                           ArrayList<Point2D.Float> doorwayList, int prevRoomDoorSize)
   {
-    int startX = (int)(Math.random()*gridWidth)/2;
-    int startY = (int)(Math.random()*gridHeight)/2;
-    int startWidth = (int)((Math.random()*1000)%6)+6;
-    int startHeight = (int)((Math.random()*1000)%8)+8;
-    int ceilDoorX = (startX+(startX+startWidth))/2;
-    int floorDoorX = ((startX+(startX+startWidth))/2)-1;
-    Point2D.Float startDoorList[] = {new Point2D.Float(ceilDoorX,startY), new Point2D.Float(floorDoorX, startY)};
-    Room startRoom = new Room(startX, startY,startWidth, startHeight,startDoorList, entityManager);
-    roomList.add(startRoom);
-    Point2D.Float startHallList[] = {new Point2D.Float(ceilDoorX,startY-1), new Point2D.Float(floorDoorX, startY-1)};
-    Room hall = new Room(floorDoorX-1,startY-4,4,4,startHallList, entityManager);
-    roomList.add(hall);
-//    Point2D.Float doorList[] = {new Point2D.Float(4,0), new Point2D.Float(6,0), new Point2D.Float(0,1),new Point2D.Float(0,5) };
-//    Room room1 = new Room(0,0, 8, 8,doorList, entityManager);
-//    Point2D.Float doorList2[] = {new Point2D.Float(10,12), new Point2D.Float(14,12), new Point2D.Float(9,13),new Point2D.Float(9,14) };
-//    Room room2 = new Room(9,12, 7, 4, doorList2 ,entityManager);
-//    //Room room3 = new Room(3,20 ,6, 4, entityManager);
-//    roomList.add(room1);
-//    roomList.add(room2);
-//    //roomList.add(room3);
+    Room newRoom = null;
+    Random generator = new Random();
+    int offsetFromCenter = generator.nextInt(5)+5;
+    int newWidth = generator.nextInt(4)+12;
+    int newHeight = generator.nextInt(4)+12;
+    switch(comingFrom)
+    {
+      case NORTH:
+        newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-1,newWidth, newHeight, entityManager);
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          doorwayList.add(new Point2D.Float(prevRoomDoorX+i,prevRoomDoorY-1));
+        }
+      break;
+      case WEST:
+        newRoom = new Room(prevRoomDoorX-1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          doorwayList.add(new Point2D.Float(prevRoomDoorX-1,prevRoomDoorY-+i));
+        }
+      break;
+      case SOUTH:
+        newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, entityManager);
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          doorwayList.add(new Point2D.Float(prevRoomDoorX-+i,prevRoomDoorY+1));
+        }
+      break;
+      case EAST:
+        newRoom = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          doorwayList.add(new Point2D.Float(prevRoomDoorX+1,prevRoomDoorY-+i));
+        }
+      break;
+    }
+    return newRoom;
+  }
+
+  private int calculateNumDoors(int depth)
+  {
+    int numDoors = 0;
+    double rand = Math.random();
+    if(depth == 1) numDoors = 4;
+    if(depth == 2)
+    {
+      if(rand >= 0.5) numDoors = 4;
+      if(rand >= 0.25) numDoors = 3;
+      if(rand >= 0.125) numDoors = 2;
+      if(rand >= 0.0625) numDoors = 1;
+    }
+    else if(depth > 2)
+    {
+      double probab = (1/(4^depth));
+      if(rand >= probab) numDoors = 4;
+      if(rand >= (probab/2)) numDoors = 3;
+      if(rand >= (probab/4)) numDoors = 2;
+      if(rand >= (probab/8)) numDoors = 1;
+    }
+    return numDoors;
+  }
+
+  private void addDoorWayOn(Direction curSide, ArrayList<Point2D.Float> doorwayList)
+  {
+
+  }
+
+
+  //Will be very sophisticated at some point
+  private void generateRoomList(int prevRoomDoorX,int prevRoomDoorY, int prevRoomDoorSize, Direction comingFrom, int depth)
+  {
+    ArrayList<Point2D.Float> doorwayList = new ArrayList<>();
+    ArrayList<Direction> directions = new ArrayList<>();
+    int numDoors;
+    Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom, doorwayList, prevRoomDoorSize);
+    Collections.addAll(directions, Direction.values());
+    directions.remove(comingFrom);
+    Collections.shuffle(directions);
+    numDoors = calculateNumDoors(depth);
+    for (int i = 0; i < numDoors-1; i++)
+    {
+      Direction curSide = directions.get(i);
+      addDoorWayOn(curSide, doorwayList);
+    }
+    newRoom.setDoorways(doorwayList);
+    newRoom.init();
+    roomList.add(newRoom);
   }
 
   private void copyObjectsToGrid()
