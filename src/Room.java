@@ -1,4 +1,3 @@
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
@@ -24,13 +23,16 @@ public class Room
     this.height = height;
   }
 
-  public void setDoorways(ArrayList<Point2D.Float> doorWayLocations)
+  public void setDoorways(ArrayList<Doorway> doorwayList)
   {
-    for (int i = 0; i < doorWayLocations.size(); i++)
+    for(Doorway doorway: doorwayList)
     {
-      int x = (int)doorWayLocations.get(i).x;
-      int y = (int)doorWayLocations.get(i).y;
-      doorways[y][x] = true;
+      for (int i = 0; i < doorway.getLengthOfDoorway(); i++)
+      {
+        int x = (int) doorway.getPointAt(i).x;
+        int y = (int) doorway.getPointAt(i).y;
+        doorways[y][x] = true;
+      }
     }
   }
 
