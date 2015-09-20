@@ -1,4 +1,3 @@
-import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,13 +7,13 @@ import java.util.stream.Collectors;
  */
 public class Graph<T>
 {
-  private HashMap<OrderIndependentTuple, Optional<Integer>> edges = new HashMap<>();
+  private HashMap<UnorderedTuple, Optional<Integer>> edges = new HashMap<>();
   private Set<T> nodes = new HashSet<>();
-  public final class OrderIndependentTuple
+  public final class UnorderedTuple
   {
     public final T a, b;
 
-    public OrderIndependentTuple(T a, T b)
+    public UnorderedTuple(T a, T b)
     {
       this.a = a;
       this.b = b;
@@ -23,8 +22,8 @@ public class Graph<T>
     @Override
     public boolean equals(Object o)
     {
-      if (!(o instanceof Graph<?>.OrderIndependentTuple)) return false;
-      Graph<?>.OrderIndependentTuple other = (Graph<?>.OrderIndependentTuple) o;
+      if (!(o instanceof Graph<?>.UnorderedTuple)) return false;
+      Graph<?>.UnorderedTuple other = (Graph<?>.UnorderedTuple) o;
       return (Objects.equals(a, other.a) && Objects.equals(b, other.b)) ||
           (Objects.equals(a, other.b) && Objects.equals(b, other.a));
     }
@@ -35,7 +34,7 @@ public class Graph<T>
     return new ArrayList<>(nodes);
   }
 
-  public Map<OrderIndependentTuple, Optional<Integer>> getEdges()
+  public Map<UnorderedTuple, Optional<Integer>> getEdges()
   {
     return new HashMap<>(edges);
   }
@@ -68,7 +67,7 @@ public class Graph<T>
     if (weight == null) throw new IllegalArgumentException("Weights cannot be null!");
     nodes.add(node1);
     nodes.add(node2);
-    edges.put(new OrderIndependentTuple(node1, node2), weight);
+    edges.put(new UnorderedTuple(node1, node2), weight);
   }
 
   public void setEdge(T node1, T node2, int weight)
@@ -81,17 +80,17 @@ public class Graph<T>
     edges.entrySet().forEach(e -> setEdge(node, e.getKey(), e.getValue()));
   }
 
-  public void setEdges(Map<OrderIndependentTuple, Optional<Integer>> edges)
+  public void setEdges(Map<UnorderedTuple, Optional<Integer>> edges)
   {
     edges.entrySet().forEach(e -> setEdge(e.getKey().a, e.getKey().b, e.getValue()));
   }
 
   public void removeEdge(T node1, T node2)
   {
-    edges.remove(new OrderIndependentTuple(node1, node2));
+    edges.remove(new UnorderedTuple(node1, node2));
   }
 
-  public void removeEdges(Collection<OrderIndependentTuple> edges)
+  public void removeEdges(Collection<UnorderedTuple> edges)
   {
     edges.forEach(this.edges::remove);
   }
@@ -99,17 +98,17 @@ public class Graph<T>
   public Collection<T> getNeighbors(T node)
   {
     return nodes.stream().filter(
-        n -> edges.getOrDefault(new OrderIndependentTuple(node, n), Optional.empty()).isPresent())
+        n -> edges.getOrDefault(new UnorderedTuple(node, n), Optional.empty()).isPresent())
         .collect(Collectors.toList());
   }
 
   public boolean areNeighbors(T node1, T node2)
   {
-    return edges.getOrDefault(new OrderIndependentTuple(node1, node2), Optional.empty()).isPresent();
+    return edges.getOrDefault(new UnorderedTuple(node1, node2), Optional.empty()).isPresent();
   }
 
   public Optional<Integer> getEdgeWeight(T node1, T node2)
   {
-    return edges.getOrDefault(new OrderIndependentTuple(node1, node2), Optional.empty());
+    return edges.getOrDefault(new UnorderedTuple(node1, node2), Optional.empty());
   }
 }
