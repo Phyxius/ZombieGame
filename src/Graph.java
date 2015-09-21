@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -7,7 +8,7 @@ import java.util.stream.Collectors;
  */
 public class Graph<T>
 {
-  private HashMap<UnorderedTuple, Optional<Integer>> edges = new HashMap<>();
+  private Map<UnorderedTuple, Optional<Float>> edges = new HashMap<>();
   private Set<T> nodes = new HashSet<>();
   public final class UnorderedTuple
   {
@@ -29,12 +30,34 @@ public class Graph<T>
     }
   }
 
+  @SafeVarargs
+  public static <T> Graph<T> concatenate(Graph<T>... graphs)
+  {
+    Graph<T> ret = new Graph<>();
+    for (Graph<T> graph : graphs)
+    {
+      ret.add(graph);
+    }
+    return ret;
+  }
+
+  public Graph()
+  {
+
+  }
+
+  public Graph(Graph<T> copy)
+  {
+    nodes = new HashSet<>(copy.getNodes());
+    edges = new HashMap<>(copy.getEdges());
+  }
+
   public Collection<T> getNodes()
   {
     return new ArrayList<>(nodes);
   }
 
-  public Map<UnorderedTuple, Optional<Integer>> getEdges()
+  public Map<UnorderedTuple, Optional<Float>> getEdges()
   {
     return new HashMap<>(edges);
   }
@@ -44,16 +67,27 @@ public class Graph<T>
     nodes.add(node);
   }
 
-  public void add(T node, T connectedNode, int edgeWeight)
+  public void add(Collection<T> nodes)
+  {
+    this.nodes.addAll(nodes);
+  }
+
+  public void add(T node, T connectedNode, float edgeWeight)
   {
     add(node);
     setEdge(node, connectedNode, edgeWeight);
   }
 
-  public void add(T node, Map<T, Optional<Integer>> edges)
+  public void add(T node, Map<T, Optional<Float>> edges)
   {
     add(node);
     setEdges(node, edges);
+  }
+
+  public void add(Graph<T> graph)
+  {
+    nodes.addAll(graph.getNodes());
+    edges.putAll(graph.getEdges());
   }
 
   public void remove(T node)
@@ -62,7 +96,7 @@ public class Graph<T>
     edges.keySet().stream().filter(t -> t.a.equals(node) || t.b.equals(node)).forEach(edges::remove);
   }
 
-  public void setEdge(T node1, T node2, Optional<Integer> weight)
+  public void setEdge(T node1, T node2, Optional<Float> weight)
   {
     if (weight == null) throw new IllegalArgumentException("Weights cannot be null!");
     nodes.add(node1);
@@ -70,17 +104,17 @@ public class Graph<T>
     edges.put(new UnorderedTuple(node1, node2), weight);
   }
 
-  public void setEdge(T node1, T node2, int weight)
+  public void setEdge(T node1, T node2, float weight)
   {
     setEdge(node1, node2, Optional.of(weight));
   }
 
-  public void setEdges(T node, Map<T, Optional<Integer>> edges)
+  public void setEdges(T node, Map<T, Optional<Float>> edges)
   {
     edges.entrySet().forEach(e -> setEdge(node, e.getKey(), e.getValue()));
   }
 
-  public void setEdges(Map<UnorderedTuple, Optional<Integer>> edges)
+  public void setEdges(Map<UnorderedTuple, Optional<Float>> edges)
   {
     edges.entrySet().forEach(e -> setEdge(e.getKey().a, e.getKey().b, e.getValue()));
   }
@@ -107,8 +141,15 @@ public class Graph<T>
     return edges.getOrDefault(new UnorderedTuple(node1, node2), Optional.empty()).isPresent();
   }
 
-  public Optional<Integer> getEdgeWeight(T node1, T node2)
+  public Optional<Float> getEdgeWeight(T node1, T node2)
   {
     return edges.getOrDefault(new UnorderedTuple(node1, node2), Optional.empty());
+  }
+
+  public Optional<Path> findPath(T startNode, T endNode, BiFunction<T, T, Float> heuristic)
+  {
+    if (!nodes.contains(startNode) || !nodes.contains(endNode)) return Optional.empty();
+    if (startNode.equals(endNode)) return Optional.of(new Path<>());
+    return Optional.empty();
   }
 }
