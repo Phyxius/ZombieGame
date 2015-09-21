@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
  */
 public class Player extends Entity
 {
-  private Point2D.Float position = new Point2D.Float(800, 800);
+  private Point2D.Float position = new Point2D.Float(880, 880);
   private SoundEffect playerFootsteps;
   private boolean isRunning = false;
   private float stamina;
@@ -52,7 +52,7 @@ public class Player extends Entity
   {
     if (isPickingUp())
     {
-
+      return;
     }
     else
     {
@@ -69,20 +69,34 @@ public class Player extends Entity
 
       if (movementMagnitude != 0)
       {
+        float xPosition = position.x;
+        float yPosition = position.y;
         isRunning = e.isKeyPressed(KeyEvent.VK_R) && !isStaminaDepleted();
         if (isRunning)
         {
           stamina--;
           position.setLocation(position.x + xMovement * Settings.playerRun, position.y + yMovement * Settings.playerRun);
-          if (soundCounter % (Settings.frameRate / 4) == 0) playerFootsteps.play(0.0, 10);
+          if (!checkCollision(e, xPosition, yPosition))
+          {
+            if (soundCounter % (Settings.frameRate / 4) == 0) playerFootsteps.play(0.0, 10);
+            soundCounter++;
+
+          }
+          else
+          {
+            replenishStamina();
+          }
         }
         else
         {
           replenishStamina();
           position.setLocation(position.x + xMovement * Settings.playerWalk, position.y + yMovement * Settings.playerWalk);
-          if (soundCounter % (Settings.frameRate / 2) == 0) playerFootsteps.play(0.0, 10);
+          if (!checkCollision(e, xPosition, yPosition))
+          {
+            if (soundCounter % (Settings.frameRate / 3) == 0) playerFootsteps.play(0.0, 10);
+            soundCounter++;
+          }
         }
-        soundCounter++;
       }
       else
       {
@@ -111,5 +125,19 @@ public class Player extends Entity
   private void replenishStamina()
   {
     if (stamina < Settings.playerStamina) stamina++;
+  }
+
+  private boolean checkCollision(UpdateManager manager, float xPosition, float yPosition)
+  {
+    final boolean[] returnValue = {false};
+    manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) -> {
+      if (entity != this && entity.isSolid())
+      {
+        this.position.x = xPosition;
+        this.position.y = yPosition;
+        returnValue[0] = true;
+      }
+    });
+    return returnValue[0];
   }
 }
