@@ -11,9 +11,15 @@ public class Room
   private int startX, startY;
   private Tile[][] tiles;
   private boolean[][] doorways;
+  private boolean isHallway;
+  private Room eastNeighbor;
+  private Room westNeighbor;
+  private Room southNeighbor;
+  private Room northNeighbor;
 
-  public Room(int startX, int startY, int width, int height, EntityManager entityManager)
+  public Room(int startX, int startY, int width, int height, boolean isHallway, EntityManager entityManager)
   {
+    this.isHallway = isHallway;
     this.entityManager = entityManager;
     tiles = new Tile[startY+height][startX+width];
     doorways = new boolean[startY+height][startX+width];
@@ -42,6 +48,11 @@ public class Room
     makeWalls();
   }
 
+  public boolean isAHallway()
+  {
+    return isHallway;
+  }
+
   public void setTileAt(int y, int x, Tile tile) {tiles[y][x] = tile;}
   public Tile getTileAt(int y, int x){return tiles[y][x];}
   public int getStartX(){return startX;}
@@ -65,6 +76,23 @@ public class Room
     }
   }
 
+  public void setNeighbor(House.Direction dir, Room neighbor)
+  {
+    switch(dir)
+    {
+      case NORTH:
+        northNeighbor = neighbor;
+        break;
+      case WEST:
+        westNeighbor = neighbor;
+        break;
+      case SOUTH:
+        southNeighbor = neighbor;
+        break;
+      case EAST:
+        eastNeighbor = neighbor;
+    }
+  }
   private void makeWallHoriz(int startY)
   {
     int tileSize = Settings.tileSize;

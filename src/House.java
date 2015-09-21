@@ -20,6 +20,7 @@ public class House extends Entity
   private Stack<Room> roomCarveList;
   public static BufferedImage houseImg;
   private int gridHeight, gridWidth;
+  private int prevHallDoorX, prevHallDoorY;
 
   public House(int gridWidth, int gridHeight, EntityManager entityManager)
   {
@@ -41,8 +42,8 @@ public class House extends Entity
     roomList.add(startRoom);
     Doorway randStartDoor = initDoorways.get(0);
     Point2D.Float startPoint = randStartDoor.getPointAt(0);
-    generateRoomList((int) startPoint.getX(), (int)startPoint.getY(),randStartDoor.getLengthOfDoorway(),
-                     randStartDoor.getSideOfRoom(), startRoom, 1);
+    generateRoomList((int) startPoint.getX(), (int) startPoint.getY(), randStartDoor.getLengthOfDoorway(),
+       randStartDoor.getSideOfRoom(), startRoom, 1);
     Doorway randStartDoor2 = initDoorways.get(1);
     Point2D.Float startPoint2 = randStartDoor2.getPointAt(0);
     generateRoomList((int) startPoint2.getX(), (int)startPoint2.getY(),randStartDoor2.getLengthOfDoorway(),
@@ -97,7 +98,7 @@ public class House extends Entity
 
   private Room makeInitRoom(int startX, int startY, int width, int height, EntityManager entityManager)
   {
-    Room startRoom = new Room(startX, startY, width, height, entityManager);
+    Room startRoom = new Room(startX, startY, width, height,false, entityManager);
     ArrayList<Direction> directions = new ArrayList<>();
     Collections.addAll(directions, Direction.values());
     Collections.shuffle(directions);
@@ -113,8 +114,91 @@ public class House extends Entity
     return startRoom;
   }
 
+  private Room makeNewHallway(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom, int prevRoomDoorSize)
+  {
+    ArrayList<Doorway> doorwayList = new ArrayList<>();
+    Doorway entrance = new Doorway();
+    Doorway exit = new Doorway();
+    Room newHallway = null;
+    //Random generator = new Random();
+    int offsetFromCenter = 1;//generator.nextInt(2)+2;
+    int newWidth;
+    int newHeight;
+    switch(comingFrom)
+    {
+
+      case NORTH:
+        newWidth = prevRoomDoorSize+2;
+        newHeight = 6;
+        newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight,true, entityManager);
+        prevHallDoorX = prevRoomDoorX;
+        prevHallDoorY = prevRoomDoorY-newHeight;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          entrance.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY - 1));
+          entrance.setLengthOfDoorway(prevRoomDoorSize);
+          entrance.setSideOfRoom(Direction.NORTH);
+          exit.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY - newHeight));
+          exit.setLengthOfDoorway(prevRoomDoorSize);
+          exit.setSideOfRoom(Direction.NORTH);
+        }
+      break;
+      case WEST:
+        newWidth = 6;
+        newHeight = prevRoomDoorSize+2;
+        newHallway = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, true, entityManager);
+        prevHallDoorX = prevRoomDoorX-newWidth;
+        prevHallDoorY = prevRoomDoorY;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+            entrance.addPoint(new Point2D.Float(prevRoomDoorX - 1, prevRoomDoorY + i));
+            entrance.setLengthOfDoorway(prevRoomDoorSize);
+            entrance.setSideOfRoom(Direction.WEST);
+            exit.addPoint(new Point2D.Float(prevRoomDoorX - newWidth, prevRoomDoorY + i));
+            exit.setLengthOfDoorway(prevRoomDoorSize);
+            exit.setSideOfRoom(Direction.WEST);
+        }
+      break;
+      case SOUTH:
+        newWidth = prevRoomDoorSize+2;
+        newHeight = 6;
+        newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, true, entityManager);
+        prevHallDoorX = prevRoomDoorX;
+        prevHallDoorY = prevRoomDoorY+newHeight;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          entrance.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY + 1));
+          entrance.setLengthOfDoorway(prevRoomDoorSize);
+          entrance.setSideOfRoom(Direction.NORTH);
+          exit.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY+newHeight));
+          exit.setLengthOfDoorway(prevRoomDoorSize);
+          exit.setSideOfRoom(Direction.NORTH);
+        }
+      break;
+      case EAST:
+        newWidth = 6;
+        newHeight = prevRoomDoorSize+2;
+        newHallway = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight,true, entityManager);
+        prevHallDoorX = prevRoomDoorX+newWidth;
+        prevHallDoorY = prevRoomDoorY;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          entrance.addPoint(new Point2D.Float(prevRoomDoorX + 1, prevRoomDoorY + i));
+          entrance.setLengthOfDoorway(prevRoomDoorSize);
+          entrance.setSideOfRoom(Direction.WEST);
+          exit.addPoint(new Point2D.Float(prevRoomDoorX + newWidth, prevRoomDoorY + i));
+          exit.setLengthOfDoorway(prevRoomDoorSize);
+          exit.setSideOfRoom(Direction.WEST);
+        }
+    }
+    doorwayList.add(entrance);
+    doorwayList.add(exit);
+    newHallway.setDoorways(doorwayList);
+    return newHallway;
+  }
+
   private Room makeNewRoom(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom,
-                           Doorway firstdoor, int prevRoomDoorSize)
+                                  Doorway firstdoor, int prevRoomDoorSize)
   {
     Room newRoom = null;
     Random generator = new Random();
@@ -124,11 +208,7 @@ public class House extends Entity
     switch(comingFrom)
     {
       case NORTH:
-        //if(newWidth < offsetFromCenter - 1) newWidth++;
-        //if(prevRoomDoorX-offsetFromCenter + newWidth > gridWidth ||
-        //   prevRoomDoorX-offsetFromCenter < 0 ||
-        //   prevRoomDoorY - newHeight < 0)
-        newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight, entityManager);
+        newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight,false, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
           firstdoor.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY - 1));
@@ -137,8 +217,7 @@ public class House extends Entity
         }
       break;
       case WEST:
-        if(newHeight < offsetFromCenter - 1) newHeight++;
-        newRoom = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
+        newRoom = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, false, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
             firstdoor.addPoint(new Point2D.Float(prevRoomDoorX - 1, prevRoomDoorY+i));
@@ -146,10 +225,8 @@ public class House extends Entity
             firstdoor.setSideOfRoom(Direction.WEST);
         }
       break;
-
       case SOUTH:
-        if(newWidth < offsetFromCenter - 1) newWidth++;
-        newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, entityManager);
+        newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, false, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
           firstdoor.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY + 1));
@@ -158,8 +235,7 @@ public class House extends Entity
         }
       break;
       case EAST:
-        if(newHeight < offsetFromCenter - 1) newHeight++;
-        newRoom = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
+        newRoom = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight,false, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
           firstdoor.addPoint(new Point2D.Float(prevRoomDoorX +1 , prevRoomDoorY+i));
@@ -200,65 +276,62 @@ public class House extends Entity
     return numDoors;
   }
 
-  private Doorway northOrSouthDoorway(int startX,int startY, int width, Direction northOrSouth)
+  private Doorway makeDoorwayAt(Direction dir , int startX, int startY, int widthOrHeight)
   {
     Random generator = new Random();
     Doorway newDoorway = new Doorway();
     int doorwaySize = generator.nextInt(2)+2;
-    int startDoorX;
-    startDoorX = generator.nextInt(width-4)+startX+2;
-    for (int i = 0; i < doorwaySize; i++)
+    if(dir == Direction.EAST || dir == Direction.WEST)
     {
-      //Corner
-      if(startDoorX + i ==  startX+ width-1)
+      int startDoorY = generator.nextInt(widthOrHeight - 4) + startY + 2;
+      for (int i = 0; i < doorwaySize; i++)
       {
-        doorwaySize--;
-        break;
-      }
-      newDoorway.addPointInDoorway(i, new Point2D.Float(startDoorX + i, startY));
-    }
-    newDoorway.setSideOfRoom(northOrSouth);
-    newDoorway.setLengthOfDoorway(doorwaySize);
-    return newDoorway;
-  }
-  private Doorway eastOrWestDoorway(int startX, int startY, int height, Direction eastOrWest)
-  {
-    Random generator = new Random();
-    Doorway newDoorway = new Doorway();
-    int doorwaySize = generator.nextInt(2)+2;
-
-
-        int startDoorY = generator.nextInt(height-4)+startY+2;
-        for (int i = 0; i < doorwaySize; i++)
+        if (startDoorY + i == startY + widthOrHeight - 1)
         {
-          if(startDoorY + i ==  startY+ height-1)
-          {
-            doorwaySize--;
-            break;
-          }
-          newDoorway.addPointInDoorway(i, new Point2D.Float(startX, startDoorY + i));
+          doorwaySize--;
+          break;
         }
-        newDoorway.setSideOfRoom(eastOrWest);
-    newDoorway.setLengthOfDoorway(doorwaySize);
-    return newDoorway;
+        newDoorway.addPointInDoorway(i, new Point2D.Float(startX, startDoorY + i));
+      }
+      newDoorway.setSideOfRoom(dir);
+      newDoorway.setLengthOfDoorway(doorwaySize);
+      return newDoorway;
+    }
+    else
+    {
+      int startDoorX;
+      startDoorX = generator.nextInt(widthOrHeight-4)+startX+2;
+      for (int i = 0; i < doorwaySize; i++)
+      {
+        //Corner
+        if(startDoorX + i ==  startX+ widthOrHeight-1)
+        {
+          doorwaySize--;
+          break;
+        }
+        newDoorway.addPointInDoorway(i, new Point2D.Float(startDoorX + i, startY));
+      }
+      newDoorway.setSideOfRoom(dir);
+      newDoorway.setLengthOfDoorway(doorwaySize);
+      return newDoorway;
+    }
   }
-
   private Doorway makeNewDoorway(Direction curSide, int startX, int startY, int width, int height)
   {
     Doorway newDoorway = new Doorway();
     switch(curSide)
     {
       case NORTH:
-        newDoorway = northOrSouthDoorway(startX,startY, width, Direction.NORTH);
+        newDoorway = makeDoorwayAt(Direction.NORTH, startX, startY, width);
       break;
       case WEST:
-        newDoorway = eastOrWestDoorway(startX, startY, height, Direction.WEST);
+        newDoorway = makeDoorwayAt(Direction.WEST, startX, startY, height);
       break;
       case SOUTH:
-        newDoorway = northOrSouthDoorway(startX,startY+(height-1), width, Direction.SOUTH);
+        newDoorway = makeDoorwayAt(Direction.SOUTH, startX, startY + (height - 1), width);
       break;
       case EAST:
-        newDoorway = eastOrWestDoorway(startX+(width-1), startY, height, Direction.EAST);
+        newDoorway = makeDoorwayAt(Direction.EAST, startX + (width - 1), startY, height);
       break;
     }
     return newDoorway;
@@ -288,29 +361,40 @@ public class House extends Entity
     ArrayList<Direction> directions = new ArrayList<>();
     doorwayList.add(new Doorway());
     int numDoors;
-    Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom,
-                               doorwayList.get(0), prevRoomDoorSize);
+    Room newHallway = makeNewHallway(prevRoomDoorX, prevRoomDoorY, comingFrom, prevRoomDoorSize);
+    Room newRoom = makeNewRoom(prevHallDoorX, prevHallDoorY, comingFrom,
+                                      doorwayList.get(0), prevRoomDoorSize);
+    prevRoom.setNeighbor(comingFrom,newRoom);
     Collections.addAll(directions, Direction.values());
     directions.remove(oppositeDirOf(comingFrom));
     Collections.shuffle(directions);
     numDoors = calculateNumDoors(depth);
-    for (int i = 1; i < numDoors-1; i++)
+    if(!newRoom.isAHallway())
     {
-      Direction curSide = directions.get(i);
-      doorwayList.add(makeNewDoorway(curSide, newRoom.getStartX(), newRoom.getStartY(),
-         newRoom.getWidth(), newRoom.getHeight()));
+      for (int i = 1; i < numDoors - 1; i++)
+      {
+        Direction curSide = directions.get(i);
+        doorwayList.add(makeNewDoorway(curSide, newRoom.getStartX(), newRoom.getStartY(),
+           newRoom.getWidth(), newRoom.getHeight()));
+      }
     }
+    //if(depth >= 5) return;
+    if(!newRoom.isAHallway())
+    {
+      for (int i = 1; i < numDoors-1; i++)
+      {
+        //if(roomList.size() > 8) return;
+        Doorway curDoorway = doorwayList.get(i);
+        Point2D.Float startOfDoor = curDoorway.getPointAt(0);
+        generateRoomList((int) startOfDoor.x, (int) startOfDoor.y,
+           curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(), newRoom, ++depth);
+      }
+    }
+    newHallway.init();
     newRoom.setDoorways(doorwayList);
     newRoom.init();
+    roomList.add(newHallway);
     roomList.add(newRoom);
-    if(depth >= 5) return;
-    for (int i = 1; i < numDoors-1; i++)
-    {
-      Doorway curDoorway = doorwayList.get(i);
-      Point2D.Float startOfDoor = curDoorway.getPointAt(0);
-      generateRoomList((int) startOfDoor.x, (int) startOfDoor.y,
-                       curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(), newRoom, ++depth);
-    }
   }
 
   private void copyObjectsToGrid()
