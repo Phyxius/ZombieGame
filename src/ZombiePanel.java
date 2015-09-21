@@ -29,8 +29,8 @@ public class ZombiePanel extends JPanel
     frame.addKeyListener(new KeyboardHandler());
     Player player = new Player();
     entityManager.add(player);
-    entityManager.add(new LineZombie(player, new Point2D.Float(2 * Settings.tileSize, 2 * Settings.tileSize)));
-    entityManager.add(new House(32, 32, entityManager));
+    entityManager.add(new LineZombie(player, new Point2D.Float(80, 80)));
+    entityManager.add(new House(100, 100, entityManager));
     //entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
     //entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
     entityManager.add(new UpdateCounter());

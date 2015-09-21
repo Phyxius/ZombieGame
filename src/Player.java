@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
  */
 public class Player extends Entity
 {
-  private Point2D.Float position = new Point2D.Float(100, 100);
+  private Point2D.Float position = new Point2D.Float(800, 800);
   private SoundEffect playerFootsteps;
   private boolean isRunning = false;
   private float stamina;

@@ -19,7 +19,7 @@ public class Settings
 
   static
   {
-    tileSize = 80;
+    tileSize = 20;
     frameRate = 60;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
     playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
