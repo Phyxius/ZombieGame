@@ -8,12 +8,13 @@ import java.util.ArrayList;
 public class Doorway
 {
   private ArrayList<Point2D.Float> pointsinDoor;
-  private Point2D.Float startOfDoor;
   private int lengthOfDoor;
+  private House.Direction sideOfRoom;
 
-  public void setStartOfDoor(Point2D.Float startOfDoor) {this.startOfDoor = startOfDoor;}
-
-  public Point2D.Float getStartOfDoor() {return startOfDoor;}
+  public Doorway()
+  {
+    pointsinDoor = new ArrayList<>();
+  }
 
   public void setLengthOfDoorway(int lengthOfDoor) {this.lengthOfDoor = lengthOfDoor;}
 
@@ -21,7 +22,13 @@ public class Doorway
 
   public ArrayList<Point2D.Float> getPointsinDoor() {return pointsinDoor;}
 
-  public void setPointinDoorway(int i, Point2D.Float point){pointsinDoor.add(i,point); }
+  public void addPointInDoorway(int i, Point2D.Float point){pointsinDoor.add(i,point); }
 
   public Point2D.Float getPointAt(int i) {return pointsinDoor.get(i);}
+
+  public void addPoint(Point2D.Float point) {pointsinDoor.add(point);}
+
+  public House.Direction getSideOfRoom() {return sideOfRoom;}
+
+  public void setSideOfRoom(House.Direction side) {sideOfRoom = side;}
 }
