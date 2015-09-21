@@ -12,14 +12,18 @@ public class Settings
   public static float zombieDecisionRate = 2.0f; //sec
   public static float zombieSmellRadius = 7f; //tiles
   public static int tileSize; //pixels
-  public static float playerSpeed;
+  public static float playerWalk; // pixels/sec
+  public static float playerRun; // pixels/sec
+  public static float playerStamina; // sec * frameRate
   public static double minAngle; // minimumTurnAngle = Math.PI * minAngle
 
   static
   {
-    tileSize = 20;
+    tileSize = 10;
     frameRate = 60;
-    playerSpeed = Util.tilesPerSecondToPixelsPerFrame(1);
+    playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
+    playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
+    playerStamina = 5 * Settings.frameRate;
     minAngle = 0.25;
   }
 }
