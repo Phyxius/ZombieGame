@@ -1,3 +1,4 @@
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
@@ -12,12 +13,13 @@ public class Room
   private Tile[][] tiles;
   private boolean[][] doorways;
   private boolean isHallway;
+  private Player player;
   private Room eastNeighbor;
   private Room westNeighbor;
   private Room southNeighbor;
   private Room northNeighbor;
 
-  public Room(int startX, int startY, int width, int height, boolean isHallway, EntityManager entityManager)
+  public Room(int startX, int startY, int width, int height, boolean isHallway, Player player, EntityManager entityManager)
   {
     this.isHallway = isHallway;
     this.entityManager = entityManager;
@@ -113,6 +115,21 @@ public class Room
       {
         Wall northWall = new Wall(tmpStartX, (endX+1)*tileSize, tmpStartY, tmpStartY+tileSize);
         entityManager.add(northWall);
+      }
+    }
+  }
+
+  public void spawnZombies()
+  {
+    for (int i = startY+1; i < (startY+height-2); i++)
+    {
+      for (int j = startX+1; j < (startX+width-2); j++)
+      {
+        if(Math.random() < 0.01)
+        {
+          LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
+          entityManager.add(zombie);
+        }
       }
     }
   }
