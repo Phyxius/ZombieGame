@@ -33,18 +33,20 @@ public class House extends Entity
     roomCarveList = new Stack<>();
     fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
-    int roomStartX = 20;
-    int roomStartY = 20;
+    int roomStartX = 40;
+    int roomStartY = 40;
     int startWidth = 8;
     int startHeight = 10;
     Room startRoom = makeInitRoom(roomStartX, roomStartY, startWidth, startHeight, entityManager);
     roomList.add(startRoom);
     Doorway randStartDoor = initDoorways.get(0);
     Point2D.Float startPoint = randStartDoor.getPointAt(0);
-    generateRoomList((int) startPoint.getX(), (int)startPoint.getY(),randStartDoor.getLengthOfDoorway(),randStartDoor.getSideOfRoom(), 1);
+    generateRoomList((int) startPoint.getX(), (int)startPoint.getY(),randStartDoor.getLengthOfDoorway(),
+                     randStartDoor.getSideOfRoom(), startRoom, 1);
     Doorway randStartDoor2 = initDoorways.get(1);
     Point2D.Float startPoint2 = randStartDoor2.getPointAt(0);
-    generateRoomList((int) startPoint2.getX(), (int)startPoint2.getY(),randStartDoor2.getLengthOfDoorway(),randStartDoor2.getSideOfRoom(), 1);
+    generateRoomList((int) startPoint2.getX(), (int)startPoint2.getY(),randStartDoor2.getLengthOfDoorway(),
+                     randStartDoor2.getSideOfRoom(), startRoom, 1);
     copyObjectsToGrid();
     generateBuffImgHouse();
   }
@@ -116,12 +118,16 @@ public class House extends Entity
   {
     Room newRoom = null;
     Random generator = new Random();
-    int offsetFromCenter = 2;
-    int newWidth = generator.nextInt(4)+5;
-    int newHeight = generator.nextInt(4)+5;
+    int offsetFromCenter = 2;//generator.nextInt(2)+2;
+    int newWidth = generator.nextInt(8)+6;
+    int newHeight = generator.nextInt(8)+6;
     switch(comingFrom)
     {
       case NORTH:
+        //if(newWidth < offsetFromCenter - 1) newWidth++;
+        //if(prevRoomDoorX-offsetFromCenter + newWidth > gridWidth ||
+        //   prevRoomDoorX-offsetFromCenter < 0 ||
+        //   prevRoomDoorY - newHeight < 0)
         newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
@@ -131,6 +137,7 @@ public class House extends Entity
         }
       break;
       case WEST:
+        if(newHeight < offsetFromCenter - 1) newHeight++;
         newRoom = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
@@ -141,6 +148,7 @@ public class House extends Entity
       break;
 
       case SOUTH:
+        if(newWidth < offsetFromCenter - 1) newWidth++;
         newRoom = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
@@ -150,6 +158,7 @@ public class House extends Entity
         }
       break;
       case EAST:
+        if(newHeight < offsetFromCenter - 1) newHeight++;
         newRoom = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
         for (int i = 0; i < prevRoomDoorSize; i++)
         {
@@ -272,7 +281,8 @@ public class House extends Entity
   }
 
   //Will be very sophisticated at some point
-  private void generateRoomList(int prevRoomDoorX,int prevRoomDoorY, int prevRoomDoorSize, Direction comingFrom, int depth)
+  private void generateRoomList(int prevRoomDoorX,int prevRoomDoorY, int prevRoomDoorSize, Direction comingFrom,
+                                Room prevRoom, int depth)
   {
     ArrayList<Doorway> doorwayList = new ArrayList<>();
     ArrayList<Direction> directions = new ArrayList<>();
@@ -294,14 +304,12 @@ public class House extends Entity
     newRoom.init();
     roomList.add(newRoom);
     if(depth >= 5) return;
-    //System.out.println("skipme1");
     for (int i = 1; i < numDoors-1; i++)
     {
       Doorway curDoorway = doorwayList.get(i);
       Point2D.Float startOfDoor = curDoorway.getPointAt(0);
       generateRoomList((int) startOfDoor.x, (int) startOfDoor.y,
-                       curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(),++depth);
-      //depth--;
+                       curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(), newRoom, ++depth);
     }
   }
 
