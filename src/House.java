@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Stack;
 
 /**
  * Created by arirappaport on 9/10/15.
@@ -16,6 +17,7 @@ public class House extends Entity
   private EntityManager entityManager;
   private ArrayList<Room> roomList;
   private ArrayList<Doorway> initDoorways;
+  private Stack<Room> roomCarveList;
   public static BufferedImage houseImg;
   private int gridHeight, gridWidth;
 
@@ -28,6 +30,7 @@ public class House extends Entity
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
+    roomCarveList = new Stack<>();
     fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 20;
@@ -36,9 +39,12 @@ public class House extends Entity
     int startHeight = 10;
     Room startRoom = makeInitRoom(roomStartX, roomStartY, startWidth, startHeight, entityManager);
     roomList.add(startRoom);
-    Doorway randStartDoor = initDoorways.get(generator.nextInt(4));
+    Doorway randStartDoor = initDoorways.get(0);
     Point2D.Float startPoint = randStartDoor.getPointAt(0);
     generateRoomList((int) startPoint.getX(), (int)startPoint.getY(),randStartDoor.getLengthOfDoorway(),randStartDoor.getSideOfRoom(), 1);
+    Doorway randStartDoor2 = initDoorways.get(1);
+    Point2D.Float startPoint2 = randStartDoor2.getPointAt(0);
+    generateRoomList((int) startPoint2.getX(), (int)startPoint2.getY(),randStartDoor2.getLengthOfDoorway(),randStartDoor2.getSideOfRoom(), 1);
     copyObjectsToGrid();
     generateBuffImgHouse();
   }
@@ -92,11 +98,14 @@ public class House extends Entity
     Room startRoom = new Room(startX, startY, width, height, entityManager);
     ArrayList<Direction> directions = new ArrayList<>();
     Collections.addAll(directions, Direction.values());
-
-    for (Direction dir: directions)
-    {
+    Collections.shuffle(directions);
+    Direction dir = directions.get(0);
+    Direction dir1 = directions.get(1);
+    //for (Direction dir: directions)
+    //{
       initDoorways.add(makeNewDoorway(dir, startX, startY, width, height));
-    }
+      initDoorways.add(makeNewDoorway(dir1, startX, startY, width, height));
+    //}
     startRoom.setDoorways(initDoorways);
     startRoom.init();
     return startRoom;
@@ -148,13 +157,6 @@ public class House extends Entity
           firstdoor.setLengthOfDoorway(prevRoomDoorSize);
           firstdoor.setSideOfRoom(Direction.WEST);
         }
-    //  case EAST:
-    //    newRoom = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, entityManager);
-    //    for (int i = 0; i < prevRoomDoorSize; i++)
-    //    {
-    //      pointsInDoor.add(new Point2D.Float(prevRoomDoorX + 1, prevRoomDoorY - +i));
-    //    }
-    //  break;
     }
     return newRoom;
   }
@@ -164,20 +166,27 @@ public class House extends Entity
     int numDoors = 0;
     double rand = Math.random();
     if(depth == 1) numDoors = 4;
-    if(depth >= 2)
+    if(depth == 2) //|| depth == 3)
     {
       if(rand >= 0.5) numDoors = 4;
       else if(rand >= 0.25) numDoors = 3;
       else if(rand >= 0.125) numDoors = 2;
       else if(rand >= 0.0625) numDoors = 1;
     }
+    else if(depth > 2)
+    {
+      if(rand >= 0.5) numDoors = 0;
+      else if(rand >= 0.25) numDoors = 1;
+      else if(rand >= 0.125) numDoors = 2;
+      else if(rand >= 0.0625) numDoors = 3;
+    }
     //else if(depth > 2)
     //{
     //  double probab = (1/(4^depth));
-    //  if(rand >= probab) numDoors = 4;
-    //  else if(rand >= (probab/2)) numDoors = 3;
-    //  else if(rand >= (probab/4)) numDoors = 2;
-    //  else if(rand >= (probab/8)) numDoors = 1;
+    //  if(rand <= probab) numDoors = 4;
+    //  else if(rand <= (probab*2)) numDoors = 3;
+    //  else if(rand <= (probab*4)) numDoors = 2;
+    //  else if(rand <= (probab*8)) numDoors = 1;
     //}
     return numDoors;
   }
@@ -227,7 +236,6 @@ public class House extends Entity
 
   private Doorway makeNewDoorway(Direction curSide, int startX, int startY, int width, int height)
   {
-    Random generator = new Random();
     Doorway newDoorway = new Doorway();
     switch(curSide)
     {
@@ -285,13 +293,15 @@ public class House extends Entity
     newRoom.setDoorways(doorwayList);
     newRoom.init();
     roomList.add(newRoom);
-    if(depth >= 3) return;
+    if(depth >= 5) return;
+    //System.out.println("skipme1");
     for (int i = 1; i < numDoors-1; i++)
     {
       Doorway curDoorway = doorwayList.get(i);
       Point2D.Float startOfDoor = curDoorway.getPointAt(0);
       generateRoomList((int) startOfDoor.x, (int) startOfDoor.y,
                        curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(),++depth);
+      //depth--;
     }
   }
 
