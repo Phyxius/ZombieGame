@@ -361,8 +361,10 @@ public class House extends Entity
     ArrayList<Direction> directions = new ArrayList<>();
     doorwayList.add(new Doorway());
     int numDoors;
-    Room newHallway = makeNewHallway(prevRoomDoorX, prevRoomDoorY, comingFrom, prevRoomDoorSize);
-    Room newRoom = makeNewRoom(prevHallDoorX, prevHallDoorY, comingFrom,
+    //Room newHallway = makeNewHallway(prevRoomDoorX, prevRoomDoorY, comingFrom, prevRoomDoorSize);
+    //Room newRoom = makeNewRoom(prevHallDoorX, prevHallDoorY, comingFrom,
+    //                                  doorwayList.get(0), prevRoomDoorSize);
+    Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom,
                                       doorwayList.get(0), prevRoomDoorSize);
     prevRoom.setNeighbor(comingFrom,newRoom);
     Collections.addAll(directions, Direction.values());
@@ -390,10 +392,10 @@ public class House extends Entity
            curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(), newRoom, ++depth);
       }
     }
-    newHallway.init();
+    //newHallway.init();
     newRoom.setDoorways(doorwayList);
     newRoom.init();
-    roomList.add(newHallway);
+    //roomList.add(newHallway);
     roomList.add(newRoom);
   }
 
