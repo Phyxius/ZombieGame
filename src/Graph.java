@@ -146,10 +146,39 @@ public class Graph<T>
     return edges.getOrDefault(new UnorderedTuple(node1, node2), Optional.empty());
   }
 
-  public Optional<Path> findPath(T startNode, T endNode, BiFunction<T, T, Float> heuristic)
+  public Optional<Path<T>> findPath(T startNode, T endNode, BiFunction<T, T, Float> heuristic)
   {
     if (!nodes.contains(startNode) || !nodes.contains(endNode)) return Optional.empty();
     if (startNode.equals(endNode)) return Optional.of(new Path<>());
-    return Optional.empty();
+    Map<T, Float> costsSoFar = new HashMap<>();
+    Map<T, T> previousNodes = new HashMap<>();
+    Queue<T> frontier = new PriorityQueue<>(
+        Comparator.comparing(node -> costsSoFar.get(node) + heuristic.apply(node, endNode)));
+    frontier.add(startNode);
+    costsSoFar.put(startNode, 0f);
+    while(!frontier.isEmpty())
+    {
+      T currentNode = frontier.remove();
+      if (currentNode.equals(endNode)) break;
+      Collection<T> neighbors = getNeighbors(currentNode);
+      for (T neighbor : neighbors)
+      {
+        float newCost = costsSoFar.getOrDefault(currentNode, Float.MAX_VALUE);
+        if (newCost >= costsSoFar.get(neighbor)) continue;
+        costsSoFar.put(neighbor, newCost);
+        previousNodes.put(neighbor, currentNode);
+      }
+    }
+    ArrayList<T> path = new ArrayList<>();
+    T currentNode = endNode, previousNode;
+    while ((previousNode = previousNodes.get(currentNode)) != null)
+    {
+      path.add(currentNode);
+      currentNode = previousNode;
+    }
+    if (path.isEmpty()) return Optional.empty();
+    path.add(startNode);
+    Collections.reverse(path);
+    return Optional.of(new Path<>(new LinkedHashSet<>(path), costsSoFar.get(endNode)));
   }
 }
