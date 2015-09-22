@@ -6,7 +6,7 @@ import java.util.Random;
  */
 public class Util
 {
-  static final Random rng = new Random(System.currentTimeMillis());
+  static final Random rng = new Random();
   static float secondsToFrames(float seconds)
   {
     return seconds / Settings.frameRate;
