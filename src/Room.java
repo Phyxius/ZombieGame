@@ -1,4 +1,5 @@
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 /**
@@ -13,6 +14,8 @@ public class Room
   private Tile[][] tiles;
   private boolean[][] doorways;
   private boolean isHallway;
+  private Rectangle2D boundingBox;
+  private ArrayList<Doorway> doorwayList;
   private Player player;
   private Room eastNeighbor;
   private Room westNeighbor;
@@ -29,9 +32,24 @@ public class Room
     this.startY = startY;
     this.width = width;
     this.height = height;
+    boundingBox = new Rectangle2D.Float(startX, startY,width, height);
   }
 
   public void setDoorways(ArrayList<Doorway> doorwayList)
+  {
+    this.doorwayList = new ArrayList<>();
+    for(Doorway d: doorwayList)
+    {
+      this.doorwayList.add(d);
+    }
+  }
+
+  public void removeDoorway(Doorway toRemove)
+  {
+    doorwayList.remove(toRemove);
+  }
+
+  public void addDoorways()
   {
     for(Doorway doorway: doorwayList)
     {
@@ -78,6 +96,26 @@ public class Room
     }
   }
 
+  public Rectangle2D.Float getBoundingBox()
+  {
+    return (Rectangle2D.Float) boundingBox;
+  }
+
+
+  public void spawnZombies()
+  {
+    for (int i = startY+1; i < (startY+height-2); i++)
+    {
+      for (int j = startX+1; j < (startX+width-2); j++)
+      {
+        if(Math.random() < 0.01)
+        {
+          LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
+          entityManager.add(zombie);
+        }
+      }
+    }
+  }
   public void setNeighbor(House.Direction dir, Room neighbor)
   {
     switch(dir)
@@ -119,20 +157,7 @@ public class Room
     }
   }
 
-  public void spawnZombies()
-  {
-    for (int i = startY+1; i < (startY+height-2); i++)
-    {
-      for (int j = startX+1; j < (startX+width-2); j++)
-      {
-        if(Math.random() < 0.01)
-        {
-          LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
-          entityManager.add(zombie);
-        }
-      }
-    }
-  }
+
 
   private void makeWallVert(int startX)
   {

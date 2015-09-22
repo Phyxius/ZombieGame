@@ -31,7 +31,7 @@ public class House extends Entity
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
-    fullGrid = new Tile[gridHeight][gridWidth];
+    fullGrid = new Tile[gridHeight+2][gridWidth+2];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 40;
     int roomStartY = 40;
@@ -40,13 +40,11 @@ public class House extends Entity
     Room startRoom = makeInitRoom(roomStartX, roomStartY, startWidth, startHeight, entityManager);
     roomList.add(startRoom);
     Doorway randStartDoor = initDoorways.get(0);
-    Point2D.Float startPoint = randStartDoor.getPointAt(0);
-    generateRoomList((int) startPoint.getX(), (int) startPoint.getY(), randStartDoor.getLengthOfDoorway(),
-       randStartDoor.getSideOfRoom(), startRoom, 1);
+    generateRoomList(randStartDoor, randStartDoor.getSideOfRoom(), startRoom, 1);
     Doorway randStartDoor2 = initDoorways.get(1);
-    Point2D.Float startPoint2 = randStartDoor2.getPointAt(0);
-    generateRoomList((int) startPoint2.getX(), (int)startPoint2.getY(),randStartDoor2.getLengthOfDoorway(),
-                     randStartDoor2.getSideOfRoom(), startRoom, 1);
+    generateRoomList(randStartDoor2, randStartDoor2.getSideOfRoom(), startRoom, 1);
+    startRoom.addDoorways();
+    startRoom.init();
     copyObjectsToGrid();
     generateBuffImgHouse();
   }
@@ -95,6 +93,91 @@ public class House extends Entity
     return -1;
   }
 
+  private Room makeNewHallway(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom, int prevRoomDoorSize)
+  {
+    ArrayList<Doorway> doorwayList = new ArrayList<>();
+    Doorway entrance = new Doorway();
+    Doorway exit = new Doorway();
+    Room newHallway = null;
+    Random generator = new Random();
+    int offsetFromCenter = 1;//generator.nextInt(2)+2;
+    int newWidth;
+    int newHeight;
+    switch(comingFrom)
+    {
+
+      case NORTH:
+        newWidth = prevRoomDoorSize+2;
+        newHeight = 6+generator.nextInt(4);
+        newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight,true,player, entityManager);
+        prevHallDoorX = prevRoomDoorX;
+        prevHallDoorY = prevRoomDoorY-newHeight;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          entrance.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY - 1));
+          entrance.setLengthOfDoorway(prevRoomDoorSize);
+          entrance.setSideOfRoom(Direction.NORTH);
+          exit.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY - newHeight));
+          exit.setLengthOfDoorway(prevRoomDoorSize);
+          exit.setSideOfRoom(Direction.NORTH);
+        }
+      break;
+      case WEST:
+        newWidth = 6+generator.nextInt(4);
+        newHeight = prevRoomDoorSize+2;
+        newHallway = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, true,player, entityManager);
+        prevHallDoorX = prevRoomDoorX-newWidth;
+        prevHallDoorY = prevRoomDoorY;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+            entrance.addPoint(new Point2D.Float(prevRoomDoorX - 1, prevRoomDoorY + i));
+            entrance.setLengthOfDoorway(prevRoomDoorSize);
+            entrance.setSideOfRoom(Direction.WEST);
+            exit.addPoint(new Point2D.Float(prevRoomDoorX - newWidth, prevRoomDoorY + i));
+            exit.setLengthOfDoorway(prevRoomDoorSize);
+            exit.setSideOfRoom(Direction.WEST);
+        }
+      break;
+      case SOUTH:
+        newWidth = prevRoomDoorSize+2;
+        newHeight = 6+generator.nextInt(4);
+        newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, true,player, entityManager);
+        prevHallDoorX = prevRoomDoorX;
+        prevHallDoorY = prevRoomDoorY+newHeight;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          entrance.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY + 1));
+          entrance.setLengthOfDoorway(prevRoomDoorSize);
+          entrance.setSideOfRoom(Direction.NORTH);
+          exit.addPoint(new Point2D.Float(prevRoomDoorX + i, prevRoomDoorY+newHeight));
+          exit.setLengthOfDoorway(prevRoomDoorSize);
+          exit.setSideOfRoom(Direction.NORTH);
+        }
+      break;
+      case EAST:
+        newWidth = 6+generator.nextInt(4);
+        newHeight = prevRoomDoorSize+2;
+        newHallway = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight,true,player, entityManager);
+        prevHallDoorX = prevRoomDoorX+newWidth;
+        prevHallDoorY = prevRoomDoorY;
+        for (int i = 0; i < prevRoomDoorSize; i++)
+        {
+          entrance.addPoint(new Point2D.Float(prevRoomDoorX + 1, prevRoomDoorY + i));
+          entrance.setLengthOfDoorway(prevRoomDoorSize);
+          entrance.setSideOfRoom(Direction.WEST);
+          exit.addPoint(new Point2D.Float(prevRoomDoorX + newWidth, prevRoomDoorY + i));
+          exit.setLengthOfDoorway(prevRoomDoorSize);
+          exit.setSideOfRoom(Direction.WEST);
+        }
+    }
+    doorwayList.add(entrance);
+    doorwayList.add(exit);
+    newHallway.setDoorways(doorwayList);
+    newHallway.addDoorways();
+
+    return newHallway;
+  }
+
   private Room makeInitRoom(int startX, int startY, int width, int height, EntityManager entityManager)
   {
     int tileSize = Settings.tileSize;
@@ -113,7 +196,6 @@ public class House extends Entity
       initDoorways.add(makeNewDoorway(dir1, startX, startY, width, height));
     //}
     startRoom.setDoorways(initDoorways);
-    startRoom.init();
     return startRoom;
   }
 
@@ -123,8 +205,8 @@ public class House extends Entity
     Room newRoom = null;
     Random generator = new Random();
     int offsetFromCenter = 2;//generator.nextInt(2)+2;
-    int newWidth = generator.nextInt(8)+6;
-    int newHeight = generator.nextInt(8)+6;
+    int newWidth = generator.nextInt(9)+6;
+    int newHeight = generator.nextInt(9)+6;
     switch(comingFrom)
     {
       case NORTH:
@@ -163,7 +245,6 @@ public class House extends Entity
           firstdoor.setSideOfRoom(Direction.WEST);
         }
     }
-    newRoom.spawnZombies();
     return newRoom;
   }
 
@@ -275,19 +356,37 @@ public class House extends Entity
   }
 
   //Will be very sophisticated at some point
-  private void generateRoomList(int prevRoomDoorX,int prevRoomDoorY, int prevRoomDoorSize, Direction comingFrom,
-                                Room prevRoom, int depth)
+  private void generateRoomList(Doorway prevDoorway, Direction comingFrom, Room prevRoom, int depth)
   {
     ArrayList<Doorway> doorwayList = new ArrayList<>();
     ArrayList<Direction> directions = new ArrayList<>();
     doorwayList.add(new Doorway());
+    Point2D.Float startOfDoor = prevDoorway.getPointAt(0);
+    int prevRoomDoorX = (int) startOfDoor.getX();
+    int prevRoomDoorY = (int) startOfDoor.getY();
+    int prevRoomDoorSize = prevDoorway.getLengthOfDoorway();
     int numDoors;
-    //Room newHallway = makeNewHallway(prevRoomDoorX, prevRoomDoorY, comingFrom, prevRoomDoorSize);
-    //Room newRoom = makeNewRoom(prevHallDoorX, prevHallDoorY, comingFrom,
-    //                                  doorwayList.get(0), prevRoomDoorSize);
-    Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom,
+    Room newHallway = makeNewHallway(prevRoomDoorX, prevRoomDoorY, comingFrom, prevRoomDoorSize);
+    Room newRoom = makeNewRoom(prevHallDoorX, prevHallDoorY, comingFrom,
                                       doorwayList.get(0), prevRoomDoorSize);
+    //Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom,
+    //                                  doorwayList.get(0), prevRoomDoorSize);
     prevRoom.setNeighbor(comingFrom,newRoom);
+    //Hitting another already made room
+    for(Room other: roomList)
+    {
+      if(newRoom.getBoundingBox().intersects(other.getBoundingBox()))
+      {
+        prevRoom.removeDoorway(prevDoorway);
+        return;
+      }
+    }
+    //Going outside the house
+    if(!this.getBoundingBox().contains(newRoom.getBoundingBox()))
+    {
+      prevRoom.removeDoorway(prevDoorway);
+      return;
+    }
     Collections.addAll(directions, Direction.values());
     directions.remove(oppositeDirOf(comingFrom));
     Collections.shuffle(directions);
@@ -301,6 +400,7 @@ public class House extends Entity
            newRoom.getWidth(), newRoom.getHeight()));
       }
     }
+    newRoom.setDoorways(doorwayList);
     //if(depth >= 5) return;
     if(!newRoom.isAHallway())
     {
@@ -308,15 +408,14 @@ public class House extends Entity
       {
         //if(roomList.size() > 8) return;
         Doorway curDoorway = doorwayList.get(i);
-        Point2D.Float startOfDoor = curDoorway.getPointAt(0);
-        generateRoomList((int) startOfDoor.x, (int) startOfDoor.y,
-           curDoorway.getLengthOfDoorway(), curDoorway.getSideOfRoom(), newRoom, ++depth);
+        generateRoomList(curDoorway, curDoorway.getSideOfRoom(), newRoom, ++depth);
       }
     }
-    //newHallway.init();
-    newRoom.setDoorways(doorwayList);
+    newHallway.init();
+    newRoom.addDoorways();
     newRoom.init();
-    //roomList.add(newHallway);
+    newRoom.spawnZombies();
+    roomList.add(newHallway);
     roomList.add(newRoom);
   }
 
@@ -335,7 +434,7 @@ public class House extends Entity
       {
         for(int j = startX; j < width; j++)
         {
-          fullGrid[i][j] = room.getTileAt(i,j);
+          fullGrid[i+1][j+1] = room.getTileAt(i,j);
         }
       }
     }
@@ -349,8 +448,8 @@ public class House extends Entity
     {
       for(int j = 0; j < gridWidth; j++)
       {
-        if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
-        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
+        if(fullGrid[i+1][j+1] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
+        houseImg.createGraphics().drawImage(fullGrid[i+1][j+1].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
       }
     }
   }
