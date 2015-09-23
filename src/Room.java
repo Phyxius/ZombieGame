@@ -26,8 +26,11 @@ public class Room
   {
     this.isHallway = isHallway;
     this.entityManager = entityManager;
-    tiles = new Tile[startY+height][startX+width];
-    doorways = new boolean[startY+height][startX+width];
+    if(startX+width > 0 && startY+width > 0)
+    {
+      tiles = new Tile[startY + height][startX + width];
+      doorways = new boolean[startY + height][startX + width];
+    }
     this.startX = startX;
     this.startY = startY;
     this.width = width;
@@ -66,6 +69,7 @@ public class Room
   {
     makeRoom();
     makeWalls();
+    spawnFireTraps();
   }
 
   public boolean isAHallway()
@@ -108,7 +112,7 @@ public class Room
     {
       for (int j = startX+1; j < (startX+width-2); j++)
       {
-        if(Math.random() < 0.01)
+        if(Util.rng.nextDouble() < 0.01)
         {
           LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
           entityManager.add(zombie);
@@ -116,6 +120,22 @@ public class Room
       }
     }
   }
+
+  public void spawnFireTraps()
+  {
+    for (int i = startY+1; i < (startY+height-2); i++)
+    {
+      for (int j = startX+1; j < (startX+width-2); j++)
+      {
+        if(Util.rng.nextDouble() < 0.01)
+        {
+          Trap trap = new Trap(new Point2D.Float(j*Settings.tileSize, i*Settings.tileSize), entityManager);
+          entityManager.add(trap);
+        }
+      }
+    }
+  }
+
   public void setNeighbor(House.Direction dir, Room neighbor)
   {
     switch(dir)

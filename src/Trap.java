@@ -26,7 +26,6 @@ public class Trap extends Entity
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
-    local.setColor(Color.red);
     local.drawImage(trapImg, 0,0, tileSize, tileSize, null);
   }
 
@@ -50,7 +49,7 @@ public class Trap extends Entity
   @Override
   public int getDepth()
   {
-    return 100;
+    return 0;
   }
 
   @Override

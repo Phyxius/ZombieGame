@@ -31,7 +31,7 @@ public class House extends Entity
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
-    fullGrid = new Tile[gridHeight+2][gridWidth+2];
+    fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 40;
     int roomStartY = 40;
@@ -70,7 +70,7 @@ public class House extends Entity
     Point2D.Float position = getPosition();
     if (position == null) return null;
     return new Rectangle2D.Float(position.x, position.y,
-            position.x + gridWidth*Settings.tileSize, position.y + gridHeight*Settings.tileSize);
+                                 gridWidth*Settings.tileSize, gridHeight*Settings.tileSize);
   }
   public boolean isSolid() //solid objects cannot move into each other
   {
@@ -173,7 +173,6 @@ public class House extends Entity
     doorwayList.add(entrance);
     doorwayList.add(exit);
     newHallway.setDoorways(doorwayList);
-    newHallway.addDoorways();
 
     return newHallway;
   }
@@ -375,14 +374,16 @@ public class House extends Entity
     //Hitting another already made room
     for(Room other: roomList)
     {
-      if(newRoom.getBoundingBox().intersects(other.getBoundingBox()))
+      if(newRoom.getBoundingBox().intersects(other.getBoundingBox()) ||
+         newHallway.getBoundingBox().intersects(other.getBoundingBox()))
       {
         prevRoom.removeDoorway(prevDoorway);
         return;
       }
     }
     //Going outside the house
-    if(!this.getBoundingBox().contains(newRoom.getBoundingBox()))
+    if(!this.getBoundingBox().contains(newRoom.getBoundingBox())||
+       !this.getBoundingBox().contains(newHallway.getBoundingBox()))
     {
       prevRoom.removeDoorway(prevDoorway);
       return;
@@ -411,6 +412,7 @@ public class House extends Entity
         generateRoomList(curDoorway, curDoorway.getSideOfRoom(), newRoom, ++depth);
       }
     }
+    newHallway.addDoorways();
     newHallway.init();
     newRoom.addDoorways();
     newRoom.init();
@@ -434,7 +436,7 @@ public class House extends Entity
       {
         for(int j = startX; j < width; j++)
         {
-          fullGrid[i+1][j+1] = room.getTileAt(i,j);
+          fullGrid[i][j] = room.getTileAt(i,j);
         }
       }
     }
@@ -448,8 +450,8 @@ public class House extends Entity
     {
       for(int j = 0; j < gridWidth; j++)
       {
-        if(fullGrid[i+1][j+1] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
-        houseImg.createGraphics().drawImage(fullGrid[i+1][j+1].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
+        if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
+        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
       }
     }
   }
