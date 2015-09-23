@@ -35,7 +35,7 @@ public class Room
     this.startY = startY;
     this.width = width;
     this.height = height;
-    boundingBox = new Rectangle2D.Float(startX, startY,width, height);
+    boundingBox = new Rectangle2D.Float(startX*Settings.tileSize, startY*Settings.tileSize,width*Settings.tileSize, height*Settings.tileSize);
   }
 
   public void setDoorways(ArrayList<Doorway> doorwayList)

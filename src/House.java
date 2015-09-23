@@ -251,7 +251,6 @@ public class House extends Entity
   {
     int numDoors = 0;
     double rand = Math.random();
-    if(depth == 1) numDoors = 4;
     if(depth == 2) //|| depth == 3)
     {
       if(rand >= 0.5) numDoors = 4;
@@ -266,14 +265,7 @@ public class House extends Entity
       else if(rand >= 0.125) numDoors = 2;
       else if(rand >= 0.0625) numDoors = 3;
     }
-    //else if(depth > 2)
-    //{
-    //  double probab = (1/(4^depth));
-    //  if(rand <= probab) numDoors = 4;
-    //  else if(rand <= (probab*2)) numDoors = 3;
-    //  else if(rand <= (probab*4)) numDoors = 2;
-    //  else if(rand <= (probab*8)) numDoors = 1;
-    //}
+    if(numDoors == 0 && roomList.size() < 11) numDoors = 4;
     return numDoors;
   }
 
@@ -370,6 +362,7 @@ public class House extends Entity
                                       doorwayList.get(0), prevRoomDoorSize);
     //Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom,
     //                                  doorwayList.get(0), prevRoomDoorSize);
+
     prevRoom.setNeighbor(comingFrom,newRoom);
     //Hitting another already made room
     for(Room other: roomList)
@@ -378,6 +371,8 @@ public class House extends Entity
          newHallway.getBoundingBox().intersects(other.getBoundingBox()))
       {
         prevRoom.removeDoorway(prevDoorway);
+        roomList.remove(newHallway);
+        roomList.remove(newRoom);
         return;
       }
     }
@@ -386,8 +381,12 @@ public class House extends Entity
        !this.getBoundingBox().contains(newHallway.getBoundingBox()))
     {
       prevRoom.removeDoorway(prevDoorway);
+      roomList.remove(newHallway);
+      roomList.remove(newRoom);
       return;
     }
+    roomList.add(newHallway);
+    roomList.add(newRoom);
     Collections.addAll(directions, Direction.values());
     directions.remove(oppositeDirOf(comingFrom));
     Collections.shuffle(directions);
@@ -417,8 +416,6 @@ public class House extends Entity
     newRoom.addDoorways();
     newRoom.init();
     newRoom.spawnZombies();
-    roomList.add(newHallway);
-    roomList.add(newRoom);
   }
 
   private void copyObjectsToGrid()
