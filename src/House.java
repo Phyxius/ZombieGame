@@ -90,7 +90,7 @@ public class House extends Entity
 
   public int getDepth() //lower numbers are drawn above higher numbers
   {
-    return -1;
+    return -100;
   }
 
   private Room makeNewHallway(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom, int prevRoomDoorSize)
