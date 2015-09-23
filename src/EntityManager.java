@@ -79,8 +79,11 @@ public class EntityManager
         Graphics2D local = (Graphics2D) g.create((int)(boundingBox.x - cameraOrigin.x), (int) (boundingBox.y - cameraOrigin.y),
             ((int) boundingBox.width), ((int) boundingBox.height));
         entity.draw(local, screen, drawingManager);
-        local.setColor(Color.GREEN);
-        local.drawRect(0, 0, (int)boundingBox.width-1, (int)boundingBox.height-1);
+        if (debugModeEnabled)
+        {
+          local.setColor(Color.GREEN);
+          local.drawRect(0, 0, (int) boundingBox.width - 1, (int) boundingBox.height - 1);
+        }
         local.dispose();
       }
       else entity.draw(null, screen, drawingManager);
