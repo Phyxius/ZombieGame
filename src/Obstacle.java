@@ -48,4 +48,14 @@ public class Obstacle extends Entity
   {
     return true;
   }
+
+  @Override
+  public void onCollision(Entity other, CollisionManager c)
+  {
+    if (other instanceof Fire)
+    {
+      c.remove(this);
+      c.add(new Fire(getBoundingBox()));
+    }
+  }
 }
