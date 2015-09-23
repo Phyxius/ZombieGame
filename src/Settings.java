@@ -4,10 +4,8 @@
  */
 public class Settings
 {
+  static final int ashOpacity = 64;
   public static int frameRate; //frames/sec
-  public static int floorDepth = -1;
-  public static int playerDepth = 1;
-  public static int zombieDepth = 2;
   public static float zombieSpeed = 0.5f; //tiles/sec
   public static float zombieDecisionRate = 2.0f; //sec
   public static float zombieSmellRadius = 7f; //tiles
@@ -16,8 +14,9 @@ public class Settings
   public static float playerRun; // pixels/sec
   public static float playerStamina; // sec * frameRate
   public static double minAngle; // minimumTurnAngle = Math.PI * minAngle
+  public static int fireDuration; //frames
 
-  static
+  static //ensures correct order of assignment
   {
     tileSize = 10;
     frameRate = 60;
@@ -25,5 +24,6 @@ public class Settings
     playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
     playerStamina = 5 * Settings.frameRate;
     minAngle = 0.25;
+    fireDuration = 15 * frameRate;
   }
 }
