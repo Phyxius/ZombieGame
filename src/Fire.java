@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 /**
  * Created by arirappaport on 9/7/15.
  */
-public class Fire extends Entity
+public class Fire extends Entity implements Detonator
 {
   private Rectangle2D explosionArea;
   private BufferedImage frame;

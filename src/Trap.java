@@ -53,7 +53,7 @@ public class Trap extends Entity
   @Override
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
-    if (other instanceof LineZombie || (other instanceof Player && ((Player) other).isRunning()) || other instanceof Fire)
+    if (other instanceof Detonator || (other instanceof Player && ((Player) other).isRunning()))
     {
       detonate(c);
       c.remove(this);
