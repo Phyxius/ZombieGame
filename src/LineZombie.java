@@ -12,6 +12,8 @@ class LineZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
+  private int soundCounter = 0;
+  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private boolean moving = true;
 
   LineZombie(Player player, Point2D.Float position)
@@ -80,6 +82,11 @@ class LineZombie extends ZombieModel
     {
       moveAnimation.nextFrame(!moving);
       moving = true;
+      double balance = this.getPosition().x  - player.getPosition().x;
+      double volume = Math.sqrt(Math.abs(this.getPosition().x  - player.getPosition().x)+
+                                Math.abs(this.getPosition().y  - player.getPosition().y));
+      if (soundCounter % (Settings.frameRate / 3) == 0) zombieStep.play(balance, 1/volume);
+      soundCounter++;
     }
 
     updateCount++;

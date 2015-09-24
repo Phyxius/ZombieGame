@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class Room
 {
   private EntityManager entityManager;
-  private Entity[][] obstacles;
   private int width, height;
   private int startX, startY;
   private Tile[][] tiles;
@@ -17,14 +16,11 @@ public class Room
   private Rectangle2D boundingBox;
   private ArrayList<Doorway> doorwayList;
   private Player player;
-  private Room eastNeighbor;
-  private Room westNeighbor;
-  private Room southNeighbor;
-  private Room northNeighbor;
 
   public Room(int startX, int startY, int width, int height, boolean isHallway, Player player, EntityManager entityManager)
   {
     this.isHallway = isHallway;
+    this.player = player;
     this.entityManager = entityManager;
     if(startX+width > 0 && startY+width > 0)
     {
@@ -95,7 +91,13 @@ public class Room
           if(!doorways[i][j]) setTileAt(i,j,new Tile("tileset/wall", true));
           else setTileAt(i,j, new Tile("tileset/nonwall", false));
         }
-        else setTileAt(i,j, new Tile("tileset/nonwall", false));
+        else
+        {
+          double rng = Util.rng.nextDouble();
+          if (rng < 0.3) setTileAt(i, j, new Tile("tileset/nonwall", false));
+          else if (rng > 0.3 && rng < 0.6) setTileAt(i, j, new Tile("tileset/nonwall2", false));
+          else setTileAt(i, j, new Tile("tileset/nonwall3", false));
+        }
       }
     }
   }
@@ -136,31 +138,14 @@ public class Room
     }
   }
 
-  public void setNeighbor(House.Direction dir, Room neighbor)
-  {
-    switch(dir)
-    {
-      case NORTH:
-        northNeighbor = neighbor;
-        break;
-      case WEST:
-        westNeighbor = neighbor;
-        break;
-      case SOUTH:
-        southNeighbor = neighbor;
-        break;
-      case EAST:
-        eastNeighbor = neighbor;
-    }
-  }
   private void makeWallHoriz(int startY)
   {
     int tileSize = Settings.tileSize;
-    int endX = startX+(width-1);
-    int tmpStartX = startX*tileSize;
+    int endX = (startX+1)+(width-1);
+    int tmpStartX = (startX+1)*tileSize;
     int tmpStartY = startY*tileSize;
     int tmpEndX;
-    for (int i = startX; i <= endX; i++)
+    for (int i = startX+1; i <= endX-2; i++)
     {
       if(doorways[startY][i])
       {
@@ -169,9 +154,9 @@ public class Room
         entityManager.add(northWall);
         tmpStartX = (i+1)*tileSize;
       }
-      if(i == endX)
+      if(i == endX-2)
       {
-        Wall northWall = new Wall(tmpStartX, (endX+1)*tileSize, tmpStartY, tmpStartY+tileSize);
+        Wall northWall = new Wall(tmpStartX, (endX-1)*tileSize, tmpStartY, tmpStartY+tileSize);
         entityManager.add(northWall);
       }
     }

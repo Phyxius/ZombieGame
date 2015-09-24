@@ -7,14 +7,18 @@ import java.awt.image.BufferedImage;
  */
 public class Fire extends Entity implements Detonator
 {
+  private final int numFireFrames;
   private Rectangle2D explosionArea;
   private BufferedImage frame;
+  private BufferedImage fireBackground;
   private int age = 0; //frames
   Animation fireAnimation;
+
   public Fire(Rectangle2D.Float explosionArea)
   {
     this.explosionArea = explosionArea;
-    int numFireFrames = 318;
+    numFireFrames = 318;
+    fireBackground = ResourceManager.getImage("stills/firebackground.png");
     fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
   }
 
@@ -30,6 +34,8 @@ public class Fire extends Entity implements Detonator
 
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
+    //Animate fire
+    local.drawImage(fireBackground, 0, 0, Settings.tileSize, Settings.tileSize, null);
     local.drawImage(frame, 0, 0, Settings.tileSize, Settings.tileSize, null);
   }
   @Override

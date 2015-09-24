@@ -363,7 +363,6 @@ public class House extends Entity
     //Room newRoom = makeNewRoom(prevRoomDoorX, prevRoomDoorY, comingFrom,
     //                                  doorwayList.get(0), prevRoomDoorSize);
 
-    prevRoom.setNeighbor(comingFrom,newRoom);
     //Hitting another already made room
     for(Room other: roomList)
     {
