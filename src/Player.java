@@ -1,26 +1,31 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Created by Rashid on 07/09/15.
  * Player information and behavior.
  */
-public class Player extends Entity
+public class Player extends Entity implements LightSource
 {
   private Point2D.Float position = new Point2D.Float(44*Settings.tileSize, 45*Settings.tileSize);
+  private Point2D.Float center = new Point2D.Float();
   private SoundEffect playerFootsteps;
   private boolean isRunning = false;
   private float stamina;
   private boolean staminaDepleted = false;
   private boolean isPickingUp;
+  private int pickUpCounter = 0;
   private int soundCounter = 0;
   private int trapsInInventory = 0;
+  private Trap collidingTrap = null;
 
   public Player()
   {
     playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
     stamina = Settings.playerStamina;
+    this.setLightLocation(getBoundingBox());
   }
 
   void setPosition(Point2D.Float position)
@@ -52,7 +57,21 @@ public class Player extends Entity
   {
     if (isPickingUp())
     {
-      return;
+      if (e.isKeyPressed(KeyEvent.VK_P))
+      {
+        pickUpCounter++;
+        if (pickUpCounter % (5 * Settings.frameRate) == 0)
+        {
+          pickUpCounter = 0;
+          trapsInInventory++;
+          e.remove(collidingTrap);
+        }
+      }
+      else
+      {
+        isPickingUp = false;
+        pickUpCounter = 0;
+      }
     }
     else
     {
@@ -69,38 +88,24 @@ public class Player extends Entity
 
       if (movementMagnitude != 0)
       {
-        float xPosition = position.x;
-        float yPosition = position.y;
         isRunning = e.isKeyPressed(KeyEvent.VK_R) && !isStaminaDepleted();
-        if (isRunning)
-        {
-          stamina--;
-          position.setLocation(position.x + xMovement * Settings.playerRun, position.y + yMovement * Settings.playerRun);
-          if (!checkCollision(e, xPosition, yPosition))
-          {
-            if (soundCounter % (Settings.frameRate / 4) == 0) playerFootsteps.play(0.0, 10);
-            soundCounter++;
+        move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
+      }
 
-          }
-          else
-          {
-            replenishStamina();
-          }
-        }
-        else
-        {
-          replenishStamina();
-          position.setLocation(position.x + xMovement * Settings.playerWalk, position.y + yMovement * Settings.playerWalk);
-          if (!checkCollision(e, xPosition, yPosition))
-          {
-            if (soundCounter % (Settings.frameRate / 3) == 0) playerFootsteps.play(0.0, 10);
-            soundCounter++;
-          }
-        }
+      if (e.isKeyPressed(KeyEvent.VK_P) && collidingTrap != null)
+      {
+        isPickingUp = true;
+        pickUpCounter++;
       }
       else
       {
-        replenishStamina();
+        isPickingUp = false;
+      }
+
+      if (e.isKeyPressed(KeyEvent.VK_T) && trapsInInventory > 0 && collidingTrap == null)
+      {
+        e.add(new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize)));
+        trapsInInventory--;
       }
     }
   }
@@ -130,6 +135,7 @@ public class Player extends Entity
   private boolean checkCollision(UpdateManager manager, float xPosition, float yPosition)
   {
     final boolean[] returnValue = {false};
+    collidingTrap = null;
     manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) -> {
       if (entity != this && entity.isSolid())
       {
@@ -137,7 +143,62 @@ public class Player extends Entity
         this.position.y = yPosition;
         returnValue[0] = true;
       }
+      if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
     });
     return returnValue[0];
+  }
+
+  private boolean move(float x, float y, float xMovement, float yMovement, boolean isRunning, UpdateManager manager)
+  {
+    boolean returnValue = false;
+    if (isRunning)
+    {
+      position.setLocation(x + xMovement * Settings.playerRun, y + yMovement * Settings.playerRun);
+      if (returnValue = checkCollision(manager, (float) getPosition().getX(), (float) getPosition().getY()))
+      {
+        position.setLocation(x, y);
+      }
+      else // successful movement
+      {
+        setLightLocation(getBoundingBox());
+        if (soundCounter % (Settings.frameRate / 4) == 0) playerFootsteps.play(0.0, 10);
+        soundCounter++;
+        stamina--;
+      }
+    }
+    else
+    {
+      replenishStamina();
+      position.setLocation(x + xMovement * Settings.playerWalk, y + yMovement * Settings.playerWalk);
+      if (returnValue = checkCollision(manager, (float) getPosition().getX(), (float) getPosition().getY()))
+      {
+        position.setLocation(x, y);
+      }
+      else //successful movement
+      {
+        setLightLocation(getBoundingBox());
+        if (soundCounter % (Settings.frameRate / 3) == 0) playerFootsteps.play(0.0, 10);
+        soundCounter++;
+      }
+    }
+    return returnValue;
+  }
+
+  @Override
+  public Point2D.Float getLightLocation()
+  {
+    return center;
+  }
+
+  @Override
+  public void setLightLocation(Point2D.Float location)
+  {
+    center.setLocation(location.getX(), location.getY());
+  }
+
+  @Override
+  public void setLightLocation(Rectangle2D.Float boundingBox)
+  {
+    center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
   }
 }

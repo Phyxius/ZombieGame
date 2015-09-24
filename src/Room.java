@@ -129,7 +129,7 @@ public class Room
       {
         if(Util.rng.nextDouble() < 0.01)
         {
-          Trap trap = new Trap(new Point2D.Float(j*Settings.tileSize, i*Settings.tileSize), entityManager);
+          Trap trap = new Trap(new Point2D.Float(j*Settings.tileSize, i*Settings.tileSize));
           entityManager.add(trap);
         }
       }
