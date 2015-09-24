@@ -4,4 +4,5 @@
  */
 public interface Detonator
 {
+  public boolean trigger();
 }

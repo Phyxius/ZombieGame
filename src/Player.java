@@ -7,7 +7,7 @@ import java.awt.geom.Rectangle2D;
  * Created by Rashid on 07/09/15.
  * Player information and behavior.
  */
-public class Player extends Entity implements LightSource
+public class Player extends Entity implements LightSource, Detonator
 {
   private Point2D.Float position = new Point2D.Float(44*Settings.tileSize, 45*Settings.tileSize);
   private Point2D.Float center = new Point2D.Float();
@@ -200,5 +200,11 @@ public class Player extends Entity implements LightSource
   public void setLightLocation(Rectangle2D.Float boundingBox)
   {
     center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
+  }
+
+  @Override
+  public boolean trigger()
+  {
+    return isRunning();
   }
 }

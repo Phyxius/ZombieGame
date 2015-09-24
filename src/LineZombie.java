@@ -8,7 +8,7 @@ import java.util.Collection;
  * Created by Rashid on 07/09/15.
  * The Generic template for the zombies in the game.
  */
-class LineZombie extends ZombieModel implements Detonator
+class LineZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);

@@ -42,4 +42,10 @@ public class Fire extends Entity implements Detonator
       updateManager.add(new Ash(getBoundingBox()));
     }
   }
+
+  @Override
+  public boolean trigger()
+  {
+    return true;
+  }
 }

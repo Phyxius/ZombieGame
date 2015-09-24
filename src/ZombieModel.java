@@ -7,7 +7,7 @@ import java.awt.geom.Rectangle2D;
  * The Template for zombies.
  */
 
-abstract class ZombieModel extends Entity
+abstract class ZombieModel extends Entity implements Detonator
 {
   protected float speed; // displacement = speed * tiles
   protected int decisionRate; // New decision every decisionRate updates.
@@ -74,6 +74,12 @@ abstract class ZombieModel extends Entity
 
   @Override
   public boolean isSolid()
+  {
+    return true;
+  }
+
+  @Override
+  public boolean trigger()
   {
     return true;
   }
