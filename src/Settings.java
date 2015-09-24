@@ -13,6 +13,7 @@ public class Settings
   public static float playerWalk; // pixels/sec
   public static float playerRun; // pixels/sec
   public static float playerStamina; // sec * frameRate
+  public static float playerStaminaRegen;
   public static double minAngle; // in Radians
   public static int fireDuration; //frames
 
@@ -22,7 +23,8 @@ public class Settings
     frameRate = 60;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
     playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
-    playerStamina = 5 * Settings.frameRate;
+    playerStamina = 5f * Settings.frameRate;
+    playerStaminaRegen = 0.20f * Settings.frameRate;
     minAngle = 0.25 * Math.PI;
     fireDuration = 15 * frameRate;
   }

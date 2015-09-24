@@ -13,7 +13,7 @@ abstract class ZombieModel extends Entity implements Detonator
   protected int decisionRate; // New decision every decisionRate updates.
   protected float smell; // smell radius = smell * tiles
   protected int updateCount = 0; // Used in decision making. New decision when updateCount % (decitionRate * frameRate) == 0
-  protected Player player; // Reference to the player on the current board.
+  protected final Player player; // Reference to the player on the current board.
   protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
   protected Point2D.Float position = new Point2D.Float(); // Top Left Corner.
   protected double directionAngle; // 0 - 2 * PI
@@ -22,10 +22,11 @@ abstract class ZombieModel extends Entity implements Detonator
 
   /**
    * Constructs a zombie using default values in Settings.
-   * @param player The player associated with this zombie. Used in detectPlayer.
+   *
+   * @param player   The player associated with this zombie. Used in detectPlayer.
    * @param position The initial location of the zombie.
    */
-  ZombieModel (Player player, Point2D.Float position)
+  ZombieModel(Player player, Point2D.Float position)
   {
     speed = Settings.zombieSpeed;
     decisionRate = (int) (Settings.zombieDecisionRate * Settings.frameRate);
@@ -38,14 +39,15 @@ abstract class ZombieModel extends Entity implements Detonator
 
   /**
    * Constructs a zombie using given parameters.
-   * @param player The player associated with this zombie. Used in detectPlayer.
-   * @param position The initial location of the zombie.
-   * @param speed The movement speed of the zombie.
+   *
+   * @param player       The player associated with this zombie. Used in detectPlayer.
+   * @param position     The initial location of the zombie.
+   * @param speed        The movement speed of the zombie.
    * @param decisionRate The time between each decision a zombie makes in seconds.
-   * @param smell The radius of the area in which a zombie can detect a player.
-   * @param minAngle The minimum angle, in radians, a zombie turns when colliding with solid objects.
+   * @param smell        The radius of the area in which a zombie can detect a player.
+   * @param minAngle     The minimum angle, in radians, a zombie turns when colliding with solid objects.
    */
-  ZombieModel (Player player, Point2D.Float position, float speed, float decisionRate, float smell, double minAngle)
+  ZombieModel(Player player, Point2D.Float position, float speed, float decisionRate, float smell, double minAngle)
   {
     this(player, position);
     this.speed = speed;
@@ -60,7 +62,7 @@ abstract class ZombieModel extends Entity implements Detonator
   {
     int tileSize = Settings.tileSize;
     local.setColor(Color.GREEN);
-    local.drawRoundRect(0, 0, tileSize, tileSize, tileSize/10, tileSize/10);
+    local.drawRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
   }
 
   @Override
@@ -91,6 +93,7 @@ abstract class ZombieModel extends Entity implements Detonator
 
   /**
    * Determines whether the object is solid.
+   *
    * @return By default all zombies are solid.
    */
   @Override
@@ -101,6 +104,7 @@ abstract class ZombieModel extends Entity implements Detonator
 
   /**
    * Trigger value for zombies.
+   *
    * @return By default all zombies trigger Traps.
    */
   @Override
