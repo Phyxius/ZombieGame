@@ -4,7 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Created by Rashid on 07/09/15.
- * The Template for zombies.
+ * Basic model for the zombies in the Zombie House game.
  */
 
 abstract class ZombieModel extends Entity implements Detonator
@@ -20,6 +20,11 @@ abstract class ZombieModel extends Entity implements Detonator
   protected boolean collision;
   protected double minAngle;
 
+  /**
+   * Constructs a zombie using defualt values in Settings.
+   * @param player The player associated with this zombie. Used in detectPlayer.
+   * @param position The initial location of the zombie.
+   */
   ZombieModel (Player player, Point2D.Float position)
   {
     speed = Settings.zombieSpeed;
@@ -31,7 +36,16 @@ abstract class ZombieModel extends Entity implements Detonator
     this.directionAngle = 2 * Util.rng.nextDouble() * Math.PI;
   }
 
-  ZombieModel (Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
+  /**
+   * Constructs a zombie using given parameters.
+   * @param player The player associated with this zombie. Used in detectPlayer.
+   * @param position The initial location of the zombie.
+   * @param speed The movement speed of the zombie.
+   * @param decisionRate The time between each decision a zombie makes in seconds.
+   * @param smell The radius of the area in which a zombie can detect a player.
+   * @param minAngle The minimum angle, in radians, a zombie turns when colliding with solid objects.
+   */
+  ZombieModel (Player player, Point2D.Float position, float speed, float decisionRate, float smell, double minAngle)
   {
     this(player, position);
     this.speed = speed;
@@ -55,6 +69,9 @@ abstract class ZombieModel extends Entity implements Detonator
     return this.position;
   }
 
+  /**
+   * Determines whether the zombie detects the player.
+   */
   void detectPlayer()
   {
     Rectangle2D.Float playerBox = player.getBoundingBox();
@@ -72,12 +89,20 @@ abstract class ZombieModel extends Entity implements Detonator
     }
   }
 
+  /**
+   * Determines whether the object is solid.
+   * @return By default all zombies are solid.
+   */
   @Override
   public boolean isSolid()
   {
     return true;
   }
 
+  /**
+   * Trigger value for zombies.
+   * @return By default all zombies trigger Traps.
+   */
   @Override
   public boolean trigger()
   {

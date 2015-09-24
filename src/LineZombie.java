@@ -21,7 +21,7 @@ class LineZombie extends ZombieModel
 
   LineZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
-    super(player, speed, decisionRate, smell, position, minAngle);
+    super(player, position, speed, decisionRate, smell, minAngle);
   }
 
   @Override
@@ -33,7 +33,7 @@ class LineZombie extends ZombieModel
       {
         if (collision)
         {
-          directionAngle += Math.PI * minAngle + Util.rng.nextDouble() * 2 * (1 - minAngle) * Math.PI;
+          directionAngle += minAngle + Util.rng.nextDouble() * 2 * (Math.PI - minAngle);
           directionAngle %= 2 * Math.PI;
           moving = true;
           collision = false;
@@ -85,6 +85,12 @@ class LineZombie extends ZombieModel
     updateCount++;
   }
 
+  /**
+   * Draws the object to the screen
+   * @param local Draws at the position of the zombie.
+   * @param global Draws at the top left corner of the screen.
+   * @param drawingManager The drawing manager for this object.
+   */
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
@@ -94,6 +100,11 @@ class LineZombie extends ZombieModel
     local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
 
+  /**
+   * Called when another object collides with this object.
+   * @param other The object that collides with this object.
+   * @param collisionManager The manager for this collision.
+   */
   @Override
   public void onCollision(Entity other, CollisionManager collisionManager)
   {
