@@ -21,7 +21,7 @@ abstract class ZombieModel extends Entity implements Detonator
   protected double minAngle;
 
   /**
-   * Constructs a zombie using defualt values in Settings.
+   * Constructs a zombie using default values in Settings.
    * @param player The player associated with this zombie. Used in detectPlayer.
    * @param position The initial location of the zombie.
    */

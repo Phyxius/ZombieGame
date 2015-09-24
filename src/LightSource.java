@@ -6,7 +6,7 @@ import java.awt.geom.Rectangle2D;
  */
 public interface LightSource
 {
-  public Point2D.Float getLightLocation();
-  public void setLightLocation(Point2D.Float location);
-  public void setLightLocation(Rectangle2D.Float boundingBox);
+  Point2D.Float getLightLocation();
+  void setLightLocation(Point2D.Float location);
+  void setLightLocation(Rectangle2D.Float boundingBox);
 }

@@ -12,6 +12,7 @@ public class Player extends Entity implements LightSource, Detonator
   private Point2D.Float position = new Point2D.Float(44*Settings.tileSize, 45*Settings.tileSize);
   private Point2D.Float center = new Point2D.Float();
   private SoundEffect playerFootsteps;
+  private SoundEffect playerPickup;
   private boolean isRunning = false;
   private float stamina;
   private boolean staminaDepleted = false;
@@ -24,6 +25,7 @@ public class Player extends Entity implements LightSource, Detonator
   public Player()
   {
     playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
+    playerPickup = new SoundEffect("soundfx/player_pickup.mp3");
     stamina = Settings.playerStamina;
     this.setLightLocation(getBoundingBox());
   }
@@ -62,15 +64,17 @@ public class Player extends Entity implements LightSource, Detonator
         pickUpCounter++;
         if (pickUpCounter % (5 * Settings.frameRate) == 0)
         {
-          pickUpCounter = 0;
           trapsInInventory++;
           e.remove(collidingTrap);
+          collidingTrap = null;
           isPickingUp = false;
+          playerPickup.stop();
         }
       }
       else
       {
         isPickingUp = false;
+        playerPickup.stop();
         pickUpCounter = 0;
       }
     }
@@ -97,9 +101,11 @@ public class Player extends Entity implements LightSource, Detonator
       {
         isPickingUp = true;
         pickUpCounter++;
+        playerPickup.play(0.0, 1.0);
       }
       else
       {
+        pickUpCounter = 0;
         isPickingUp = false;
       }
 
@@ -123,8 +129,7 @@ public class Player extends Entity implements LightSource, Detonator
    */
   public boolean isStaminaDepleted()
   {
-    if (stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2)) staminaDepleted = true;
-    else staminaDepleted = false;
+    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
     return staminaDepleted;
   }
 
@@ -151,7 +156,7 @@ public class Player extends Entity implements LightSource, Detonator
 
   private boolean move(float x, float y, float xMovement, float yMovement, boolean isRunning, UpdateManager manager)
   {
-    boolean returnValue = false;
+    boolean returnValue;
     if (isRunning)
     {
       position.setLocation(x + xMovement * Settings.playerRun, y + yMovement * Settings.playerRun);
