@@ -65,6 +65,7 @@ public class Player extends Entity implements LightSource, Detonator
           pickUpCounter = 0;
           trapsInInventory++;
           e.remove(collidingTrap);
+          isPickingUp = false;
         }
       }
       else
