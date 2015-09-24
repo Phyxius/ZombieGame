@@ -83,9 +83,12 @@ class LineZombie extends ZombieModel
       moveAnimation.nextFrame(!moving);
       moving = true;
       double balance = this.getPosition().x  - player.getPosition().x;
-      double volume = Math.sqrt(Math.abs(this.getPosition().x  - player.getPosition().x)+
-                                Math.abs(this.getPosition().y  - player.getPosition().y));
-      if (soundCounter % (Settings.frameRate / 3) == 0) zombieStep.play(balance, 1/volume);
+      double distanceToPlayer = Math.abs(this.getPosition().x  - player.getPosition().x)+
+                               Math.abs(this.getPosition().y  - player.getPosition().y);
+      //double volume = 10;
+      if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && distanceToPlayer < 10* Settings.tileSize)
+          zombieStep.play(balance, 10/(distanceToPlayer));
+      //zombieStep.stop();
       soundCounter++;
     }
 

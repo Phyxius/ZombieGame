@@ -22,7 +22,7 @@ public class Room
     this.isHallway = isHallway;
     this.player = player;
     this.entityManager = entityManager;
-    if(startX+width > 0 && startY+width > 0)
+    if(startX+width > 0 && startY+height > 0)
     {
       tiles = new Tile[startY + height][startX + width];
       doorways = new boolean[startY + height][startX + width];
