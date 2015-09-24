@@ -17,7 +17,8 @@ public class Player extends Entity implements LightSource, Detonator
   private float stamina;
   private boolean staminaDepleted = false;
   private boolean isPickingUp;
-  private int pickUpCounter = 0;
+  private boolean isPlacing;
+  private int progressCounter = 0;
   private int soundCounter = 0;
   private int trapsInInventory = 1;
   private Trap collidingTrap = null;
@@ -40,9 +41,9 @@ public class Player extends Entity implements LightSource, Detonator
     int tileSize = Settings.tileSize;
     local.setColor(Color.YELLOW);
     local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
-    if (isPickingUp())
+    if (isPickingUp() || isPlacing)
     {
-      pickUpBar.setPosition(Settings.tileSize / 2, Settings.tileSize / 4);
+      pickUpBar.setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2), (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
       pickUpBar.setWidth(2 * Settings.tileSize);
       pickUpBar.setHeight(Settings.tileSize / 4);
       pickUpBar.draw(null, global, null);
@@ -68,14 +69,14 @@ public class Player extends Entity implements LightSource, Detonator
   @Override
   public void update(UpdateManager e)
   {
-    if (isPickingUp())
+    if (isPickingUp() || isPlacing)
     {
       increaseStamina();
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
-        pickUpCounter++;
+        progressCounter++;
         updatePickUpBar();
-        if (pickUpCounter % (5 * Settings.frameRate) == 0)
+        if (progressCounter % (5 * Settings.frameRate) == 0)
         {
           trapsInInventory++;
           e.remove(collidingTrap);
@@ -84,11 +85,26 @@ public class Player extends Entity implements LightSource, Detonator
           playerPickup.stop();
         }
       }
+      else if (e.isKeyPressed(KeyEvent.VK_T))
+      {
+        progressCounter++;
+        updatePickUpBar();
+        if (progressCounter % (5 * Settings.frameRate) == 0)
+        {
+          trapsInInventory--;
+          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
+          e.add(trap);
+          collidingTrap = trap;
+          isPlacing = false;
+          playerPickup.stop();
+        }
+      }
       else
       {
+        isPlacing = false;
         isPickingUp = false;
         playerPickup.stop();
-        pickUpCounter = 0;
+        progressCounter = 0;
       }
     }
     else
@@ -117,20 +133,27 @@ public class Player extends Entity implements LightSource, Detonator
       if (e.isKeyPressed(KeyEvent.VK_P) && collidingTrap != null)
       {
         isPickingUp = true;
-        pickUpCounter++;
+        progressCounter++;
         playerPickup.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
       {
-        pickUpCounter = 0;
+        progressCounter = 0;
         isPickingUp = false;
       }
 
       if (e.isKeyPressed(KeyEvent.VK_T) && trapsInInventory > 0 && collidingTrap == null)
       {
-        e.add(new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize)));
-        trapsInInventory--;
+        progressCounter++;
+        isPlacing = true;
+        playerPickup.play(0.0, 1.0);
+        updatePickUpBar();
+      }
+      else
+      {
+        progressCounter = 0;
+        isPlacing = false;
       }
     }
   }
@@ -173,7 +196,7 @@ public class Player extends Entity implements LightSource, Detonator
 
   private void updatePickUpBar()
   {
-    pickUpBar.setCurrentValue(pickUpCounter);
+    pickUpBar.setCurrentValue(progressCounter);
     pickUpBar.setMaxValue(5 * Settings.frameRate);
   }
 
