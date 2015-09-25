@@ -19,8 +19,8 @@ public class ResourceManager
     imagePaths.add("tileset/nonwall.png");
     imagePaths.add("tileset/wall.png");
     imagePaths.add("tileset/outofbounds.png");
-    imagePaths.add("stills/firetrap.png");
-    imagePaths.add("stills/firebackground.png");
+    imagePaths.add("fire/firetrap.png");
+    imagePaths.add("fire/firebackground.png");
     for (int i = 0; i <= 16; i++)
     {
       imagePaths.add("animation/zombie/idle_" + i + ".png");
