@@ -9,5 +9,8 @@ public interface Detonator
    * Determines whether the trigger is activated.
    * @return True if the trigger is activated otherwise false.
    */
-  boolean trigger();
+  default boolean trigger()
+  {
+    return true;
+  }
 }

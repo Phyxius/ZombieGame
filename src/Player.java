@@ -122,7 +122,7 @@ public class Player extends Entity implements LightSource, Detonator
 
       if (movementMagnitude != 0)
       {
-        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !isStaminaDepleted();
+        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
       }
       else
@@ -178,6 +178,7 @@ public class Player extends Entity implements LightSource, Detonator
   private void increaseStamina()
   {
     if (++stamina > Settings.playerStamina) stamina = Settings.playerStamina;
+    isStaminaDepleted();
     updateStaminaBar();
   }
 
@@ -185,7 +186,7 @@ public class Player extends Entity implements LightSource, Detonator
   {
     if (stamina > 0) stamina--;
     else stamina = 0;
-//    System.out.println (stamina);
+    isStaminaDepleted();
     updateStaminaBar();
   }
 

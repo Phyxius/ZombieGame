@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.Collection;
 
 /**
@@ -29,6 +28,7 @@ class LineZombie extends ZombieModel
   @Override
   public void update(UpdateManager e)
   {
+
     if (updateCount % decisionRate == 0)
     {
       if (playerPosition == null)
@@ -47,6 +47,7 @@ class LineZombie extends ZombieModel
       }
     }
 
+    detectPlayer();
     if (moving)
     {
       float lastX = position.x;
@@ -82,12 +83,13 @@ class LineZombie extends ZombieModel
     {
       moveAnimation.nextFrame(!moving);
       moving = true;
-      double balance = this.getPosition().x  - player.getPosition().x;
-      double distanceToPlayer = Math.abs(this.getPosition().x  - player.getPosition().x)+
-                               Math.abs(this.getPosition().y  - player.getPosition().y);
+
       //double volume = 10;
-      if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && distanceToPlayer < 10* Settings.tileSize)
-          zombieStep.play(balance, 10/(distanceToPlayer));
+      if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && loud)
+      {
+        double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize ;
+        zombieStep.play(balance, 0.5 / distanceFromPlayer);
+      }
       //zombieStep.stop();
       soundCounter++;
     }
