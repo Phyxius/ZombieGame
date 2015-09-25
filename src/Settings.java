@@ -15,12 +15,14 @@ public class Settings
   public static float playerStamina; // sec * frameRate
   public static float playerStaminaRegen;
   public static double minAngle; // in Radians
+  public static int numObjectsGuranteed; //Rooms + hallways
   public static int fireDuration; //frames
 
   static //ensures correct order of assignment
   {
     tileSize = 80;
     frameRate = 60;
+    numObjectsGuranteed = 11;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
     playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
     playerStamina = 5f * Settings.frameRate;

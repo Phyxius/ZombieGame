@@ -15,13 +15,27 @@ public class Room
   private boolean isHallway;
   private Rectangle2D boundingBox;
   private ArrayList<Doorway> doorwayList;
+  public ArrayList<Wall> wallList;
   private Player player;
+  private boolean isLeaf;
 
+  /**
+   * Constructs a Room object at the given location
+   * @param startX The starting X coord of the Room.
+   * @param startY The starting X coord of the Room.
+   * @param width The width of the Room.
+   * @param height The height of the Room.
+   * @param isHallway Whether the Room is a Hallway or not
+   * @param player The player, needed for added zombies
+   * @param entityManager a referenence to the global entityManger for adding new Entities
+   *
+   */
   public Room(int startX, int startY, int width, int height, boolean isHallway, Player player, EntityManager entityManager)
   {
     this.isHallway = isHallway;
     this.player = player;
     this.entityManager = entityManager;
+    isLeaf = false;
     if(startX+width > 0 && startY+height > 0)
     {
       tiles = new Tile[startY + height][startX + width];
@@ -31,9 +45,15 @@ public class Room
     this.startY = startY;
     this.width = width;
     this.height = height;
+    wallList = new ArrayList<>();
     boundingBox = new Rectangle2D.Float(startX*Settings.tileSize, startY*Settings.tileSize,width*Settings.tileSize, height*Settings.tileSize);
   }
 
+  /**
+   *
+   * @param doorwayList the List of all Doorways randomly
+   *                    generated in House
+   */
   public void setDoorways(ArrayList<Doorway> doorwayList)
   {
     this.doorwayList = new ArrayList<>();
@@ -41,13 +61,23 @@ public class Room
     {
       this.doorwayList.add(d);
     }
+    if(doorwayList.size() == 1) isLeaf = true;
   }
 
+  /**
+   *
+   * @param toRemove the doorway to be removed
+   */
   public void removeDoorway(Doorway toRemove)
   {
     doorwayList.remove(toRemove);
   }
 
+  /**
+   * Copies Doorways from the local ArrayList containing
+   * Door objects to a 2D array of booleans that is used when
+   * making walls
+   */
   public void addDoorways()
   {
     for(Doorway doorway: doorwayList)
@@ -61,6 +91,10 @@ public class Room
     }
   }
 
+  /**
+   * Called to build the Room once the Doorways
+   * have been copied.
+   */
   public void init()
   {
     makeRoom();
@@ -73,11 +107,44 @@ public class Room
     return isHallway;
   }
 
+  /**
+   *
+   * @param y coord of Tile object to be assigned
+   * @param x coord of Tile object to be assigned
+   * @param tile Tile to assign
+   */
   public void setTileAt(int y, int x, Tile tile) {tiles[y][x] = tile;}
+
+  /**
+   *
+   * @param y coord of Tile object to be retrieved
+   * @param x coord of Tile object to be retrieved
+   * @return the corresponding Tile
+   */
   public Tile getTileAt(int y, int x){return tiles[y][x];}
+
+  /**
+   * Getter for room's startX
+   * @return startX
+   */
   public int getStartX(){return startX;}
+
+  /**
+   * Getter for room's startY
+   * @return startY
+   */
   public int getStartY(){return startY;}
+
+  /**
+   * Getter for room's width
+   * @return width
+   */
   public int getWidth(){return width;}
+
+  /**
+   * Getter for room's height
+   * @return height
+   */
   public int getHeight(){return height;}
 
   private void makeRoom()
@@ -108,6 +175,10 @@ public class Room
   }
 
 
+  /**
+   * Given a random chance < 0.01 for each tile in the room,
+   * make a zombie on that tile
+   */
   public void spawnZombies()
   {
     for (int i = startY+1; i < (startY+height-2); i++)
@@ -123,6 +194,10 @@ public class Room
     }
   }
 
+  /**
+   * Given a random chance < 0.01 for each tile in the room,
+   * make a firetrap on that tile
+   */
   public void spawnFireTraps()
   {
     for (int i = startY+1; i < (startY+height-2); i++)
@@ -138,51 +213,65 @@ public class Room
     }
   }
 
-  private void makeWallHoriz(int startY)
+
+  public boolean isLeaf()
+  {
+    return isLeaf;
+  }
+
+  private void makeWallHoriz(int startY, House.Direction dir)
   {
     int tileSize = Settings.tileSize;
     int endX = (startX+1)+(width-1);
     int tmpStartX = (startX+1)*tileSize;
     int tmpStartY = startY*tileSize;
     int tmpEndX;
+    Wall newWall = null;
+    boolean hasDoor = false;
     for (int i = startX+1; i <= endX-2; i++)
     {
       if(doorways[startY][i])
       {
+        hasDoor = true;
         tmpEndX = (i)*tileSize;
-        Wall northWall = new Wall(tmpStartX, tmpEndX, tmpStartY, tmpStartY+tileSize);
-        entityManager.add(northWall);
+        newWall = new Wall(tmpStartX, tmpEndX, tmpStartY, tmpStartY+tileSize, dir);
+        entityManager.add(newWall);
         tmpStartX = (i+1)*tileSize;
       }
       if(i == endX-2)
       {
-        Wall northWall = new Wall(tmpStartX, (endX-1)*tileSize, tmpStartY, tmpStartY+tileSize);
-        entityManager.add(northWall);
+        newWall = new Wall(tmpStartX, (endX-1)*tileSize, tmpStartY, tmpStartY+tileSize, dir);
+        entityManager.add(newWall);
+        if(!hasDoor) wallList.add(newWall);
       }
     }
   }
 
 
 
-  private void makeWallVert(int startX)
+  private void makeWallVert(int startX, House.Direction dir)
   {
     int tileSize = Settings.tileSize;
     int endY = startY+(height-1);
     int tmpStartY = startY*tileSize;
     int tmpEndY;
+    boolean hasDoor = false;
+    Wall newWall = null;
     for (int i = startY; i <= endY; i++)
     {
       if(doorways[i][startX])
       {
+        hasDoor = true;
         tmpEndY = (i)*tileSize;
-        Wall westWall = new Wall(startX*tileSize,(startX+1)*tileSize, tmpStartY, tmpEndY);
-        entityManager.add(westWall);
+        newWall = new Wall(startX*tileSize,(startX+1)*tileSize, tmpStartY, tmpEndY, dir);
+        entityManager.add(newWall);
         tmpStartY = (i+1)*tileSize;
       }
       if(i == endY)
       {
-        Wall westWall = new Wall(startX*tileSize, (startX+1)*tileSize, tmpStartY, (endY+1)*tileSize);
-        entityManager.add(westWall);
+        newWall = new Wall(startX*tileSize, (startX+1)*tileSize, tmpStartY, (endY+1)*tileSize, dir);
+        entityManager.add(newWall);
+        if(!hasDoor) wallList.add(newWall);
       }
     }
   }
@@ -193,9 +282,9 @@ public class Room
   {
     int endX = startX+(width-1);
     int endY = startY+(height-1);
-    makeWallHoriz(startY);
-    makeWallHoriz(endY);
-    makeWallVert(startX);
-    makeWallVert(endX);
+    makeWallHoriz(startY, House.Direction.NORTH);
+    makeWallHoriz(endY, House.Direction.SOUTH);
+    makeWallVert(startX, House.Direction.WEST);
+    makeWallVert(endX, House.Direction.EAST);
   }
 }

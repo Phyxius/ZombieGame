@@ -18,7 +18,7 @@ public class Trap extends Entity
   {
     this.position = position;
     tileSize = Settings.tileSize;
-    trapImg = ResourceManager.getImage("stills/firetrap.png");
+    trapImg = ResourceManager.getImage("fire/firetrap.png");
   }
 
   @Override

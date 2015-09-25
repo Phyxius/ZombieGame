@@ -28,6 +28,12 @@ public class Graph<T>
       return (Objects.equals(a, other.a) && Objects.equals(b, other.b)) ||
           (Objects.equals(a, other.b) && Objects.equals(b, other.a));
     }
+
+    @Override
+    public int hashCode()
+    {
+      return a.hashCode() + b.hashCode();
+    }
   }
 
   @SafeVarargs

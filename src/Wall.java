@@ -6,8 +6,16 @@ import java.awt.geom.Rectangle2D;
 public class Wall extends Entity
 {
   Rectangle2D.Float box;
-  public Wall(int startX, int endX,int startY, int endY)
+  private House.Direction direction;
+  private int startX, startY;
+  private int endX, endY;
+  public Wall(int startX, int endX,int startY, int endY, House.Direction direction)
   {
+    this.direction = direction;
+    this.startX = startX;
+    this.startY = startY;
+    this.endX = endX;
+    this.endY = endY;
     makeBoundingBox(startX, endX, startY, endY);
   }
 
@@ -26,5 +34,30 @@ public class Wall extends Entity
   private void makeBoundingBox(int startX, int endX,int startY, int endY)
   {
     box = new Rectangle2D.Float(startX, startY, endX-startX, endY-startY);
+  }
+
+  public House.Direction getDirection()
+  {
+    return direction;
+  }
+
+  public int getStartX()
+  {
+    return startX;
+  }
+
+  public int getStartY()
+  {
+    return startY;
+  }
+
+  public int getEndX()
+  {
+    return endX;
+  }
+
+  public int getEndY()
+  {
+    return endY;
   }
 }
