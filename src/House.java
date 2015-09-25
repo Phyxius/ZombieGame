@@ -53,8 +53,8 @@ public class House extends Entity
     roomList.add(startRoom);
     Doorway randStartDoor = initDoorways.get(0);
     generateRoomList(randStartDoor, randStartDoor.getSideOfRoom(), startRoom, 1);
-    Doorway randStartDoor2 = initDoorways.get(1);
-    generateRoomList(randStartDoor2, randStartDoor2.getSideOfRoom(), startRoom, 1);
+    //Doorway randStartDoor2 = initDoorways.get(1);
+    //generateRoomList(randStartDoor2, randStartDoor2.getSideOfRoom(), startRoom, 1);
     startRoom.addDoorways();
     startRoom.init();
     copyObjectsToGrid();
@@ -209,7 +209,7 @@ public class House extends Entity
     //for (Direction dir: directions)
     //{
       initDoorways.add(makeNewDoorway(dir, startX, startY, width, height));
-      initDoorways.add(makeNewDoorway(dir1, startX, startY, width, height));
+      //initDoorways.add(makeNewDoorway(dir1, startX, startY, width, height));
     //}
     startRoom.setDoorways(initDoorways);
     return startRoom;
@@ -462,7 +462,7 @@ public class House extends Entity
     for(Room room: roomList)
     {
       Collections.shuffle(room.wallList);
-      if(room.isLeaf())
+      if(room.isLeaf() && !room.equals(startRoom))
       {
         for(Wall wall: room.wallList)
         {
