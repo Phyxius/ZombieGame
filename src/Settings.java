@@ -13,6 +13,7 @@ public class Settings
   public static float playerWalk; // pixels/sec
   public static float playerRun; // pixels/sec
   public static float playerStamina; // sec * frameRate
+  public static float playerHearing;
   public static float playerStaminaRegen;
   public static double minAngle; // in Radians
   public static int numObjectsGuranteed; //Rooms + hallways
@@ -20,7 +21,7 @@ public class Settings
 
   static //ensures correct order of assignment
   {
-    tileSize = 10;
+    tileSize = 20;
     frameRate = 60;
     numObjectsGuranteed = 11;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
@@ -29,5 +30,6 @@ public class Settings
     playerStaminaRegen = 0.20f * Settings.frameRate;
     minAngle = 0.25 * Math.PI;
     fireDuration = 15 * frameRate;
+    playerHearing = 10;
   }
 }

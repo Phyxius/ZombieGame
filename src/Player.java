@@ -17,7 +17,8 @@ public class Player extends Entity implements LightSource, Detonator
   private float stamina;
   private boolean staminaDepleted = false;
   private boolean isPickingUp;
-  private int pickUpCounter = 0;
+  private boolean isPlacing;
+  private int progressCounter = 0;
   private int soundCounter = 0;
   private int trapsInInventory = 1;
   private Trap collidingTrap = null;
@@ -40,9 +41,9 @@ public class Player extends Entity implements LightSource, Detonator
     int tileSize = Settings.tileSize;
     local.setColor(Color.YELLOW);
     local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
-    if (isPickingUp())
+    if (isPickingUp() || isPlacing)
     {
-      pickUpBar.setPosition(Settings.tileSize / 2, Settings.tileSize / 4);
+      pickUpBar.setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2), (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
       pickUpBar.setWidth(2 * Settings.tileSize);
       pickUpBar.setHeight(Settings.tileSize / 4);
       pickUpBar.draw(null, global, null);
@@ -68,14 +69,14 @@ public class Player extends Entity implements LightSource, Detonator
   @Override
   public void update(UpdateManager e)
   {
-    if (isPickingUp())
+    if (isPickingUp() || isPlacing)
     {
       increaseStamina();
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
-        pickUpCounter++;
+        progressCounter++;
         updatePickUpBar();
-        if (pickUpCounter % (5 * Settings.frameRate) == 0)
+        if (progressCounter % (5 * Settings.frameRate) == 0)
         {
           trapsInInventory++;
           e.remove(collidingTrap);
@@ -84,11 +85,26 @@ public class Player extends Entity implements LightSource, Detonator
           playerPickup.stop();
         }
       }
+      else if (e.isKeyPressed(KeyEvent.VK_T))
+      {
+        progressCounter++;
+        updatePickUpBar();
+        if (progressCounter % (5 * Settings.frameRate) == 0)
+        {
+          trapsInInventory--;
+          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
+          e.add(trap);
+          collidingTrap = trap;
+          isPlacing = false;
+          playerPickup.stop();
+        }
+      }
       else
       {
+        isPlacing = false;
         isPickingUp = false;
         playerPickup.stop();
-        pickUpCounter = 0;
+        progressCounter = 0;
       }
     }
     else
@@ -106,7 +122,7 @@ public class Player extends Entity implements LightSource, Detonator
 
       if (movementMagnitude != 0)
       {
-        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !isStaminaDepleted();
+        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
       }
       else
@@ -117,20 +133,27 @@ public class Player extends Entity implements LightSource, Detonator
       if (e.isKeyPressed(KeyEvent.VK_P) && collidingTrap != null)
       {
         isPickingUp = true;
-        pickUpCounter++;
+        progressCounter++;
         playerPickup.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
       {
-        pickUpCounter = 0;
+        progressCounter = 0;
         isPickingUp = false;
       }
 
       if (e.isKeyPressed(KeyEvent.VK_T) && trapsInInventory > 0 && collidingTrap == null)
       {
-        e.add(new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize)));
-        trapsInInventory--;
+        progressCounter++;
+        isPlacing = true;
+        playerPickup.play(0.0, 1.0);
+        updatePickUpBar();
+      }
+      else
+      {
+        progressCounter = 0;
+        isPlacing = false;
       }
     }
   }
@@ -148,12 +171,14 @@ public class Player extends Entity implements LightSource, Detonator
   private boolean isStaminaDepleted()
   {
     staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
+    staminaBar.setColor(staminaDepleted ? Color.RED : Color.GREEN);
     return staminaDepleted;
   }
 
   private void increaseStamina()
   {
     if (++stamina > Settings.playerStamina) stamina = Settings.playerStamina;
+    isStaminaDepleted();
     updateStaminaBar();
   }
 
@@ -161,7 +186,7 @@ public class Player extends Entity implements LightSource, Detonator
   {
     if (stamina > 0) stamina--;
     else stamina = 0;
-//    System.out.println (stamina);
+    isStaminaDepleted();
     updateStaminaBar();
   }
 
@@ -173,7 +198,7 @@ public class Player extends Entity implements LightSource, Detonator
 
   private void updatePickUpBar()
   {
-    pickUpBar.setCurrentValue(pickUpCounter);
+    pickUpBar.setCurrentValue(progressCounter);
     pickUpBar.setMaxValue(5 * Settings.frameRate);
   }
 
@@ -257,6 +282,7 @@ public class Player extends Entity implements LightSource, Detonator
     private final String label;
     private final Point2D.Float position;
     private final Font font;
+    private Color color;
     private int fontSize;
     private int currentValue;
     private int maxValue;
@@ -270,9 +296,15 @@ public class Player extends Entity implements LightSource, Detonator
       setMaxValue(-1);
       setWidth(2 * Settings.tileSize);
       setHeight(Settings.tileSize / 4);
+      setColor(Color.GREEN);
       this.label = label;
       this.position = new Point2D.Float();
       this.font = font;
+    }
+
+    public void setColor(Color color)
+    {
+      this.color = color;
     }
 
     private void setHeight(int height)
@@ -318,26 +350,17 @@ public class Player extends Entity implements LightSource, Detonator
         global.setFont(font);
 
         Color originalColor = global.getColor();
-        global.setColor(Color.GREEN);
+        global.setColor(color);
 
         int x = (int) position.x;
         int y = (int) position.y;
         global.drawString(label, x, y);
         x += global.getFontMetrics().stringWidth(label);
         y -= global.getFontMetrics().getHeight() / 2;
-        if (currentValue == 0)
-        {
-          global.setColor(Color.RED);
-          global.drawRect(x, y, width, height);
-        }
-        else
-        {
-          global.drawRect(x, y, width, height);
-          global.fillRect(x + 2, y + 2, (int) ((double) currentValue / maxValue * (width - 4)), height - 4);
-          global.setColor(Color.BLACK);
-          global.drawRect(x + 1, y + 1, width - 2, height - 2);
-        }
-
+        global.drawRect(x, y, width, height);
+        global.fillRect(x + 2, y + 2, (int) ((double) currentValue / maxValue * (width - 4)), height - 4);
+        global.setColor(Color.BLACK);
+        global.drawRect(x + 1, y + 1, width - 2, height - 2);
         global.setFont(originalFont);
         global.setColor(originalColor);
       }
