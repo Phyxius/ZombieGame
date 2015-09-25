@@ -4,15 +4,15 @@ import java.awt.geom.Point2D;
 import java.util.Collection;
 
 /**
- * Created by Rashid on 07/09/15.
- * The Generic template for the zombies in the game.
+ * Created by Mohammad R. Yousefi on 07/09/15.
+ * A simple zombie that moves in straight lines until reaching a solid obstacle.
  */
 class LineZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
-  private int soundCounter = 0;
   private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
+  private int soundCounter = 0;
   private boolean moving = true;
 
   LineZombie(Player player, Point2D.Float position)
@@ -28,7 +28,6 @@ class LineZombie extends ZombieModel
   @Override
   public void update(UpdateManager e)
   {
-
     if (updateCount % decisionRate == 0)
     {
       if (playerPosition == null)
@@ -93,12 +92,11 @@ class LineZombie extends ZombieModel
       //zombieStep.stop();
       soundCounter++;
     }
-
     updateCount++;
   }
 
   /**
-   * Draws the object to the screen
+   * Draws the zombie.
    * @param local Draws at the position of the zombie.
    * @param global Draws at the top left corner of the screen.
    * @param drawingManager The drawing manager for this object.
@@ -113,7 +111,7 @@ class LineZombie extends ZombieModel
   }
 
   /**
-   * Called when another object collides with this object.
+   * Informs the zombie to react to a collision.
    * @param other The object that collides with this object.
    * @param collisionManager The manager for this collision.
    */

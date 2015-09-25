@@ -1,13 +1,13 @@
 /**
- * Created by rashid on 9/23/2015.
- * This interface marks any objects as a Trap detonator.
+ * Created by Mohammad R. Yousefi on 9/23/2015.
+ * Provides the functionality of a simple detonator.
  * @see Trap
  */
 public interface Detonator
 {
   /**
-   * Determines whether the trigger is activated.
-   * @return True if the trigger is activated otherwise false.
+   * Simulates the press of a trigger.
+   * @return Returns true upon a successful activation of the detonator.
    */
   default boolean trigger()
   {
