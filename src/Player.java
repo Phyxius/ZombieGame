@@ -171,6 +171,7 @@ public class Player extends Entity implements LightSource, Detonator
   private boolean isStaminaDepleted()
   {
     staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
+    staminaBar.setColor(staminaDepleted ? Color.RED : Color.GREEN);
     return staminaDepleted;
   }
 
@@ -280,6 +281,7 @@ public class Player extends Entity implements LightSource, Detonator
     private final String label;
     private final Point2D.Float position;
     private final Font font;
+    private Color color;
     private int fontSize;
     private int currentValue;
     private int maxValue;
@@ -293,9 +295,15 @@ public class Player extends Entity implements LightSource, Detonator
       setMaxValue(-1);
       setWidth(2 * Settings.tileSize);
       setHeight(Settings.tileSize / 4);
+      setColor(Color.GREEN);
       this.label = label;
       this.position = new Point2D.Float();
       this.font = font;
+    }
+
+    public void setColor(Color color)
+    {
+      this.color = color;
     }
 
     private void setHeight(int height)
@@ -341,26 +349,17 @@ public class Player extends Entity implements LightSource, Detonator
         global.setFont(font);
 
         Color originalColor = global.getColor();
-        global.setColor(Color.GREEN);
+        global.setColor(color);
 
         int x = (int) position.x;
         int y = (int) position.y;
         global.drawString(label, x, y);
         x += global.getFontMetrics().stringWidth(label);
         y -= global.getFontMetrics().getHeight() / 2;
-        if (currentValue == 0)
-        {
-          global.setColor(Color.RED);
-          global.drawRect(x, y, width, height);
-        }
-        else
-        {
-          global.drawRect(x, y, width, height);
-          global.fillRect(x + 2, y + 2, (int) ((double) currentValue / maxValue * (width - 4)), height - 4);
-          global.setColor(Color.BLACK);
-          global.drawRect(x + 1, y + 1, width - 2, height - 2);
-        }
-
+        global.drawRect(x, y, width, height);
+        global.fillRect(x + 2, y + 2, (int) ((double) currentValue / maxValue * (width - 4)), height - 4);
+        global.setColor(Color.BLACK);
+        global.drawRect(x + 1, y + 1, width - 2, height - 2);
         global.setFont(originalFont);
         global.setColor(originalColor);
       }
