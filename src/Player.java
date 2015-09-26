@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
  */
 public class Player extends Entity implements Detonator
 {
+  public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
   private final SoundEffect footstepSfx = new SoundEffect("soundfx/player_footstep.mp3");
   private final Animation idleAnimation = new Animation("animation/player/idle_", 8, true);
   private final Animation moveAnimation = new Animation("animation/player/move_", 13, true);
@@ -72,8 +73,7 @@ public class Player extends Entity implements Detonator
     global.drawImage(ResourceManager.getImage(trapIconPath), Settings.tileSize,
         (int) (global.getClipBounds().getHeight() - 2.5 * Settings.tileSize), Settings.tileSize, Settings.tileSize,
         null);
-    Font font = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
-    global.setFont(font);
+    global.setFont(UI_FONT);
     global.setColor(Color.GREEN);
     global.drawString("X " + trapsInInventory, (int) (2.3 * Settings.tileSize),
         (int) (global.getClipBounds().getHeight() - 1.8 * Settings.tileSize));
