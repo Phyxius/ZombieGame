@@ -1,13 +1,15 @@
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class Path <T>
 {
-  private final LinkedHashSet<T> nodes;
+  private final ArrayList<T> nodes;
   private float totalPathCost;
 
-  public Path(LinkedHashSet<T> nodes, float totalPathCost)
+  public Path(Set<T> nodes, float totalPathCost)
   {
-    this.nodes = nodes;
+    this.nodes = new ArrayList<>(nodes);
     this.totalPathCost = totalPathCost;
   }
 
@@ -16,9 +18,9 @@ public class Path <T>
     this(new LinkedHashSet<>(), 0);
   }
 
-  public LinkedHashSet<T> getNodes()
+  public ArrayList<T> getNodes()
   {
-    return new LinkedHashSet<>(nodes);
+    return new ArrayList<>(nodes);
   }
 
   public float getTotalPathCost()
