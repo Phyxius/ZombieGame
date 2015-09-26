@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Created by Rashid on 07/09/15.
@@ -19,6 +18,9 @@ abstract class ZombieModel extends Entity implements Detonator
   protected double directionAngle; // 0 - 2 * PI
   protected boolean collision;
   protected double minAngle;
+  protected boolean loud;
+  protected double distanceFromPlayer;
+
 
   /**
    * Constructs a zombie using default values in Settings.
@@ -76,19 +78,16 @@ abstract class ZombieModel extends Entity implements Detonator
    */
   void detectPlayer()
   {
-    Rectangle2D.Float playerBox = player.getBoundingBox();
-    Rectangle2D.Float zombieBox = this.getBoundingBox();
-    Point2D.Double playerCenter = new Point2D.Double(playerBox.getCenterX(), playerBox.getCenterY());
-    Point2D.Double zombieCenter = new Point2D.Double(zombieBox.getCenterX(), zombieBox.getCenterY());
-
-    if (playerCenter.distance(zombieCenter) <= smell)
+    distanceFromPlayer = position.distance(player.getPosition()) / Settings.tileSize;
+    if (distanceFromPlayer <= smell)
     {
-      playerPosition = new Point2D.Float((float) playerCenter.x, (float) playerCenter.y);
+//      playerPosition = new Point2D.Float((float) player.getBoundingBox().getCenterX(), (float) player.getBoundingBox().getCenterY());
     }
     else
     {
       playerPosition = null;
     }
+    loud = distanceFromPlayer <= Settings.playerHearing;
   }
 
   /**
@@ -98,17 +97,6 @@ abstract class ZombieModel extends Entity implements Detonator
    */
   @Override
   public boolean isSolid()
-  {
-    return true;
-  }
-
-  /**
-   * Trigger value for zombies.
-   *
-   * @return By default all zombies trigger Traps.
-   */
-  @Override
-  public boolean trigger()
   {
     return true;
   }

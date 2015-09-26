@@ -1,7 +1,11 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created by Rashid on 07/09/15.
@@ -9,49 +13,91 @@ import java.awt.geom.Rectangle2D;
  */
 public class Player extends Entity implements LightSource, Detonator
 {
-  private Point2D.Float position = new Point2D.Float(44 * Settings.tileSize, 45 * Settings.tileSize);
+  private final SoundEffect FOOTSTEP_SFX = new SoundEffect("soundfx/player_footstep.mp3");
+  ;
+  private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
+  private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
+  private final ProgressBar STAMINA_PROGRESS_BAR = new ProgressBar("gui/label_stamina.png");
+  private final String TRAP_ICON_PATH = "fire/firetrap.png";
+  private final SoundEffect TRAP_INTERACTION_SFX = new SoundEffect("soundfx/player_pickup.mp3");
+  private final ProgressBar TRAP_PROGRESS_BAR = new ProgressBar("");
   private Point2D.Float center = new Point2D.Float();
-  private final SoundEffect playerFootsteps;
-  private final SoundEffect playerPickup;
-  private boolean isRunning = false;
-  private float stamina;
-  private boolean staminaDepleted = false;
-  private boolean isPickingUp;
-  private int pickUpCounter = 0;
-  private int soundCounter = 0;
-  private int trapsInInventory = 1;
   private Trap collidingTrap = null;
-  private final ProgressBar pickUpBar;
-  private final ProgressBar staminaBar;
+  private boolean flipAnimation;
+  private boolean isPickingUp;
+  private boolean isPlacing;
+  private boolean isRunning = false;
+  private boolean moving;
+  private Point2D.Float position = new Point2D.Float(44 * Settings.tileSize, 45 * Settings.tileSize);
+  private int progressCounter = 0;
+  private int soundCounter = 0;
+  private float stamina = Settings.playerStamina;
+  private boolean staminaDepleted;
+  private int trapsInInventory = 1;
 
   public Player()
   {
-    playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
-    playerPickup = new SoundEffect("soundfx/player_pickup.mp3");
-    pickUpBar = new ProgressBar("", new Font("SansSerif", Font.PLAIN, Settings.tileSize / 4));
-    staminaBar = new ProgressBar("Stamina ", new Font("SansSerif", Font.PLAIN, Settings.tileSize / 4));
-    stamina = Settings.playerStamina;
     this.setLightLocation(getBoundingBox());
   }
 
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
-    int tileSize = Settings.tileSize;
-    local.setColor(Color.YELLOW);
-    local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
-    if (isPickingUp())
+    AffineTransform transformer = new AffineTransform();
+    if (flipAnimation)
     {
-      pickUpBar.setPosition(Settings.tileSize / 2, Settings.tileSize / 4);
-      pickUpBar.setWidth(2 * Settings.tileSize);
-      pickUpBar.setHeight(Settings.tileSize / 4);
-      pickUpBar.draw(null, global, null);
+      BufferedImage frame = (moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame());
+      transformer.scale(-1, 1);
+      transformer.translate(-frame.getWidth(), 0);
+      AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+      frame = opTransformer.filter(frame, null);
+      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
+          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
+      local.drawImage(frame, transformer, null);
     }
+    else
+    {
+      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
+          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
+      local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), transformer, null);
+    }
+    if (isPickingUp() || isPlacing)
+    {
+      TRAP_PROGRESS_BAR
+          .setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2),
+              (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
+      TRAP_PROGRESS_BAR.draw(null, global, null);
+    }
+      STAMINA_PROGRESS_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
+          Settings.tileSize);
+    STAMINA_PROGRESS_BAR.draw(null, global, null);
 
-    staminaBar.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() - Settings.tileSize);
-    staminaBar.setWidth(2 * Settings.tileSize);
-    staminaBar.setHeight(Settings.tileSize / 4);
-    staminaBar.draw(null, global, null);
+    global.drawImage(ResourceManager.getImage(TRAP_ICON_PATH), Settings.tileSize,
+        (int) (global.getClipBounds().getHeight() - 2.5 * Settings.tileSize), Settings.tileSize, Settings.tileSize,
+        null);
+    Font font = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
+    global.setFont(font);
+    global.setColor(Color.GREEN);
+    global.drawString("X " + trapsInInventory, (int) (2.3 * Settings.tileSize),
+        (int) (global.getClipBounds().getHeight() - 1.8 * Settings.tileSize));
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return 110;
+  }
+
+  @Override
+  public Point2D.Float getLightLocation()
+  {
+    return center;
+  }
+
+  @Override
+  public void setLightLocation(Point2D.Float location)
+  {
+    center.setLocation(location.getX(), location.getY());
   }
 
   @Override
@@ -60,35 +106,60 @@ public class Player extends Entity implements LightSource, Detonator
     return this.position;
   }
 
-  private boolean isRunning()
+  @Override
+  public void setLightLocation(Rectangle2D.Float boundingBox)
   {
-    return isRunning;
+    center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
+  }
+
+  @Override
+  public boolean trigger()
+  {
+    return isRunning();
   }
 
   @Override
   public void update(UpdateManager e)
   {
-    if (isPickingUp())
+    if (isPickingUp() || isPlacing)
     {
       increaseStamina();
+      IDLE_ANIMATION.nextFrame(moving);
+      moving = false;
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
-        pickUpCounter++;
+        progressCounter++;
         updatePickUpBar();
-        if (pickUpCounter % (5 * Settings.frameRate) == 0)
+        if (progressCounter % (5 * Settings.frameRate) == 0)
         {
           trapsInInventory++;
           e.remove(collidingTrap);
           collidingTrap = null;
           isPickingUp = false;
-          playerPickup.stop();
+          TRAP_INTERACTION_SFX.stop();
+        }
+      }
+      else if (e.isKeyPressed(KeyEvent.VK_T))
+      {
+        progressCounter++;
+        updatePickUpBar();
+        if (progressCounter % (5 * Settings.frameRate) == 0)
+        {
+          trapsInInventory--;
+          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize,
+              (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
+          e.add(trap);
+          collidingTrap = trap;
+          isPlacing = false;
+          TRAP_INTERACTION_SFX.stop();
         }
       }
       else
       {
+        isPlacing = false;
         isPickingUp = false;
-        playerPickup.stop();
-        pickUpCounter = 0;
+        TRAP_INTERACTION_SFX.stop();
+        progressCounter = 0;
       }
     }
     else
@@ -98,7 +169,8 @@ public class Player extends Entity implements LightSource, Detonator
       if (e.isKeyPressed(KeyEvent.VK_RIGHT) || e.isKeyPressed(KeyEvent.VK_D)) xMovement += 1;
       if (e.isKeyPressed(KeyEvent.VK_UP) || e.isKeyPressed(KeyEvent.VK_W)) yMovement -= 1;
       if (e.isKeyPressed(KeyEvent.VK_DOWN) || e.isKeyPressed(KeyEvent.VK_S)) yMovement += 1;
-
+      if (xMovement > 0) flipAnimation = false;
+      else if (xMovement < 0) flipAnimation = true;
       // Normalize movement vector.
       double movementMagnitude = Math.sqrt(xMovement * xMovement + yMovement * yMovement);
       xMovement /= movementMagnitude;
@@ -106,75 +178,44 @@ public class Player extends Entity implements LightSource, Detonator
 
       if (movementMagnitude != 0)
       {
-        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !isStaminaDepleted();
+        isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
+        MOVE_ANIMATION.nextFrame(!moving);
+        moving = true;
       }
       else
       {
+        IDLE_ANIMATION.nextFrame(moving);
+        moving = false;
         increaseStamina();
       }
 
       if (e.isKeyPressed(KeyEvent.VK_P) && collidingTrap != null)
       {
         isPickingUp = true;
-        pickUpCounter++;
-        playerPickup.play(0.0, 1.0);
+        progressCounter++;
+        TRAP_INTERACTION_SFX.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
       {
-        pickUpCounter = 0;
+        progressCounter = 0;
         isPickingUp = false;
       }
 
       if (e.isKeyPressed(KeyEvent.VK_T) && trapsInInventory > 0 && collidingTrap == null)
       {
-        e.add(new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize)));
-        trapsInInventory--;
+        progressCounter++;
+        isPlacing = true;
+        TRAP_INTERACTION_SFX.play(0.0, 1.0);
+        updatePickUpBar();
+      }
+      else
+      {
+        progressCounter = 0;
+        isPlacing = false;
       }
     }
-  }
-
-  private boolean isPickingUp()
-  {
-    return isPickingUp;
-  }
-
-  /**
-   * Used to indicate that stamina was recently depleted.
-   *
-   * @return Returns a true value while stamina < Settings.frameRate * 2 (2 seconds) after the player stamina reaches zero.
-   */
-  private boolean isStaminaDepleted()
-  {
-    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
-    return staminaDepleted;
-  }
-
-  private void increaseStamina()
-  {
-    if (++stamina > Settings.playerStamina) stamina = Settings.playerStamina;
-    updateStaminaBar();
-  }
-
-  private void decreaseStamina()
-  {
-    if (stamina > 0) stamina--;
-    else stamina = 0;
-//    System.out.println (stamina);
-    updateStaminaBar();
-  }
-
-  private void updateStaminaBar()
-  {
-    staminaBar.setCurrentValue((int) stamina);
-    staminaBar.setMaxValue((int) Settings.playerStamina);
-  }
-
-  private void updatePickUpBar()
-  {
-    pickUpBar.setCurrentValue(pickUpCounter);
-    pickUpBar.setMaxValue(5 * Settings.frameRate);
   }
 
   private boolean checkCollision(UpdateManager manager, float xPosition, float yPosition)
@@ -193,6 +234,43 @@ public class Player extends Entity implements LightSource, Detonator
     return returnValue[0];
   }
 
+  private void decreaseStamina()
+  {
+    if (stamina > 0) stamina--;
+    else stamina = 0;
+    isStaminaDepleted();
+    updateStaminaBar();
+  }
+
+  private void increaseStamina()
+  {
+    if (++stamina > Settings.playerStamina) stamina = Settings.playerStamina;
+    isStaminaDepleted();
+    updateStaminaBar();
+  }
+
+  private boolean isPickingUp()
+  {
+    return isPickingUp;
+  }
+
+  private boolean isRunning()
+  {
+    return isRunning;
+  }
+
+  /**
+   * Used to indicate that stamina was recently depleted.
+   *
+   * @return Returns a true value while stamina < Settings.frameRate * 2 (2 seconds) after the player stamina reaches zero.
+   */
+  private boolean isStaminaDepleted()
+  {
+    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
+    STAMINA_PROGRESS_BAR.changeColor(staminaDepleted);
+    return staminaDepleted;
+  }
+
   private void move(float x, float y, float xMovement, float yMovement, boolean isRunning, UpdateManager manager)
   {
     if (isRunning)
@@ -206,7 +284,7 @@ public class Player extends Entity implements LightSource, Detonator
       else // successful movement
       {
         setLightLocation(getBoundingBox());
-        if (soundCounter % (Settings.frameRate / 4) == 0) playerFootsteps.play(0.0, 10);
+        if (soundCounter % (Settings.frameRate / 2) == 0) FOOTSTEP_SFX.play(0.0, 10);
         soundCounter++;
         decreaseStamina();
       }
@@ -222,72 +300,68 @@ public class Player extends Entity implements LightSource, Detonator
       else //successful movement
       {
         setLightLocation(getBoundingBox());
-        if (soundCounter % (Settings.frameRate / 3) == 0) playerFootsteps.play(0.0, 10);
+        if (soundCounter % Settings.frameRate == 0) FOOTSTEP_SFX.play(0.0, 10);
         soundCounter++;
       }
     }
   }
 
-  @Override
-  public Point2D.Float getLightLocation()
+  private void updatePickUpBar()
   {
-    return center;
+    TRAP_PROGRESS_BAR.setCurrentValue(progressCounter);
+    TRAP_PROGRESS_BAR.setMaxValue(5 * Settings.frameRate);
   }
 
-  @Override
-  public void setLightLocation(Point2D.Float location)
+  private void updateStaminaBar()
   {
-    center.setLocation(location.getX(), location.getY());
-  }
-
-  @Override
-  public void setLightLocation(Rectangle2D.Float boundingBox)
-  {
-    center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
-  }
-
-  @Override
-  public boolean trigger()
-  {
-    return isRunning();
+    STAMINA_PROGRESS_BAR.setCurrentValue((int) stamina);
+    STAMINA_PROGRESS_BAR.setMaxValue((int) Settings.playerStamina);
   }
 
   private class ProgressBar
   {
-    private final String label;
-    private final Point2D.Float position;
-    private final Font font;
-    private int fontSize;
+    private final BufferedImage[] imageList = new BufferedImage[5];
+    private final Point2D.Float POSITION;
+    private boolean changeColor;
     private int currentValue;
     private int maxValue;
-    private int width;
-    private int height;
 
-    ProgressBar(String label, Font font)
+    ProgressBar(String labelPath)
     {
-      setFontSize(6);
+
+      if (!labelPath.equals("")) imageList[0] =  ResourceManager.getImage(labelPath);
+      imageList[1] = ResourceManager.getImage("gui/progress_border_green.png");
+      imageList[2] = ResourceManager.getImage("gui/progress_fill_green.png");
+      imageList[3] = ResourceManager.getImage("gui/progress_border_red.png");
+      imageList[4] = ResourceManager.getImage("gui/progress_fill_red.png");
       setCurrentValue(-1);
       setMaxValue(-1);
-      setWidth(2 * Settings.tileSize);
-      setHeight(Settings.tileSize / 4);
-      this.label = label;
-      this.position = new Point2D.Float();
-      this.font = font;
+      this.POSITION = new Point2D.Float();
     }
 
-    private void setHeight(int height)
+    public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
     {
-      this.height = (height < 5 ? 5 : height);
-    }
-
-    public void setWidth(int width)
-    {
-      this.width = (width < 5 ? 5 : width);
-    }
-
-    public void setMaxValue(int maxValue)
-    {
-      this.maxValue = maxValue;
+      int xPosition = (int) POSITION.getX();
+      int yPosition = (int) POSITION.getY();
+      int imageWidth = 2 * Settings.tileSize;
+      int imageHeight = (int) (0.375 * Settings.tileSize);
+      int offset = 0;
+      if (imageList[0] != null)
+      {
+        offset = imageWidth;
+        global.drawImage(imageList[0], xPosition, yPosition, imageWidth, imageHeight, null);
+      }
+      int fillWidth = (int) ((float) currentValue / maxValue * imageWidth);
+      if (changeColor)
+      {
+        global.drawImage(imageList[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(imageList[4], xPosition + offset, yPosition, fillWidth , imageHeight, null);
+      }
+      else
+      {
+        global.drawImage(imageList[1], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(imageList[2], xPosition + offset, yPosition, fillWidth, imageHeight, null);
+      }
     }
 
     public void setCurrentValue(int currentValue)
@@ -295,52 +369,19 @@ public class Player extends Entity implements LightSource, Detonator
       this.currentValue = currentValue;
     }
 
-    public void setFontSize(int fontSize)
+    public void setMaxValue(int maxValue)
     {
-      if (fontSize < 6) this.fontSize = 6;
-      else if (fontSize < 20) this.fontSize = 20;
-      else this.fontSize = 20;
+      this.maxValue = maxValue;
     }
 
     public void setPosition(float x, float y)
     {
-      this.position.setLocation(x, y);
+      this.POSITION.setLocation(x, y);
     }
 
-    public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
+    public void changeColor (boolean changeColor)
     {
-      if (currentValue > -1)
-      {
-//        if (label.equals("")) System.out.printf ("%s Print Progress, [%5.2f,%5.2f], %d, %d, %d, %d, %d\n", label, position.x, position.y, currentValue, maxValue, width, height, fontSize);
-        setFontSize(Settings.tileSize / 4);
-
-        Font originalFont = global.getFont();
-        global.setFont(font);
-
-        Color originalColor = global.getColor();
-        global.setColor(Color.GREEN);
-
-        int x = (int) position.x;
-        int y = (int) position.y;
-        global.drawString(label, x, y);
-        x += global.getFontMetrics().stringWidth(label);
-        y -= global.getFontMetrics().getHeight() / 2;
-        if (currentValue == 0)
-        {
-          global.setColor(Color.RED);
-          global.drawRect(x, y, width, height);
-        }
-        else
-        {
-          global.drawRect(x, y, width, height);
-          global.fillRect(x + 2, y + 2, (int) ((double) currentValue / maxValue * (width - 4)), height - 4);
-          global.setColor(Color.BLACK);
-          global.drawRect(x + 1, y + 1, width - 2, height - 2);
-        }
-
-        global.setFont(originalFont);
-        global.setColor(originalColor);
-      }
+      this.changeColor = changeColor;
     }
   }
 }

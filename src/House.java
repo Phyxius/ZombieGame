@@ -13,31 +13,43 @@ import java.util.Stack;
  */
 public class House extends Entity
 {
-  public static Tile[][] fullGrid;
+  private Tile[][] fullGrid;
+  private Graph<Point> graphOfGrid;
   private EntityManager entityManager;
   private ArrayList<Room> roomList;
   private ArrayList<Doorway> initDoorways;
   private Player player;
-  public static BufferedImage houseImg;
+  private BufferedImage houseImg;
+  private Room startRoom;
   private int gridHeight, gridWidth;
   private int prevHallDoorX, prevHallDoorY;
 
+  /**
+   * Makes a new House object of specified height and width at (0,0).
+   * Uses recursion to generate a set of rooms of Rooms of random
+   * widths and height, in random positions, completely connected by
+   * hallways. The number of Rooms + Hallways guaranteed to be generated
+   * is determined by numObjectsGenerated in Settings.
+   * @param gridWidth Width of House
+   * @param gridHeight Height of House
+   * @param entityManager a reference to global EntityManager
+   */
   public House(int gridWidth, int gridHeight, EntityManager entityManager)
   {
-    Random generator = new Random();
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
     this.entityManager = entityManager;
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
+    graphOfGrid = new Graph<>();
     fullGrid = new Tile[gridHeight][gridWidth];
     houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 40;
     int roomStartY = 40;
     int startWidth = 8;
     int startHeight = 10;
-    Room startRoom = makeInitRoom(roomStartX, roomStartY, startWidth, startHeight, entityManager);
+    startRoom = makeInitRoom(roomStartX, roomStartY, startWidth, startHeight, entityManager);
     roomList.add(startRoom);
     Doorway randStartDoor = initDoorways.get(0);
     generateRoomList(randStartDoor, randStartDoor.getSideOfRoom(), startRoom, 1);
@@ -46,9 +58,14 @@ public class House extends Entity
     startRoom.addDoorways();
     startRoom.init();
     copyObjectsToGrid();
+    makeExit();
     generateBuffImgHouse();
   }
 
+  /**
+   * Enum for convenience when descibing 2D directions
+   * NORTH, WEST, SOUTH, EAST
+   */
   public enum Direction
   {
     NORTH,WEST,SOUTH,EAST
@@ -265,7 +282,7 @@ public class House extends Entity
       else if(rand >= 0.125) numDoors = 2;
       else if(rand >= 0.0625) numDoors = 3;
     }
-    if(numDoors == 0 && roomList.size() < 11) numDoors = 4;
+    if(numDoors == 0 && roomList.size() < Settings.numObjectsGuranteed) numDoors = 4;
     return numDoors;
   }
 
@@ -433,6 +450,27 @@ public class House extends Entity
         for(int j = startX; j < width; j++)
         {
           fullGrid[i][j] = room.getTileAt(i,j);
+          graphOfGrid.add(new Point(j,i));
+        }
+      }
+    }
+  }
+
+  private void makeExit()
+  {
+    Collections.shuffle(roomList);
+    for(Room room: roomList)
+    {
+      Collections.shuffle(room.wallList);
+      if(room.isLeaf())
+      {
+        for(Wall wall: room.wallList)
+        {
+          if(wall!=null)
+          {
+            entityManager.add(new Exit(wall.getDirection(),wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
+            return;
+          }
         }
       }
     }

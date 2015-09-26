@@ -18,7 +18,7 @@ public class Fire extends Entity implements Detonator
   {
     this.explosionArea = explosionArea;
     numFireFrames = 318;
-    fireBackground = ResourceManager.getImage("stills/firebackground.png");
+    fireBackground = ResourceManager.getImage("fire/firebackground.png");
     fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
   }
 
