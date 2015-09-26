@@ -21,6 +21,11 @@ public class ResourceManager
     imagePaths.add("tileset/outofbounds.png");
     imagePaths.add("fire/firetrap.png");
     imagePaths.add("fire/firebackground.png");
+    imagePaths.add("gui/label_stamina.png");
+    imagePaths.add("gui/progress_border_green.png");
+    imagePaths.add("gui/progress_border_red.png");
+    imagePaths.add("gui/progress_fill_green.png");
+    imagePaths.add("gui/progress_fill_red.png");
     for (int i = 0; i <= 16; i++)
     {
       imagePaths.add("animation/zombie/idle_" + i + ".png");

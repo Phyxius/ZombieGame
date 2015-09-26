@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created by Rashid on 07/09/15.
@@ -16,9 +17,10 @@ public class Player extends Entity implements LightSource, Detonator
   ;
   private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
   private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
-  private final ProgressBar STAMINA_PROGRESS_BAR = new ProgressBar("Stamina ", new Font("SansSerif", Font.PLAIN, Settings.tileSize / 4));
+  private final ProgressBar STAMINA_PROGRESS_BAR = new ProgressBar("gui/label_stamina.png");
+  private final String TRAP_ICON_PATH = "fire/firetrap.png";
   private final SoundEffect TRAP_INTERACTION_SFX = new SoundEffect("soundfx/player_pickup.mp3");
-  private final ProgressBar TRAP_PROGRESS_BAR = new ProgressBar("", new Font("SansSerif", Font.PLAIN, Settings.tileSize / 4));
+  private final ProgressBar TRAP_PROGRESS_BAR = new ProgressBar("");
   private Point2D.Float center = new Point2D.Float();
   private Trap collidingTrap = null;
   private boolean flipAnimation;
@@ -49,26 +51,35 @@ public class Player extends Entity implements LightSource, Detonator
       transformer.translate(-frame.getWidth(), 0);
       AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
       frame = opTransformer.filter(frame, null);
-      transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
+          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
       local.drawImage(frame, transformer, null);
     }
     else
     {
-      transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
+          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
       local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), transformer, null);
     }
     if (isPickingUp() || isPlacing)
     {
-      TRAP_PROGRESS_BAR.setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2), (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
-      TRAP_PROGRESS_BAR.setWidth(2 * Settings.tileSize);
-      TRAP_PROGRESS_BAR.setHeight(Settings.tileSize / 4);
+      TRAP_PROGRESS_BAR
+          .setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2),
+              (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
       TRAP_PROGRESS_BAR.draw(null, global, null);
     }
-
-    STAMINA_PROGRESS_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() - Settings.tileSize);
-    STAMINA_PROGRESS_BAR.setWidth(2 * Settings.tileSize);
-    STAMINA_PROGRESS_BAR.setHeight(Settings.tileSize / 4);
+      STAMINA_PROGRESS_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
+          Settings.tileSize);
     STAMINA_PROGRESS_BAR.draw(null, global, null);
+
+    global.drawImage(ResourceManager.getImage(TRAP_ICON_PATH), Settings.tileSize,
+        (int) (global.getClipBounds().getHeight() - 2.5 * Settings.tileSize), Settings.tileSize, Settings.tileSize,
+        null);
+    Font font = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
+    global.setFont(font);
+    global.setColor(Color.GREEN);
+    global.drawString("X " + trapsInInventory, (int) (2.3 * Settings.tileSize),
+        (int) (global.getClipBounds().getHeight() - 1.8 * Settings.tileSize));
   }
 
   @Override
@@ -84,9 +95,9 @@ public class Player extends Entity implements LightSource, Detonator
   }
 
   @Override
-  public void setLightLocation(Rectangle2D.Float boundingBox)
+  public void setLightLocation(Point2D.Float location)
   {
-    center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
+    center.setLocation(location.getX(), location.getY());
   }
 
   @Override
@@ -96,9 +107,9 @@ public class Player extends Entity implements LightSource, Detonator
   }
 
   @Override
-  public void setLightLocation(Point2D.Float location)
+  public void setLightLocation(Rectangle2D.Float boundingBox)
   {
-    center.setLocation(location.getX(), location.getY());
+    center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
   }
 
   @Override
@@ -135,7 +146,8 @@ public class Player extends Entity implements LightSource, Detonator
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
           trapsInInventory--;
-          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize, (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
+          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize,
+              (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
           e.add(trap);
           collidingTrap = trap;
           isPlacing = false;
@@ -255,7 +267,7 @@ public class Player extends Entity implements LightSource, Detonator
   private boolean isStaminaDepleted()
   {
     staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
-    STAMINA_PROGRESS_BAR.setColor(staminaDepleted ? Color.RED : Color.GREEN);
+    STAMINA_PROGRESS_BAR.changeColor(staminaDepleted);
     return staminaDepleted;
   }
 
@@ -308,52 +320,48 @@ public class Player extends Entity implements LightSource, Detonator
 
   private class ProgressBar
   {
-    private final String LABEL;
-    private final Font LABEL_FONT;
+    private final BufferedImage[] imageList = new BufferedImage[5];
     private final Point2D.Float POSITION;
-    private Color color;
+    private boolean changeColor;
     private int currentValue;
-    private int height;
     private int maxValue;
-    private int width;
 
-    ProgressBar(String label, Font font)
+    ProgressBar(String labelPath)
     {
+
+      if (!labelPath.equals("")) imageList[0] =  ResourceManager.getImage(labelPath);
+      imageList[1] = ResourceManager.getImage("gui/progress_border_green.png");
+      imageList[2] = ResourceManager.getImage("gui/progress_fill_green.png");
+      imageList[3] = ResourceManager.getImage("gui/progress_border_red.png");
+      imageList[4] = ResourceManager.getImage("gui/progress_fill_red.png");
       setCurrentValue(-1);
       setMaxValue(-1);
-      setWidth(2 * Settings.tileSize);
-      setHeight(Settings.tileSize / 4);
-      setColor(Color.GREEN);
-      this.LABEL = label;
       this.POSITION = new Point2D.Float();
-      this.LABEL_FONT = font;
     }
 
     public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
     {
-      if (currentValue > -1)
+      int xPosition = (int) POSITION.getX();
+      int yPosition = (int) POSITION.getY();
+      int imageWidth = 2 * Settings.tileSize;
+      int imageHeight = (int) (0.375 * Settings.tileSize);
+      int offset = 0;
+      if (imageList[0] != null)
       {
-        Font originalFont = global.getFont();
-        global.setFont(LABEL_FONT);
-        Color originalColor = global.getColor();
-        global.setColor(color);
-        int x = (int) POSITION.x;
-        int y = (int) POSITION.y;
-        global.drawString(LABEL, x, y);
-        x += global.getFontMetrics().stringWidth(LABEL);
-        y -= global.getFontMetrics().getHeight() / 2;
-        global.drawRect(x, y, width, height);
-        global.fillRect(x + 2, y + 2, (int) ((double) currentValue / maxValue * (width - 4)), height - 4);
-        global.setColor(Color.BLACK);
-        global.drawRect(x + 1, y + 1, width - 2, height - 2);
-        global.setFont(originalFont);
-        global.setColor(originalColor);
+        offset = imageWidth;
+        global.drawImage(imageList[0], xPosition, yPosition, imageWidth, imageHeight, null);
       }
-    }
-
-    public void setColor(Color color)
-    {
-      this.color = color;
+      int fillWidth = (int) ((float) currentValue / maxValue * imageWidth);
+      if (changeColor)
+      {
+        global.drawImage(imageList[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(imageList[4], xPosition + offset, yPosition, fillWidth , imageHeight, null);
+      }
+      else
+      {
+        global.drawImage(imageList[1], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(imageList[2], xPosition + offset, yPosition, fillWidth, imageHeight, null);
+      }
     }
 
     public void setCurrentValue(int currentValue)
@@ -371,14 +379,9 @@ public class Player extends Entity implements LightSource, Detonator
       this.POSITION.setLocation(x, y);
     }
 
-    public void setWidth(int width)
+    public void changeColor (boolean changeColor)
     {
-      this.width = (width < 5 ? 5 : width);
-    }
-
-    private void setHeight(int height)
-    {
-      this.height = (height < 5 ? 5 : height);
+      this.changeColor = changeColor;
     }
   }
 }

@@ -5,6 +5,7 @@
 public class Settings
 {
   static final int ashOpacity = 64;
+  static final int DEFAULT_TILE_SIZE = 80;
   public static int frameRate; //frames/sec
   public static float zombieSpeed = 0.5f; //tiles/sec
   public static float zombieDecisionRate = 2.0f; //sec
@@ -21,7 +22,7 @@ public class Settings
 
   static //ensures correct order of assignment
   {
-    tileSize = 40;
+    tileSize = 80;
     frameRate = 60;
     numObjectsGuranteed = 11;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
