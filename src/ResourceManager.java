@@ -26,6 +26,16 @@ public class ResourceManager
       imagePaths.add("animation/zombie/idle_" + i + ".png");
       imagePaths.add("animation/zombie/move_" + i + ".png");
     }
+
+    for (int i = 0; i <= 13; i++)
+    {
+      imagePaths.add("animation/player/move_" + i + ".png");
+    }
+    for (int i = 0; i <= 8; i++)
+    {
+      imagePaths.add("animation/player/idle_" + i + ".png");
+    }
+
   }
 
   public static void populateImageHashMap()

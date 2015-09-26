@@ -1,7 +1,10 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Rashid on 07/09/15.
@@ -25,6 +28,11 @@ public class Player extends Entity implements LightSource, Detonator
   private final ProgressBar pickUpBar;
   private final ProgressBar staminaBar;
 
+  private boolean moving;
+  private boolean flipAnimation;
+  private final Animation idleAnimation = new Animation("animation/player/idle_", 8, true);
+  private final Animation moveAnimation = new Animation("animation/player/move_", 13, true);
+
   public Player()
   {
     playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
@@ -38,9 +46,22 @@ public class Player extends Entity implements LightSource, Detonator
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
-    int tileSize = Settings.tileSize;
-    local.setColor(Color.YELLOW);
-    local.fillRoundRect(0, 0, tileSize, tileSize, tileSize / 10, tileSize / 10);
+    AffineTransform transformer = new AffineTransform();
+    if (flipAnimation)
+    {
+      BufferedImage frame = (moving ? moveAnimation.getFrame() : idleAnimation.getFrame());
+      transformer.scale(-1, 1);
+      transformer.translate(-frame.getWidth(), 0);
+      AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+      frame = opTransformer.filter(frame, null);
+      transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+      local.drawImage(frame, transformer, null);
+    }
+    else
+    {
+      transformer.setToScale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+      local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
+    }
     if (isPickingUp() || isPlacing)
     {
       pickUpBar.setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2), (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
@@ -72,6 +93,8 @@ public class Player extends Entity implements LightSource, Detonator
     if (isPickingUp() || isPlacing)
     {
       increaseStamina();
+      idleAnimation.nextFrame(moving);
+      moving = false;
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
         progressCounter++;
@@ -114,7 +137,8 @@ public class Player extends Entity implements LightSource, Detonator
       if (e.isKeyPressed(KeyEvent.VK_RIGHT) || e.isKeyPressed(KeyEvent.VK_D)) xMovement += 1;
       if (e.isKeyPressed(KeyEvent.VK_UP) || e.isKeyPressed(KeyEvent.VK_W)) yMovement -= 1;
       if (e.isKeyPressed(KeyEvent.VK_DOWN) || e.isKeyPressed(KeyEvent.VK_S)) yMovement += 1;
-
+      if (xMovement > 0) flipAnimation = false;
+      else if (xMovement < 0) flipAnimation = true;
       // Normalize movement vector.
       double movementMagnitude = Math.sqrt(xMovement * xMovement + yMovement * yMovement);
       xMovement /= movementMagnitude;
@@ -124,9 +148,13 @@ public class Player extends Entity implements LightSource, Detonator
       {
         isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
+        moveAnimation.nextFrame(!moving);
+        moving = true;
       }
       else
       {
+        idleAnimation.nextFrame(moving);
+        moving = false;
         increaseStamina();
       }
 
@@ -253,6 +281,7 @@ public class Player extends Entity implements LightSource, Detonator
     }
   }
 
+
   @Override
   public Point2D.Float getLightLocation()
   {
@@ -269,6 +298,12 @@ public class Player extends Entity implements LightSource, Detonator
   public void setLightLocation(Rectangle2D.Float boundingBox)
   {
     center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return 110;
   }
 
   @Override
