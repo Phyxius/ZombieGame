@@ -11,6 +11,9 @@ public class Util
   {
     return seconds / Settings.frameRate;
   }
+  static final int NUM_DIRECTIONS = 8;
+  static final int[] dx = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+  static final int[] dy = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
   static float tilesPerSecondToPixelsPerFrame(float tilesPerSec)
   {
     return tilesPerSec * Settings.tileSize / Settings.frameRate;

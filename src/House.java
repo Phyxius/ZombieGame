@@ -6,15 +6,14 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.Stack;
 
 /**
  * Created by arirappaport on 9/10/15.
  */
 public class House extends Entity
 {
+  public static Graph<Point> graphOfGrid;
   private Tile[][] fullGrid;
-  private Graph<Point> graphOfGrid;
   private EntityManager entityManager;
   private ArrayList<Room> roomList;
   private ArrayList<Doorway> initDoorways;
@@ -58,6 +57,7 @@ public class House extends Entity
     startRoom.addDoorways();
     startRoom.init();
     copyObjectsToGrid();
+    makeGraph();
     makeExit();
     generateBuffImgHouse();
   }
@@ -108,6 +108,11 @@ public class House extends Entity
   public int getDepth() //lower numbers are drawn above higher numbers
   {
     return -100;
+  }
+
+  public static Point calculateAStar(Point startPoint, Point endPoint)
+  {
+    return null;//graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2))).get();
   }
 
   private Room makeNewHallway(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom, int prevRoomDoorSize)
@@ -221,8 +226,8 @@ public class House extends Entity
     Room newRoom = null;
     Random generator = new Random();
     int offsetFromCenter = 2;//generator.nextInt(2)+2;
-    int newWidth = generator.nextInt(9)+6;
-    int newHeight = generator.nextInt(9)+6;
+    int newWidth = generator.nextInt(9)+8;
+    int newHeight = generator.nextInt(9)+8;
     switch(comingFrom)
     {
       case NORTH:
@@ -268,7 +273,7 @@ public class House extends Entity
   {
     int numDoors = 0;
     double rand = Math.random();
-    if(depth == 2) //|| depth == 3)
+    if(depth <= 2) //|| depth == 3)
     {
       if(rand >= 0.5) numDoors = 4;
       else if(rand >= 0.25) numDoors = 3;
@@ -409,9 +414,9 @@ public class House extends Entity
     numDoors = calculateNumDoors(depth);
     if(!newRoom.isAHallway())
     {
-      for (int i = 1; i < numDoors - 1; i++)
+      for (int i = 1; i < numDoors; i++)
       {
-        Direction curSide = directions.get(i);
+        Direction curSide = directions.get(i-1);
         doorwayList.add(makeNewDoorway(curSide, newRoom.getStartX(), newRoom.getStartY(),
            newRoom.getWidth(), newRoom.getHeight()));
       }
@@ -420,7 +425,8 @@ public class House extends Entity
     //if(depth >= 5) return;
     if(!newRoom.isAHallway())
     {
-      for (int i = 1; i < numDoors-1; i++)
+      //skip going backwards
+      for (int i = 1; i < numDoors; i++)
       {
         //if(roomList.size() > 8) return;
         Doorway curDoorway = doorwayList.get(i);
@@ -450,7 +456,42 @@ public class House extends Entity
         for(int j = startX; j < width; j++)
         {
           fullGrid[i][j] = room.getTileAt(i,j);
-          graphOfGrid.add(new Point(j,i));
+        }
+      }
+    }
+  }
+
+  private void makeGraph()
+  {
+    int startX, startY;
+    int width, height;
+    for(Room room: roomList)
+    {
+      startX = room.getStartX();
+      startY = room.getStartY();
+      width = room.getWidth() + startX;
+      height = room.getHeight() + startY;
+
+      for (int i = startY; i < height; i++)
+      {
+        for (int j = startX; j < width; j++)
+        {
+          Point newPoint = new Point(j,i);
+          for (int k = 0; k < Util.NUM_DIRECTIONS; k++)
+          {
+            int dx = Util.dx[k];
+            int dy = Util.dy[k];
+            if(j + dx > -1 && i + dy > -1 && j + dx < gridWidth && i + dy < gridHeight)
+            {
+              Point neighbor = new Point(j + dx, i + dy);
+              if (fullGrid[i + dy][j + dx] == null) continue;
+              if (fullGrid[i + dy][j + dx].isSolid() ||
+                  fullGrid[i][j].isSolid())
+              {
+                graphOfGrid.setEdge(newPoint, neighbor, Float.MAX_VALUE);
+              } else graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
+            }
+          }
         }
       }
     }

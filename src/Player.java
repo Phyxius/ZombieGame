@@ -27,7 +27,7 @@ public class Player extends Entity implements LightSource, Detonator
 
   public Player()
   {
-    playerFootsteps = new SoundEffect("soundfx/player_footstep.mp3");
+    playerFootsteps = new SoundEffect("soundfx/playerfoot.mp3");
     playerPickup = new SoundEffect("soundfx/player_pickup.mp3");
     pickUpBar = new ProgressBar("", new Font("SansSerif", Font.PLAIN, Settings.tileSize / 4));
     staminaBar = new ProgressBar("Stamina ", new Font("SansSerif", Font.PLAIN, Settings.tileSize / 4));
