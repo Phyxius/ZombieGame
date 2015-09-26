@@ -86,6 +86,12 @@ public class Player extends Entity implements Detonator
   }
 
   @Override
+  public boolean isLightSource()
+  {
+    return true;
+  }
+
+  @Override
   public Point2D.Float getPosition()
   {
     return this.position;

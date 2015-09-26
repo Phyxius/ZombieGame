@@ -48,4 +48,9 @@ public abstract class Entity
   {
     return 0;
   }
+
+  public boolean isLightSource()
+  {
+    return false;
+  }
 }

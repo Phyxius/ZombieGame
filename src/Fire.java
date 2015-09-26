@@ -54,4 +54,10 @@ public class Fire extends Entity implements Detonator
   {
     return true;
   }
+
+  @Override
+  public boolean isLightSource()
+  {
+    return true;
+  }
 }
