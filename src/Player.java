@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
  * Created by Rashid on 07/09/15.
  * Player information and behavior.
  */
-public class Player extends Entity implements LightSource, Detonator
+public class Player extends Entity implements Detonator
 {
   private final SoundEffect footstepSfx = new SoundEffect("soundfx/player_footstep.mp3");
   private final Animation idleAnimation = new Animation("animation/player/idle_", 8, true);
@@ -35,7 +35,6 @@ public class Player extends Entity implements LightSource, Detonator
 
   public Player()
   {
-    this.setLightLocation(getBoundingBox());
   }
 
   @Override
@@ -87,27 +86,9 @@ public class Player extends Entity implements LightSource, Detonator
   }
 
   @Override
-  public Point2D.Float getLightLocation()
-  {
-    return center;
-  }
-
-  @Override
-  public void setLightLocation(Point2D.Float location)
-  {
-    center.setLocation(location.getX(), location.getY());
-  }
-
-  @Override
   public Point2D.Float getPosition()
   {
     return this.position;
-  }
-
-  @Override
-  public void setLightLocation(Rectangle2D.Float boundingBox)
-  {
-    center.setLocation(boundingBox.getCenterX(), boundingBox.getCenterY());
   }
 
   @Override
@@ -281,7 +262,6 @@ public class Player extends Entity implements LightSource, Detonator
       }
       else // successful movement
       {
-        setLightLocation(getBoundingBox());
         if (soundCounter % (Settings.frameRate / 2) == 0) footstepSfx.play(0.0, 10);
         soundCounter++;
         decreaseStamina();
@@ -297,7 +277,6 @@ public class Player extends Entity implements LightSource, Detonator
       }
       else //successful movement
       {
-        setLightLocation(getBoundingBox());
         if (soundCounter % Settings.frameRate == 0) footstepSfx.play(0.0, 10);
         soundCounter++;
       }
@@ -381,5 +360,7 @@ public class Player extends Entity implements LightSource, Detonator
     {
       this.changeColor = changeColor;
     }
+
+
   }
 }
