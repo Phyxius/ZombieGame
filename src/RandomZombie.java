@@ -7,7 +7,7 @@ import java.util.Collection;
  * Created by Mohammad R. Yousefi on 07/09/15.
  * A simple zombie that moves in straight lines until reaching a solid obstacle.
  */
-class LineZombie extends ZombieModel
+class RandomZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
@@ -15,12 +15,12 @@ class LineZombie extends ZombieModel
   private int soundCounter = 0;
   private boolean moving = true;
 
-  LineZombie(Player player, Point2D.Float position)
+  RandomZombie(Player player, Point2D.Float position)
   {
     super(player, position);
   }
 
-  LineZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
+  RandomZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
     super(player, position, speed, decisionRate, smell, minAngle);
   }
@@ -40,6 +40,11 @@ class LineZombie extends ZombieModel
           moving = true;
           collision = false;
         }
+        else
+        {
+          directionAngle = Util.rng.nextDouble() * 2 * Math.PI;
+          moving = true;
+        }
       }
       else
       {
@@ -50,7 +55,6 @@ class LineZombie extends ZombieModel
         Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
         directionAngle = Math.atan(pointToAimAt.getY()/pointToAimAt.getX());
         moving = true;
-
       }
     }
 
@@ -140,3 +144,4 @@ class LineZombie extends ZombieModel
     return 100;
   }
 }
+

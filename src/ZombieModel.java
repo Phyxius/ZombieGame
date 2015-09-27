@@ -81,7 +81,7 @@ abstract class ZombieModel extends Entity implements Detonator
     distanceFromPlayer = position.distance(player.getPosition()) / Settings.tileSize;
     if (distanceFromPlayer <= smell)
     {
-//      playerPosition = new Point2D.Float((float) player.getBoundingBox().getCenterX(), (float) player.getBoundingBox().getCenterY());
+      playerPosition = new Point2D.Float((float) player.getBoundingBox().getCenterX(), (float) player.getBoundingBox().getCenterY());
     }
     else
     {
