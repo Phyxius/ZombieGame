@@ -169,10 +169,11 @@ public class Graph<T>
       Collection<T> neighbors = getNeighbors(currentNode);
       for (T neighbor : neighbors)
       {
-        float newCost = costsSoFar.getOrDefault(currentNode, Float.MAX_VALUE);
-        if (newCost >= costsSoFar.get(neighbor)) continue;
+        float newCost = costsSoFar.getOrDefault(currentNode, Float.MAX_VALUE) + getEdgeWeight(currentNode, neighbor).get();
+        if (newCost >= costsSoFar.getOrDefault(neighbor, Float.MAX_VALUE)) continue;
         costsSoFar.put(neighbor, newCost);
         previousNodes.put(neighbor, currentNode);
+        frontier.add(neighbor);
       }
     }
     ArrayList<T> path = new ArrayList<>();
