@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 
 /**
- * Created by Rashid on 07/09/15.
+ * Created by Mohammad R. Yousefi on 07/09/15.
  * Basic model for the zombies in the Zombie House game.
  */
 
@@ -11,7 +11,7 @@ abstract class ZombieModel extends Entity implements Detonator
   protected float speed; // displacement = speed * tiles
   protected int decisionRate; // New decision every decisionRate updates.
   protected float smell; // smell radius = smell * tiles
-  protected int updateCount = 0; // Used in decision making. New decision when updateCount % (decitionRate * frameRate) == 0
+  protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
   protected final Player player; // Reference to the player on the current board.
   protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
   protected Point2D.Float position = new Point2D.Float(); // Top Left Corner.

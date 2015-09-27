@@ -2,25 +2,23 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 /**
- * Created by Rashid on 07/09/15.
+ * Created by Mohammad R. Yousefi on 07/09/15.
  * Player information and behavior.
  */
 public class Player extends Entity implements Detonator
 {
   public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
-  private final SoundEffect footstepSfx = new SoundEffect("soundfx/player_footstep.wav");
-  private final Animation idleAnimation = new Animation("animation/player/idle_", 8, true);
-  private final Animation moveAnimation = new Animation("animation/player/move_", 13, true);
-  private final ProgressBar staminaProgressBar = new ProgressBar("gui/label_stamina.png");
-  private final String trapIconPath = "fire/firetrap.png";
-  private final SoundEffect trapInteractionSfx = new SoundEffect("soundfx/player_pickup.mp3");
-  private final ProgressBar trapProgressBar = new ProgressBar("");
-  private Point2D.Float center = new Point2D.Float();
+  private final SoundEffect WALK_SFX = new SoundEffect("soundfx/player_footstep.wav");
+  private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
+  private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
+  private final ProgressBar STAMINA_BAR = new ProgressBar("gui/label_stamina.png");
+  private final SoundEffect TRAP_SFX = new SoundEffect("soundfx/player_pickup.mp3");
+  private final ProgressBar TRAP_BAR = new ProgressBar("");
+  private final Point2D.Float CENTER;
   private Trap collidingTrap = null;
   private boolean flipAnimation;
   private boolean isPickingUp;
@@ -36,15 +34,15 @@ public class Player extends Entity implements Detonator
 
   public Player()
   {
+    CENTER = new Point2D.Float((float) getBoundingBox().getCenterX(), (float) getBoundingBox().getCenterY());
   }
-
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     AffineTransform transformer = new AffineTransform();
     if (flipAnimation)
     {
-      BufferedImage frame = (moving ? moveAnimation.getFrame() : idleAnimation.getFrame());
+      BufferedImage frame = (moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame());
       transformer.scale(-1, 1);
       transformer.translate(-frame.getWidth(), 0);
       AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -57,20 +55,19 @@ public class Player extends Entity implements Detonator
     {
       transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
           (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
-      local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
+      local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), transformer, null);
     }
     if (isPickingUp() || isPlacing)
     {
-      trapProgressBar
+      TRAP_BAR
           .setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2),
               (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
-      trapProgressBar.draw(null, global, null);
+      TRAP_BAR.draw(global);
     }
-      staminaProgressBar.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
+      STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
           Settings.tileSize);
-    staminaProgressBar.draw(null, global, null);
-
-    global.drawImage(ResourceManager.getImage(trapIconPath), Settings.tileSize,
+    STAMINA_BAR.draw(global);
+      global.drawImage(ResourceManager.getImage("fire/firetrap.png"), Settings.tileSize,
         (int) (global.getClipBounds().getHeight() - 2.5 * Settings.tileSize), Settings.tileSize, Settings.tileSize,
         null);
     global.setFont(UI_FONT);
@@ -109,7 +106,7 @@ public class Player extends Entity implements Detonator
     if (isPickingUp() || isPlacing)
     {
       increaseStamina();
-      idleAnimation.nextFrame(moving);
+      IDLE_ANIMATION.nextFrame(moving);
       moving = false;
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
@@ -121,7 +118,7 @@ public class Player extends Entity implements Detonator
           e.remove(collidingTrap);
           collidingTrap = null;
           isPickingUp = false;
-          trapInteractionSfx.stop();
+          TRAP_SFX.stop();
         }
       }
       else if (e.isKeyPressed(KeyEvent.VK_T))
@@ -131,19 +128,19 @@ public class Player extends Entity implements Detonator
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
           trapsInInventory--;
-          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize,
-              (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
+          Trap trap = new Trap(new Point2D.Float((int) (CENTER.getX() / Settings.tileSize) * Settings.tileSize,
+              (int) (CENTER.getY() / Settings.tileSize) * Settings.tileSize));
           e.add(trap);
           collidingTrap = trap;
           isPlacing = false;
-          trapInteractionSfx.stop();
+          TRAP_SFX.stop();
         }
       }
       else
       {
         isPlacing = false;
         isPickingUp = false;
-        trapInteractionSfx.stop();
+        TRAP_SFX.stop();
         progressCounter = 0;
       }
     }
@@ -165,12 +162,12 @@ public class Player extends Entity implements Detonator
       {
         isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
-        moveAnimation.nextFrame(!moving);
+        MOVE_ANIMATION.nextFrame(!moving);
         moving = true;
       }
       else
       {
-        idleAnimation.nextFrame(moving);
+        IDLE_ANIMATION.nextFrame(moving);
         moving = false;
         increaseStamina();
       }
@@ -179,7 +176,7 @@ public class Player extends Entity implements Detonator
       {
         isPickingUp = true;
         progressCounter++;
-        trapInteractionSfx.play(0.0, 1.0);
+        TRAP_SFX.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
@@ -192,7 +189,7 @@ public class Player extends Entity implements Detonator
       {
         progressCounter++;
         isPlacing = true;
-        trapInteractionSfx.play(0.0, 1.0);
+        TRAP_SFX.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
@@ -214,7 +211,7 @@ public class Player extends Entity implements Detonator
         this.position.y = yPosition;
         returnValue[0] = true;
       }
-      if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
+      if (entity instanceof Trap && entity.getBoundingBox().contains(CENTER)) collidingTrap = (Trap) entity;
     });
     return returnValue[0];
   }
@@ -252,7 +249,7 @@ public class Player extends Entity implements Detonator
   private boolean isStaminaDepleted()
   {
     staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.playerStaminaRegen * Settings.frameRate * 2);
-    staminaProgressBar.changeColor(staminaDepleted);
+    STAMINA_BAR.changeColor(staminaDepleted);
     return staminaDepleted;
   }
 
@@ -268,8 +265,9 @@ public class Player extends Entity implements Detonator
       }
       else // successful movement
       {
-        if (soundCounter % (Settings.frameRate / 2) == 0) footstepSfx.play(0.0, 10);
+        if (soundCounter % (Settings.frameRate / 2) == 0) WALK_SFX.play(0.0, 10);
         soundCounter++;
+        CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
         decreaseStamina();
       }
     }
@@ -283,22 +281,23 @@ public class Player extends Entity implements Detonator
       }
       else //successful movement
       {
-        if (soundCounter % Settings.frameRate == 0) footstepSfx.play(0.0, 10);
+        if (soundCounter % Settings.frameRate == 0) WALK_SFX.play(0.0, 10);
         soundCounter++;
+        CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
       }
     }
   }
 
   private void updatePickUpBar()
   {
-    trapProgressBar.setCurrentValue(progressCounter);
-    trapProgressBar.setMaxValue(5 * Settings.frameRate);
+    TRAP_BAR.setCurrentValue(progressCounter);
+    TRAP_BAR.setMaxValue(5 * Settings.frameRate);
   }
 
   private void updateStaminaBar()
   {
-    staminaProgressBar.setCurrentValue((int) stamina);
-    staminaProgressBar.setMaxValue((int) Settings.playerStamina);
+    STAMINA_BAR.setCurrentValue((int) stamina);
+    STAMINA_BAR.setMaxValue((int) Settings.playerStamina);
   }
 
   private class ProgressBar
@@ -322,7 +321,7 @@ public class Player extends Entity implements Detonator
       this.POSITION = new Point2D.Float();
     }
 
-    public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
+    public void draw(Graphics2D global)
     {
       int xPosition = (int) POSITION.getX();
       int yPosition = (int) POSITION.getY();
