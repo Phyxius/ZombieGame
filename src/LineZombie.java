@@ -28,6 +28,8 @@ class LineZombie extends ZombieModel
   @Override
   public void update(UpdateManager e)
   {
+    Point2D.Float playerPosition = player.getPosition();
+    if(!(this.getPosition().distance(playerPosition) < smell*Settings.tileSize)) playerPosition = null;
     if (updateCount % decisionRate == 0)
     {
       if (playerPosition == null)
@@ -43,6 +45,13 @@ class LineZombie extends ZombieModel
       else
       {
         // A* to player
+        int tileSize = Settings.tileSize;
+        Point zombieCenter = new Point((int)position.getX()/tileSize, (int)position.getY()/tileSize);
+        Point playerCenter = new Point((int)playerPosition.getX()/tileSize, (int)playerPosition.getY()/tileSize);
+        Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
+        directionAngle = Math.atan(pointToAimAt.getY()/pointToAimAt.getX());
+        moving = true;
+
       }
     }
 

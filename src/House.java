@@ -1,5 +1,8 @@
+import javafx.scene.shape.Line;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -16,6 +19,7 @@ public class House extends Entity
   private Tile[][] fullGrid;
   private EntityManager entityManager;
   private ArrayList<Room> roomList;
+  private ArrayList<Line2D.Float> connections;
   private ArrayList<Doorway> initDoorways;
   private Player player;
   private BufferedImage houseImg;
@@ -38,12 +42,13 @@ public class House extends Entity
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
     this.entityManager = entityManager;
+    connections = new ArrayList<>();
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
     graphOfGrid = new Graph<>();
     fullGrid = new Tile[gridHeight][gridWidth];
-    houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
+    //houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 40;
     int roomStartY = 40;
     int startWidth = 8;
@@ -59,11 +64,11 @@ public class House extends Entity
     copyObjectsToGrid();
     makeGraph();
     makeExit();
-    generateBuffImgHouse();
+    //generateBuffImgHouse();
   }
 
   /**
-   * Enum for convenience when descibing 2D directions
+   * Enum for convenience when describing 2D directions
    * NORTH, WEST, SOUTH, EAST
    */
   public enum Direction
@@ -74,7 +79,19 @@ public class House extends Entity
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
-    local.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
+    //local.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
+    int tileSize = Settings.tileSize;
+
+    for(int i = 0; i < gridHeight; i++)
+    {
+      for(int j = 0; j < gridWidth; j++)
+      {
+        if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
+        local.drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
+      }
+    }
+    //local.setColor(Color.green);
+    //connections.forEach(Line -> local.draw(Line));
   }
 
   public Point2D.Float getPosition() //returns upper left point of the object
@@ -112,7 +129,7 @@ public class House extends Entity
 
   public static Point calculateAStar(Point startPoint, Point endPoint)
   {
-    return null;//graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2))).get();
+    return graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2))).get().getNodes().get(0);
   }
 
   private Room makeNewHallway(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom, int prevRoomDoorSize)
@@ -489,7 +506,17 @@ public class House extends Entity
                   fullGrid[i][j].isSolid())
               {
                 graphOfGrid.setEdge(newPoint, neighbor, Float.MAX_VALUE);
-              } else graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
+                Point2D.Float newPointTile = new Point2D.Float((float) newPoint.getX()*Settings.tileSize, (float)newPoint.getY()*Settings.tileSize);
+                Point2D.Float neigbTile = new Point2D.Float((float) neighbor.getX()*Settings.tileSize, (float)neighbor.getY()*Settings.tileSize);
+                connections.add(new Line2D.Float(newPointTile,neigbTile));
+
+              } else
+              {
+                Point2D.Float newPointTile = new Point2D.Float((float) newPoint.getX()*Settings.tileSize, (float)newPoint.getY()*Settings.tileSize);
+                Point2D.Float neigbTile = new Point2D.Float((float) neighbor.getX()*Settings.tileSize, (float)neighbor.getY()*Settings.tileSize);
+                connections.add(new Line2D.Float(newPointTile,neigbTile));
+                graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
+              }
             }
           }
         }
