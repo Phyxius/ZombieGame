@@ -49,9 +49,9 @@ public class Util
   public static Line2D.Float getShorterLine(Line2D line, float shortenBy)
   {
     float magnitude = (float)line.getP1().distance(line.getP2());
-    float angle = ((float) Math.atan2(line.getY1() - line.getY2(), line.getX1() - line.getX2()));
+    float angle = ((float) Math.atan2(line.getY2() - line.getY1(), line.getX2() - line.getX1()));
     float shortenedMagnitude = (magnitude - shortenBy);
     return new Line2D.Float(line.getP1(), new Point2D.Float((float)(line.getX1() + shortenedMagnitude * Math.cos(angle)),
-        (float)(line.getY2() + shortenedMagnitude * Math.sin(angle))));
+        (float)(line.getY1() + shortenedMagnitude * Math.sin(angle))));
   }
 }

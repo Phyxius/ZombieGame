@@ -41,7 +41,6 @@ public class SightDrawer extends Entity
           lightSource.getY() - drawingManager.getCameraOrigin().getY());
       RadialGradientPaint p = new RadialGradientPaint(lightSource, Settings.playerSightRadius, GRADIENT_FRACTIONS, GRADIENT_COLORS);
       overlayDrawer.setPaint(p);
-      //overlayDrawer.setColor(TRANSPARENT);
       LIGHT_ELLIPSE.setFrameFromCenter(lightSource,
           new Point2D.Float((float) (lightSource.getX() + Settings.playerSightRadius),
               (float) (lightSource.getY() + Settings.playerSightRadius)));
@@ -75,6 +74,12 @@ public class SightDrawer extends Entity
       HashSet<Point2D.Float> points = new HashSet<>();
       Collection<Entity> potentiallyLitEntities = e.getCollidingEntities(new Ellipse2D.Float(lightSource.x - Settings.playerSightRadius, lightSource.y - Settings.playerSightRadius,
           2 * Settings.playerSightRadius, 2 * Settings.playerSightRadius)).stream().filter(Entity::blocksLight).collect(Collectors.toList());
+      /*
+        The following code is using the Streams API even though a foreach loop would be more appropriate because
+        it has free parallelism. It takes the list of 'interesting' (i.e. light blocking within sight range) entities,
+        flat-maps them into a long stream of Point2D's, then checks to see if the rays from the center of the light source
+        intersect any light blocking entity. If they do intersect, they are removed from the stream.
+      */
       points.addAll(
           potentiallyLitEntities.parallelStream()
               .map(Entity::getBoundingBox)
@@ -84,7 +89,7 @@ public class SightDrawer extends Entity
                   new Point2D.Float(rect.x, rect.y + rect.height),
                   new Point2D.Float(rect.x + rect.width, rect.y + rect.height))
                   .filter(p ->
-                      potentiallyLitEntities.stream().anyMatch(ent -> ent.getBoundingBox().intersectsLine(Util.getShorterLine(new Line2D.Float(p, lightSource), 2)))))
+                      potentiallyLitEntities.stream().noneMatch(ent -> ent.getBoundingBox().intersectsLine(Util.getShorterLine(new Line2D.Float(lightSource, p), 2)))))
               .collect(Collectors.toList()));
       relevantCorners.put(lightSource, points);
     }
