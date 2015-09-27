@@ -66,10 +66,10 @@ public class EntityManager
     ProcessAdditionsAndRemovals();
   }
 
-  public void draw(Graphics2D g)
+  public void draw(Graphics2D g, GraphicsConfiguration graphicsConfiguration)
   {
     if (entityToFollow != null) updateCameraOrigin(g.getClipBounds());
-    DrawingManager drawingManager = new DrawingManager(this);
+    DrawingManager drawingManager = new DrawingManager(this, graphicsConfiguration);
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();

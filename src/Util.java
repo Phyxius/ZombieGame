@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
@@ -38,5 +39,19 @@ public class Util
   public static Point2D.Float getRectangleCenterPoint(Rectangle2D.Float rect)
   {
     return new Point2D.Float((float)rect.getCenterX(), (float)rect.getCenterY());
+  }
+
+  /**
+   * Returns a line that is in the same direction but some pixels shorter
+   * @param line the line to shorten
+   * @param shortenBy the amount to shorten by
+   */
+  public static Line2D.Float getShorterLine(Line2D line, float shortenBy)
+  {
+    float magnitude = (float)line.getP1().distance(line.getP2());
+    float angle = ((float) Math.atan2(line.getY1() - line.getY2(), line.getX1() - line.getX2()));
+    float shortenedMagnitude = (magnitude - shortenBy);
+    return new Line2D.Float(line.getP1(), new Point2D.Float((float)(line.getX1() + shortenedMagnitude * Math.cos(angle)),
+        (float)(line.getY2() + shortenedMagnitude * Math.sin(angle))));
   }
 }

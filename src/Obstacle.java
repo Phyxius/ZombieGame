@@ -58,4 +58,9 @@ public class Obstacle extends Entity
       c.add(new Fire(getBoundingBox()));
     }
   }
+
+  @Override
+  public boolean blocksLight() {
+    return true;
+  }
 }

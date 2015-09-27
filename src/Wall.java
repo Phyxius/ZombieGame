@@ -60,4 +60,9 @@ public class Wall extends Entity
   {
     return endY;
   }
+
+  @Override
+  public boolean blocksLight() {
+    return true;
+  }
 }

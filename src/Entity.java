@@ -53,4 +53,9 @@ public abstract class Entity
   {
     return false;
   }
+
+  public boolean blocksLight()
+  {
+    return false;
+  }
 }
