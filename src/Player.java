@@ -31,7 +31,7 @@ public class Player extends Entity implements Detonator
   private int soundCounter = 0;
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
-  private int trapsInInventory = 1;
+  private int trapsInInventory = Settings.playerTraps;
 
   public Player()
   {

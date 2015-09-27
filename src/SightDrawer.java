@@ -15,9 +15,7 @@ public class SightDrawer extends Entity
   private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
   private final static float[] GRADIENT_FRACTIONS = new float[]{0, 1f};
   private final static Color[] GRADIENT_COLORS = new Color[]{TRANSPARENT, Color.black};
-  private static final Ellipse2D.Float LIGHT_ELLIPSE = new Ellipse2D.Float(0, 0, Settings.playerSightRadius * 2, Settings.playerSightRadius * 2);
-  private final int halfPlayerSight = Settings.playerSightRadius / 2;
-  ArrayList<Point2D.Float> lightSources = new ArrayList<>();
+  private ArrayList<Point2D.Float> lightSources = new ArrayList<>();
   private final HashMap<Point2D.Float, HashSet<Point2D.Float>> relevantCorners = new HashMap<>();
   //private VolatileImage screenOverlay = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
@@ -38,7 +36,6 @@ public class SightDrawer extends Entity
     float cameraX = (float)drawingManager.getCameraOrigin().getX();
     for (Map.Entry<Point2D.Float, HashSet<Point2D.Float>> entry : relevantCorners.entrySet())
     {
-      Area lightArea = new Area();
       Point2D.Float lightSource = entry.getKey();
       lightSource.setLocation(lightSource.getX() - cameraX,
           lightSource.getY() - cameraY);
@@ -54,22 +51,22 @@ public class SightDrawer extends Entity
           .collect(Collectors.toList());
       //overlayDrawer.setColor(Color.green);
       Polygon litArea = new Polygon();
-      for (int i = 0; i < points.size(); i++)
+      for (Point2D.Float point : points)
       {
-        litArea.addPoint(((int) points.get(i).x), ((int) points.get(i).y));
+        litArea.addPoint(((int) point.x), ((int) point.y));
       }
       overlayDrawer.fillPolygon(litArea);
     }
     overlayDrawer.dispose();
     screen.drawImage(screenOverlay, 0, 0, null);
-    screen.setColor(Color.green);
+    /*screen.setColor(Color.green);
     for (Map.Entry<Point2D.Float, HashSet<Point2D.Float>> mapping : relevantCorners.entrySet()) {
       Point2D.Float lightSource = mapping.getKey();
       for (Point2D.Float corner : mapping.getValue())
       {
         screen.drawLine((int)(corner.x - drawingManager.getCameraOrigin().x),(int)(corner.y - drawingManager.getCameraOrigin().y), (int)(lightSource.x), (int)(lightSource.y));
       }
-    }
+    }*/
   }
 
   @Override
