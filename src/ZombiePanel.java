@@ -27,7 +27,7 @@ public class ZombiePanel extends JPanel
     ResourceManager.populateImageHashMap();
     repaint();
     frame.addKeyListener(new KeyboardHandler());
-    entityManager.add(new House(100, 100, entityManager));
+    entityManager.add(new House(100, 100, entityManager, frame));
     //entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
     //entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
     entityManager.add(new SightDrawer());

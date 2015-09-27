@@ -1,5 +1,6 @@
 import javafx.scene.shape.Line;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
@@ -9,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.jar.JarFile;
 
 /**
  * Created by arirappaport on 9/10/15.
@@ -23,6 +25,7 @@ public class House extends Entity
   private ArrayList<Doorway> initDoorways;
   private Player player;
   private BufferedImage houseImg;
+  private JFrame frame;
   private Room startRoom;
   private int gridHeight, gridWidth;
   private int prevHallDoorX, prevHallDoorY;
@@ -37,11 +40,12 @@ public class House extends Entity
    * @param gridHeight Height of House
    * @param entityManager a reference to global EntityManager
    */
-  public House(int gridWidth, int gridHeight, EntityManager entityManager)
+  public House(int gridWidth, int gridHeight, EntityManager entityManager, JFrame frame)
   {
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
     this.entityManager = entityManager;
+    this.frame = frame;
     connections = new ArrayList<>();
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
@@ -81,10 +85,14 @@ public class House extends Entity
   {
     //local.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
     int tileSize = Settings.tileSize;
-
-    for(int i = 0; i < gridHeight; i++)
+    Point2D.Float curOrigin = drawingManager.getCameraOrigin();
+    int curStartY = (int) curOrigin.getY()/tileSize;
+    int curStartX = (int) curOrigin.getX()/tileSize;
+    int curEndY = curStartY + frame.getHeight()/tileSize;
+    int curEndX = curStartX + frame.getWidth()/tileSize;
+    for(int i = curStartY; i < curEndY; i++)
     {
-      for(int j = 0; j < gridWidth; j++)
+      for(int j = curStartX; j < curEndX; j++)
       {
         if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
         local.drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
@@ -147,7 +155,7 @@ public class House extends Entity
 
       case NORTH:
         newWidth = prevRoomDoorSize+2;
-        newHeight = 6+generator.nextInt(4);
+        newHeight = 4+generator.nextInt(4);
         newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight,true,player, entityManager);
         prevHallDoorX = prevRoomDoorX;
         prevHallDoorY = prevRoomDoorY-newHeight;
@@ -162,7 +170,7 @@ public class House extends Entity
         }
       break;
       case WEST:
-        newWidth = 6+generator.nextInt(4);
+        newWidth = 4+generator.nextInt(4);
         newHeight = prevRoomDoorSize+2;
         newHallway = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, true,player, entityManager);
         prevHallDoorX = prevRoomDoorX-newWidth;
@@ -179,7 +187,7 @@ public class House extends Entity
       break;
       case SOUTH:
         newWidth = prevRoomDoorSize+2;
-        newHeight = 6+generator.nextInt(4);
+        newHeight = 4+generator.nextInt(4);
         newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, true,player, entityManager);
         prevHallDoorX = prevRoomDoorX;
         prevHallDoorY = prevRoomDoorY+newHeight;
@@ -194,7 +202,7 @@ public class House extends Entity
         }
       break;
       case EAST:
-        newWidth = 6+generator.nextInt(4);
+        newWidth = 4+generator.nextInt(4);
         newHeight = prevRoomDoorSize+2;
         newHallway = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight,true,player, entityManager);
         prevHallDoorX = prevRoomDoorX+newWidth;
@@ -243,8 +251,8 @@ public class House extends Entity
     Room newRoom = null;
     Random generator = new Random();
     int offsetFromCenter = 2;//generator.nextInt(2)+2;
-    int newWidth = generator.nextInt(9)+8;
-    int newHeight = generator.nextInt(9)+8;
+    int newWidth = generator.nextInt(4)+8;
+    int newHeight = generator.nextInt(4)+8;
     switch(comingFrom)
     {
       case NORTH:

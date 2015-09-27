@@ -27,7 +27,7 @@ public class Player extends Entity implements Detonator
   private boolean isPlacing;
   private boolean isRunning = false;
   private boolean moving;
-  private Point2D.Float position = new Point2D.Float(44 * Settings.tileSize, 45 * Settings.tileSize);
+  private Point2D.Float position = new Point2D.Float(42 * Settings.tileSize, 43 * Settings.tileSize);
   private int progressCounter = 0;
   private int soundCounter = 0;
   private float stamina = Settings.playerStamina;
