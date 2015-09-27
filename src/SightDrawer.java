@@ -1,10 +1,8 @@
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
+import java.awt.geom.*;
 import java.awt.image.VolatileImage;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,16 +34,31 @@ public class SightDrawer extends Entity
     overlayDrawer.setColor(Color.black);
     overlayDrawer.fillRect(0, 0, screenOverlay.getWidth(), screenOverlay.getHeight());
     overlayDrawer.setComposite(AlphaComposite.SrcIn);
-    for (Point2D lightSource : lightSources)
+    float cameraY = (float)drawingManager.getCameraOrigin().getY();
+    float cameraX = (float)drawingManager.getCameraOrigin().getX();
+    for (Map.Entry<Point2D.Float, HashSet<Point2D.Float>> entry : relevantCorners.entrySet())
     {
-      lightSource.setLocation(lightSource.getX() - drawingManager.getCameraOrigin().getX(),
-          lightSource.getY() - drawingManager.getCameraOrigin().getY());
+      Area lightArea = new Area();
+      Point2D.Float lightSource = entry.getKey();
+      lightSource.setLocation(lightSource.getX() - cameraX,
+          lightSource.getY() - cameraY);
       RadialGradientPaint p = new RadialGradientPaint(lightSource, Settings.playerSightRadius, GRADIENT_FRACTIONS, GRADIENT_COLORS);
       overlayDrawer.setPaint(p);
-      LIGHT_ELLIPSE.setFrameFromCenter(lightSource,
+      /*LIGHT_ELLIPSE.setFrameFromCenter(lightSource,
           new Point2D.Float((float) (lightSource.getX() + Settings.playerSightRadius),
               (float) (lightSource.getY() + Settings.playerSightRadius)));
-      overlayDrawer.fill(LIGHT_ELLIPSE);
+      overlayDrawer.fill(LIGHT_ELLIPSE);*/
+      List<Point2D.Float> points = entry.getValue().parallelStream()
+          .map(point -> new Point2D.Float(point.x - cameraX, point.y - cameraY))
+          .sorted(Comparator.comparing(point -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x)))
+          .collect(Collectors.toList());
+      //overlayDrawer.setColor(Color.green);
+      Polygon litArea = new Polygon();
+      for (int i = 0; i < points.size(); i++)
+      {
+        litArea.addPoint(((int) points.get(i).x), ((int) points.get(i).y));
+      }
+      overlayDrawer.fillPolygon(litArea);
     }
     overlayDrawer.dispose();
     screen.drawImage(screenOverlay, 0, 0, null);
@@ -80,20 +93,42 @@ public class SightDrawer extends Entity
         light source intersect any light blocking entity. If they do intersect, they are removed from the stream.
         Yes, I have profiled this method and it does benefit from the parallelism.
       */
-      relevantCorners.put(lightSource,
-          potentiallyLitEntities.parallelStream()
+      HashSet<Point2D.Float> lightPoints = new HashSet<>(potentiallyLitEntities.parallelStream()
               .map(Entity::getBoundingBox)
               .flatMap(rect -> Stream.of(
                   new Point2D.Float(rect.x, rect.y),
                   new Point2D.Float(rect.x + rect.width, rect.y),
                   new Point2D.Float(rect.x, rect.y + rect.height),
-                  new Point2D.Float(rect.x + rect.width, rect.y + rect.height))
-                  .distinct()
-                  .filter(p ->potentiallyLitEntities.stream()
+                  new Point2D.Float(rect.x + rect.width, rect.y + rect.height)))
+              .distinct()
+              .map(p -> castRays(lightSource, p, potentiallyLitEntities))
+                  /*.filter(p -> potentiallyLitEntities.stream()
                       .noneMatch(ent -> ent.getBoundingBox().intersectsLine(
-                          Util.getShorterLine(new Line2D.Float(lightSource, p), 2)))))
-              .collect(Collectors.toCollection(HashSet<Point2D.Float>::new)));
+                          Util.getLongerLine(new Line2D.Float(lightSource, p), -2)))))*/
+              .collect(Collectors.toList()));
+      relevantCorners.put(lightSource, lightPoints);
     }
+  }
+
+  private boolean doRectanglesContainPoint(float x, float y, Collection<Rectangle2D.Float> rectangles)
+  {
+    return rectangles.stream().anyMatch(r -> r.contains(x, y));
+  }
+
+  private Point2D.Float castRays(Point2D.Float origin, Point2D.Float towardsPoint, Collection<Entity> interestingEntities)
+  {
+    List<Rectangle2D.Float> rectangles = interestingEntities.parallelStream().map(Entity::getBoundingBox).collect(Collectors.toList());
+    double angle = Math.atan2(towardsPoint.y - origin.y, towardsPoint.x - origin.x);
+    float dx = (float)Math.cos(angle), dy = (float)Math.sin(angle);
+    float x = origin.x, y = origin.y;
+    int iterations = 0;
+    while (!(doRectanglesContainPoint(x, y, rectangles) && doRectanglesContainPoint(x + dx, y + dy, rectangles)) && iterations < Settings.playerSightRadius / 2)
+    {
+      iterations++;
+      x += 3 * dx;
+      y += 3 * dy;
+    }
+    return new Point2D.Float(x, y);
   }
 
   @Override

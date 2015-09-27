@@ -44,13 +44,13 @@ public class Util
   /**
    * Returns a line that is in the same direction but some pixels shorter
    * @param line the line to shorten
-   * @param shortenBy the amount to shorten by
+   * @param lengthenBy the amount to shorten by
    */
-  public static Line2D.Float getShorterLine(Line2D line, float shortenBy)
+  public static Line2D.Float getLongerLine(Line2D line, float lengthenBy)
   {
     float magnitude = (float)line.getP1().distance(line.getP2());
     float angle = ((float) Math.atan2(line.getY2() - line.getY1(), line.getX2() - line.getX1()));
-    float shortenedMagnitude = (magnitude - shortenBy);
+    float shortenedMagnitude = (magnitude + lengthenBy);
     return new Line2D.Float(line.getP1(), new Point2D.Float((float)(line.getX1() + shortenedMagnitude * Math.cos(angle)),
         (float)(line.getY1() + shortenedMagnitude * Math.sin(angle))));
   }
