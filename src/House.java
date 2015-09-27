@@ -524,11 +524,11 @@ public class House extends Entity
               }
               else
               {
-                Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
-                             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
-                Point neigbTile = new Point((int) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
-                                                            (int)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
-                connections.add(new Line2D.Float(newPointTile,neigbTile));
+                //Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
+                //             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
+                //Point neigbTile = new Point((int) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
+                //                                            (int)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
+                //connections.add(new Line2D.Float(newPointTile,neigbTile));
                 graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
               }
             }
@@ -544,7 +544,7 @@ public class House extends Entity
     for(Room room: roomList)
     {
       Collections.shuffle(room.wallList);
-      if(room.isLeaf() && !room.equals(startRoom))
+      if(room.isLeaf() && !room.equals(startRoom) )
       {
         for(Wall wall: room.wallList)
         {
@@ -554,20 +554,6 @@ public class House extends Entity
             return;
           }
         }
-      }
-    }
-  }
-
-  private void generateBuffImgHouse()
-  {
-    int tileSize = Settings.tileSize;
-
-    for(int i = 0; i < gridHeight; i++)
-    {
-      for(int j = 0; j < gridWidth; j++)
-      {
-        if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
-        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
       }
     }
   }
