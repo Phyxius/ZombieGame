@@ -1,7 +1,11 @@
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.MediaPlayer;
+import sun.audio.AudioStream;
 
 import javax.sound.sampled.*;
-import javafx.scene.media.AudioClip;
+//import javafx.scene.media.AudioClip;
+import java.applet.Applet;
+//import java.applet.AudioClip;
 import java.io.IOException;
 import java.net.URL;
 
@@ -20,6 +24,17 @@ public class SoundEffect
       URL url = this.getClass().getClassLoader().getResource(soundFileName);
       String urlString = url.toString();
       audioClip = new AudioClip(urlString);
+      //audioClip.play();
+      //try{
+      //  URL url = this.getClass().getClassLoader().getResource(soundFileName);
+      //  AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+      //  audioClip = AudioSystem.getClip();
+      //  audioClip.open(ais);
+      //  audioClip.setFramePosition(0);
+      //}
+      //catch(UnsupportedAudioFileException ex){}
+      //catch(LineUnavailableException ex){}
+      //catch (IOException ex) {}
 
     }
 
