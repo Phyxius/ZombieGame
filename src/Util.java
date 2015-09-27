@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
 /**
@@ -30,5 +33,10 @@ public class Util
   public static int clampInteger(int value, int min, int max)
   {
     return Math.min(max, Math.max(min, value));
+  }
+
+  public static Point2D.Float getRectangleCenterPoint(Rectangle2D.Float rect)
+  {
+    return new Point2D.Float((float)rect.getCenterX(), (float)rect.getCenterY());
   }
 }

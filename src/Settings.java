@@ -19,10 +19,11 @@ public class Settings
   public static double minAngle; // in Radians
   public static int numObjectsGuranteed; //Rooms + hallways
   public static int fireDuration; //frames
+  public static int playerSight; //pixels
 
   static //ensures correct order of assignment
   {
-    tileSize = 10;
+    tileSize = 20;
     frameRate = 60;
     numObjectsGuranteed = 11;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
@@ -32,5 +33,6 @@ public class Settings
     minAngle = 0.25 * Math.PI;
     fireDuration = 15 * frameRate;
     playerHearing = 10;
+    playerSight = 5 * tileSize;
   }
 }
