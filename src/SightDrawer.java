@@ -122,7 +122,7 @@ public class SightDrawer extends Entity
     float dx = (float)Math.cos(angle), dy = (float)Math.sin(angle);
     float x = origin.x, y = origin.y;
     int iterations = 0;
-    while (!(doRectanglesContainPoint(x, y, rectangles) && doRectanglesContainPoint(x + dx, y + dy, rectangles)) && iterations < Settings.playerSightRadius / 2)
+    while (!(doRectanglesContainPoint(x, y, rectangles) && doRectanglesContainPoint(x + dx, y + dy, rectangles)) && iterations < Settings.playerSightRadius)
     {
       iterations++;
       x += 3 * dx;
