@@ -219,11 +219,7 @@ public class House extends Entity
   private Room makeInitRoom(int startX, int startY, int width, int height, EntityManager entityManager)
   {
     int tileSize = Settings.tileSize;
-    ProgressBar progressBar = new ProgressBar("");
-    ProgressBar staminaBar = new ProgressBar("gui/label_stamina.png");
-    player = new Player(staminaBar, progressBar);
-    entityManager.add(staminaBar);
-    entityManager.add(progressBar);
+    player = new Player();
     entityManager.add(player);
     entityManager.setEntityToFollow(player);
     Room startRoom = new Room(startX, startY, width, height,false,player, entityManager);
