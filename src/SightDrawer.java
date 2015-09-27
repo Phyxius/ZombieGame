@@ -26,6 +26,7 @@ public class SightDrawer extends Entity
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
+    //TODO: use a do-while loop for this using contentsLost()
     //if (screenOverlay.getWidth() != screen.getClipBounds().width || screenOverlay.getHeight() != screen.getClipBounds().height)
     //screenOverlay = new BufferedImage(screen.getClipBounds().width, screen.getClipBounds().height, BufferedImage.TYPE_INT_ARGB);
     GraphicsConfiguration graphicsConfiguration = drawingManager.getGraphicsConfiguration();
@@ -49,8 +50,7 @@ public class SightDrawer extends Entity
     overlayDrawer.dispose();
     screen.drawImage(screenOverlay, 0, 0, null);
     screen.setColor(Color.green);
-    for (Map.Entry<Point2D.Float, HashSet<Point2D.Float>> mapping : relevantCorners.entrySet())
-    {
+    for (Map.Entry<Point2D.Float, HashSet<Point2D.Float>> mapping : relevantCorners.entrySet()) {
       Point2D.Float lightSource = mapping.getKey();
       for (Point2D.Float corner : mapping.getValue())
       {
@@ -71,16 +71,16 @@ public class SightDrawer extends Entity
     relevantCorners.clear();
     for (Point2D.Float lightSource : lightSources)
     {
-      HashSet<Point2D.Float> points = new HashSet<>();
       Collection<Entity> potentiallyLitEntities = e.getCollidingEntities(new Ellipse2D.Float(lightSource.x - Settings.playerSightRadius, lightSource.y - Settings.playerSightRadius,
           2 * Settings.playerSightRadius, 2 * Settings.playerSightRadius)).stream().filter(Entity::blocksLight).collect(Collectors.toList());
       /*
-        The following code is using the Streams API even though a foreach loop would be more appropriate because
-        it has free parallelism. It takes the list of 'interesting' (i.e. light blocking within sight range) entities,
-        flat-maps them into a long stream of Point2D's, then checks to see if the rays from the center of the light source
-        intersect any light blocking entity. If they do intersect, they are removed from the stream.
+        The following code is using the Streams API even though a foreach loop would be more readable because
+        Streams provide free parallelism. It takes the list of 'interesting' (i.e. light blocking within sight range) entities,
+        flat-maps them into a stream of Point2D's (one for each corner), then checks to see if the rays from the center of the
+        light source intersect any light blocking entity. If they do intersect, they are removed from the stream.
+        Yes, I have profiled this method and it does benefit from the parallelism.
       */
-      points.addAll(
+      relevantCorners.put(lightSource,
           potentiallyLitEntities.parallelStream()
               .map(Entity::getBoundingBox)
               .flatMap(rect -> Stream.of(
@@ -88,10 +88,11 @@ public class SightDrawer extends Entity
                   new Point2D.Float(rect.x + rect.width, rect.y),
                   new Point2D.Float(rect.x, rect.y + rect.height),
                   new Point2D.Float(rect.x + rect.width, rect.y + rect.height))
-                  .filter(p ->
-                      potentiallyLitEntities.stream().noneMatch(ent -> ent.getBoundingBox().intersectsLine(Util.getShorterLine(new Line2D.Float(lightSource, p), 2)))))
-              .collect(Collectors.toList()));
-      relevantCorners.put(lightSource, points);
+                  .distinct()
+                  .filter(p ->potentiallyLitEntities.stream()
+                      .noneMatch(ent -> ent.getBoundingBox().intersectsLine(
+                          Util.getShorterLine(new Line2D.Float(lightSource, p), 2)))))
+              .collect(Collectors.toCollection(HashSet<Point2D.Float>::new)));
     }
   }
 
