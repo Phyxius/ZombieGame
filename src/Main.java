@@ -8,6 +8,7 @@ public class Main
 {
   public static void main(String[] args)
   {
+    new SettingsWindow();
     JFrame zombieFrame = new JFrame();
     ZombiePanel zombiePanel = new ZombiePanel(zombieFrame);
     zombiePanel.init();

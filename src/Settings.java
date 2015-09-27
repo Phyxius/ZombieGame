@@ -29,7 +29,7 @@ public class Settings
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
     playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
     playerStamina = 5f * Settings.frameRate;
-    playerStaminaRegen = 0.20f * Settings.frameRate;
+    playerStaminaRegen = 0.20f;
     minAngle = 0.25 * Math.PI;
     fireDuration = 15 * frameRate;
     playerHearing = 10;

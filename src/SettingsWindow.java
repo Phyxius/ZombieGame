@@ -21,16 +21,16 @@ public class SettingsWindow extends JFrame implements ActionListener
   private JComboBox gameSettingsBox;
   private JLabel gameSettingsLabel;
   private JPanel gameSettingsPanel;
-  private JFormattedTextField gameSettingsText;
+  private JTextField gameSettingsText;
   private JComboBox playerSettingsBox;
   private JLabel playerSettingsLabel;
   private JPanel playerSettingsPanel;
-  private JFormattedTextField playerSettingsText;
+  private JTextField playerSettingsText;
   private FieldListener textFieldListener = new FieldListener();
   private JComboBox zombieSettingsBox;
   private JLabel zombieSettingsLabel;
   private JPanel zombieSettingsPanel;
-  private JFormattedTextField zombieSettingsText;
+  private JTextField zombieSettingsText;
 
   public SettingsWindow()
   {
@@ -75,7 +75,7 @@ public class SettingsWindow extends JFrame implements ActionListener
         Settings.playerStamina = value * Settings.frameRate;
         return;
       case 2:
-        Settings.playerStaminaRegen = value * Settings.frameRate;
+        Settings.playerStaminaRegen = value;
         return;
       case 3:
         Settings.playerRun = Util.tilesPerSecondToPixelsPerFrame(value);
@@ -142,7 +142,7 @@ public class SettingsWindow extends JFrame implements ActionListener
     gameSettingsBox.setName(gameSettingsLabel.getText());
     gameSettingsBox.addActionListener(comboListener);
     gameSettingsPanel.add(gameSettingsBox);
-    gameSettingsText = new JFormattedTextField(NumberFormat.getNumberInstance());
+    gameSettingsText = new JTextField();
     gameSettingsText.setPreferredSize(fieldSize);
     gameSettingsText.addActionListener(textFieldListener);
     gameSettingsText.addKeyListener(textFieldListener);
@@ -161,7 +161,7 @@ public class SettingsWindow extends JFrame implements ActionListener
     playerSettingsBox.setName(playerSettingsLabel.getText());
     playerSettingsBox.addActionListener(comboListener);
     playerSettingsPanel.add(playerSettingsBox);
-    playerSettingsText = new JFormattedTextField(NumberFormat.getCurrencyInstance());
+    playerSettingsText = new JTextField();
     playerSettingsText.setPreferredSize(fieldSize);
     playerSettingsText.addActionListener(textFieldListener);
     playerSettingsText.addKeyListener(textFieldListener);
@@ -190,14 +190,14 @@ public class SettingsWindow extends JFrame implements ActionListener
     zombieSettingsBox.setName(zombieSettingsLabel.getText());
     zombieSettingsBox.addActionListener(comboListener);
     zombieSettingsPanel.add(zombieSettingsBox);
-    zombieSettingsText = new JFormattedTextField(NumberFormat.getCurrencyInstance());
+    zombieSettingsText = new JTextField();
     zombieSettingsText.setPreferredSize(fieldSize);
     zombieSettingsText.addActionListener(textFieldListener);
     zombieSettingsText.addKeyListener(textFieldListener);
     zombieSettingsPanel.add(zombieSettingsText);
   }
 
-  private void parseValue(JFormattedTextField field)
+  private void parseValue(JTextField field)
   {
     if (field == gameSettingsText)
     {
@@ -249,7 +249,7 @@ public class SettingsWindow extends JFrame implements ActionListener
         playerSettingsText.setText(String.format("%.2f", Settings.playerStamina / Settings.frameRate));
         return;
       case 2:
-        playerSettingsText.setText(String.format("%.2f", Settings.playerStaminaRegen / Settings.frameRate));
+        playerSettingsText.setText(String.format("%.2f", Settings.playerStaminaRegen));
         return;
       case 3:
         playerSettingsText.setText(String.format("%.2f", Settings.playerRun * Settings.frameRate / Settings.tileSize));
@@ -295,7 +295,7 @@ public class SettingsWindow extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-      parseValue((JFormattedTextField) e.getSource());
+      parseValue((JTextField) e.getSource());
     }
 
     @Override

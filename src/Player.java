@@ -229,7 +229,7 @@ public class Player extends Entity implements Detonator
 
   private void increaseStamina()
   {
-    if (++stamina > Settings.playerStamina) stamina = Settings.playerStamina;
+    if ((stamina += Settings.playerStaminaRegen) > Settings.playerStamina) stamina = Settings.playerStamina;
     isStaminaDepleted();
     updateStaminaBar();
   }
@@ -251,7 +251,7 @@ public class Player extends Entity implements Detonator
    */
   private boolean isStaminaDepleted()
   {
-    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.frameRate * 2);
+    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.playerStaminaRegen * Settings.frameRate * 2);
     staminaProgressBar.changeColor(staminaDepleted);
     return staminaDepleted;
   }
