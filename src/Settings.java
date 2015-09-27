@@ -20,6 +20,9 @@ public class Settings
   public static int numObjectsGuranteed; //Rooms + hallways
   public static int fireDuration; //frames
   public static int playerSightRadius; //pixels
+  public static float zombieSpawnRate = 0.09f;
+  public static float trapSpawnRate = 0.09f;
+  public static int playerTraps = 1;
 
   static //ensures correct order of assignment
   {
@@ -55,8 +58,10 @@ public class Settings
   {
     float pWalk = playerWalk * Settings.frameRate / Settings.tileSize;
     float pRun = playerRun * Settings.frameRate / Settings.tileSize;
+    int pSight = playerSightRadius / Settings.tileSize;
     Settings.tileSize = value;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(pWalk);
     playerRun = Util.tilesPerSecondToPixelsPerFrame(pRun);
+    playerSightRadius = pSight * Settings.tileSize;
   }
 }

@@ -185,7 +185,7 @@ public class Room
     {
       for (int j = startX+1; j < (startX+width-2); j++)
       {
-        if(Util.rng.nextDouble() < 0.09)
+        if(Util.rng.nextDouble() < Settings.zombieSpawnRate)
         {
           if (Util.rng.nextBoolean())
           {
@@ -212,7 +212,7 @@ public class Room
     {
       for (int j = startX+1; j < (startX+width-2); j++)
       {
-        if(Util.rng.nextDouble() < 0.01)
+        if(Util.rng.nextDouble() < Settings.trapSpawnRate)
         {
           Trap trap = new Trap(new Point2D.Float(j*Settings.tileSize, i*Settings.tileSize));
           entityManager.add(trap);
