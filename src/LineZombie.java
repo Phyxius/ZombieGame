@@ -55,7 +55,6 @@ class LineZombie extends ZombieModel
         //directionAngle = Math.atan((pointToAimAt.getY()-zombieCenter.getY())/(pointToAimAt.getX()-zombieCenter.getX()));
         triedAStar = true;
         moving = true;
-
       }
     }
 
