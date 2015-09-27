@@ -90,16 +90,16 @@ public class House extends Entity
     int curStartX = (int) curOrigin.getX()/tileSize;
     int curEndY = curStartY + frame.getHeight()/tileSize;
     int curEndX = curStartX + frame.getWidth()/tileSize;
-    for(int i = curStartY; i < curEndY; i++)
+    for(int i = curStartY; i < curEndY+1; i++)
     {
-      for(int j = curStartX; j < curEndX; j++)
+      for(int j = curStartX; j < curEndX+1; j++)
       {
         if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
         local.drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
       }
     }
-    //local.setColor(Color.green);
-    //connections.forEach(Line -> local.draw(Line));
+    local.setColor(Color.green);
+    connections.forEach(Line -> local.draw(Line));
   }
 
   public Point2D.Float getPosition() //returns upper left point of the object
@@ -298,7 +298,8 @@ public class House extends Entity
   {
     int numDoors = 0;
     double rand = Math.random();
-    if(depth <= 2) //|| depth == 3)
+    if(depth == 1) numDoors = 4;
+    if(depth == 2) //|| depth == 3)
     {
       if(rand >= 0.5) numDoors = 4;
       else if(rand >= 0.25) numDoors = 3;
@@ -513,15 +514,20 @@ public class House extends Entity
               if (fullGrid[i + dy][j + dx].isSolid() ||
                   fullGrid[i][j].isSolid())
               {
-                graphOfGrid.setEdge(newPoint, neighbor, Float.MAX_VALUE);
-                Point2D.Float newPointTile = new Point2D.Float((float) newPoint.getX()*Settings.tileSize, (float)newPoint.getY()*Settings.tileSize);
-                Point2D.Float neigbTile = new Point2D.Float((float) neighbor.getX()*Settings.tileSize, (float)neighbor.getY()*Settings.tileSize);
-                connections.add(new Line2D.Float(newPointTile,neigbTile));
+                //graphOfGrid.setEdge(newPoint, neighbor, Float.MAX_VALUE);
+                //Point2D.Float newPointTile = new Point2D.Float((float) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
+                //             (float)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
+                //Point2D.Float neigbTile = new Point2D.Float((float) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
+                //                                            (float)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
+                //connections.add(new Line2D.Float(newPointTile,neigbTile));
 
-              } else
+              }
+              else
               {
-                Point2D.Float newPointTile = new Point2D.Float((float) newPoint.getX()*Settings.tileSize, (float)newPoint.getY()*Settings.tileSize);
-                Point2D.Float neigbTile = new Point2D.Float((float) neighbor.getX()*Settings.tileSize, (float)neighbor.getY()*Settings.tileSize);
+                Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
+                             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
+                Point neigbTile = new Point((int) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
+                                                            (int)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
                 connections.add(new Line2D.Float(newPointTile,neigbTile));
                 graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
               }

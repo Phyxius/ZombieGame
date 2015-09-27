@@ -50,11 +50,15 @@ class RandomZombie extends ZombieModel
       {
         // A* to player
         int tileSize = Settings.tileSize;
-        Point zombieCenter = new Point((int)position.getX()/tileSize, (int)position.getY()/tileSize);
-        Point playerCenter = new Point((int)playerPosition.getX()/tileSize, (int)playerPosition.getY()/tileSize);
+        Point zombieCenter = findCurrentlyOccupiedTile(numFailedAttempts);
+        Point playerCenter = new Point((int)(playerPosition.getX()+tileSize/2)/tileSize, (int)(playerPosition.getY()+tileSize/2)/tileSize);
         Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
-        directionAngle = Math.atan(pointToAimAt.getY()/pointToAimAt.getX());
+        if(pointToAimAt.getY()-zombieCenter.getY() > 0) directionAngle = (Math.PI/2);
+        else if(pointToAimAt.getY()-zombieCenter.getY() < 0) directionAngle = -(Math.PI/2);
+        else if(pointToAimAt.getX()-zombieCenter.getX() > 0) directionAngle = 0;
+        else if(pointToAimAt.getX()-zombieCenter.getX() < 0) directionAngle = Math.PI;
         moving = true;
+        triedAStar = true;
       }
     }
 
@@ -67,6 +71,7 @@ class RandomZombie extends ZombieModel
       // Change Position
       float velocity = Util.tilesPerSecondToPixelsPerFrame(speed);
       position.setLocation((float) (lastX + Math.cos(directionAngle) * velocity), (float) (lastY + Math.sin(directionAngle) * velocity));
+      aStarWorked = true;
 
       // Check for collisions after moving
       Collection<Entity> collisions = e.getCollidingEntities(this.getBoundingBox());
@@ -77,6 +82,11 @@ class RandomZombie extends ZombieModel
           {
             e.remove(this);
             return;
+          }
+          if(triedAStar)
+          {
+            numFailedAttempts++;
+            aStarWorked = false;
           }
           position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
           collision = true;
@@ -92,6 +102,7 @@ class RandomZombie extends ZombieModel
     }
     else
     {
+      if(aStarWorked) numFailedAttempts = 0;
       moveAnimation.nextFrame(!moving);
       moving = true;
 

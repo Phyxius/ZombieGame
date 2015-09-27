@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Set;
 
 /**
  * Created by Mohammad R. Yousefi on 07/09/15.
@@ -12,6 +13,9 @@ abstract class ZombieModel extends Entity implements Detonator
   protected int decisionRate; // New decision every decisionRate updates.
   protected float smell; // smell radius = smell * tiles
   protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
+  protected int numFailedAttempts = 0;
+  protected boolean triedAStar;
+  protected boolean aStarWorked;
   protected final Player player; // Reference to the player on the current board.
   protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
   protected Point2D.Float position = new Point2D.Float(); // Top Left Corner.
@@ -88,6 +92,26 @@ abstract class ZombieModel extends Entity implements Detonator
       playerPosition = null;
     }
     loud = distanceFromPlayer <= Settings.playerHearing;
+  }
+
+  Point findCurrentlyOccupiedTile(int numFailedAttempts)
+  {
+    int tileSize = Settings.tileSize;
+    int upperLeftX = (int) getPosition().getX();
+    int upperLeftY = (int) getPosition().getY();
+    if(numFailedAttempts == 0) return new Point((upperLeftX + (tileSize/2))/tileSize, (upperLeftY + (tileSize/2))/tileSize);
+    if(numFailedAttempts == 1) return new Point(upperLeftX/tileSize, upperLeftY/tileSize);
+    if(numFailedAttempts == 2) return new Point((upperLeftX + tileSize)/tileSize, upperLeftY/tileSize);
+    if(numFailedAttempts == 3) return new Point(upperLeftX/tileSize, (upperLeftY + tileSize)/tileSize);
+    if(numFailedAttempts == 4) return new Point((upperLeftX + tileSize)/tileSize, (upperLeftY + tileSize)/tileSize);
+    else return null;
+    //int varX = (int) getPosition().getX();
+    //if(varX % Settings.tileSize != 0) varX += Settings.tileSize;
+    //int varY = (int) getPosition().getY()+Settings.tileSize;
+    //if(varY % Settings.tileSize != 0) varY += Settings.tileSize;
+    //while(varX % Settings.tileSize != 0) varX--;
+    //while(varY % Settings.tileSize != 0) varY--;
+    //return new Point(varX/Settings.tileSize, varY/Settings.tileSize);
   }
 
   /**
