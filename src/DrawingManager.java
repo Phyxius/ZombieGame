@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 /**
@@ -7,10 +8,12 @@ import java.awt.geom.Point2D;
 public class DrawingManager
 {
   private final EntityManager entityManager;
+  private final GraphicsConfiguration graphicsConfiguration;
 
-  public DrawingManager(EntityManager entityManager)
+  public DrawingManager(EntityManager entityManager, GraphicsConfiguration graphicsConfiguration)
   {
     this.entityManager = entityManager;
+    this.graphicsConfiguration = graphicsConfiguration;
   }
 
   public Entity getEntityToFollow()
@@ -26,5 +29,10 @@ public class DrawingManager
   public Point2D.Float getCameraOrigin()
   {
     return entityManager.getCameraOrigin();
+  }
+
+  public GraphicsConfiguration getGraphicsConfiguration()
+  {
+    return graphicsConfiguration;
   }
 }

@@ -187,8 +187,16 @@ public class Room
       {
         if(Util.rng.nextDouble() < 0.01)
         {
-          LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
-          entityManager.add(zombie);
+          if (Util.rng.nextBoolean())
+          {
+            LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
+            entityManager.add(zombie);
+          }
+          else
+          {
+            RandomZombie zombie = new RandomZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
+            entityManager.add(zombie);
+          }
         }
       }
     }

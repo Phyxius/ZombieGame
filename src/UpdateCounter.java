@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -7,6 +8,11 @@ import java.awt.*;
 public class UpdateCounter extends Entity
 {
   int updates;
+
+  public UpdateCounter()
+  {
+    new Timer(1000, (e -> updates = 0)).start();
+  }
 
   @Override
   public void update(UpdateManager e)
