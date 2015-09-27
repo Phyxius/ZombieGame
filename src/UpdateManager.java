@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -51,7 +52,7 @@ public class UpdateManager
     return entityManager.getAllEntities();
   }
 
-  public Collection<Entity> getCollidingEntities(Rectangle2D.Float boundingBox)
+  public Collection<Entity> getCollidingEntities(Shape boundingBox)
   {
     return entityManager.getCollidingEntities(boundingBox);
   }
@@ -59,11 +60,6 @@ public class UpdateManager
   public Collection<Entity> getIntersectingEntities(Point2D.Float point)
   {
     return entityManager.getIntersectingEntities(point);
-  }
-
-  public Collection<Entity> getIntersectingEntities(Line2D line)
-  {
-    return entityManager.getIntersectingEntities(line);
   }
 
   public boolean isKeyPressed(int keyCode)

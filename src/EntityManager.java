@@ -155,22 +155,16 @@ public class EntityManager
     return new ArrayList<>(entities);
   }
 
-  public Collection<Entity> getCollidingEntities(Rectangle2D.Float boundingBox)
+  public Collection<Entity> getCollidingEntities(Shape boundingBox)
   {
     return entities.parallelStream().filter(e -> e.getBoundingBox() != null)
-        .filter(e -> e.getBoundingBox().intersects(boundingBox)).collect(Collectors.toList());
+        .filter(e -> boundingBox.intersects(e.getBoundingBox())).collect(Collectors.toList());
   }
 
   public Collection<Entity> getIntersectingEntities(Point2D.Float point)
   {
     return entities.parallelStream().filter(e -> e.getBoundingBox() != null)
         .filter(e -> e.getBoundingBox().contains(point)).collect(Collectors.toList());
-  }
-
-  public Collection<Entity> getIntersectingEntities(Line2D line)
-  {
-    return entities.parallelStream().filter(e -> e.getBoundingBox() != null)
-        .filter(e -> e.getBoundingBox().intersectsLine(line)).collect(Collectors.toList());
   }
 
   public boolean isKeyPressed(int keyCode)
