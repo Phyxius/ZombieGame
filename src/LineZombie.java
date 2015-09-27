@@ -13,7 +13,6 @@ class LineZombie extends ZombieModel
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
-  private boolean moving = true;
 
   LineZombie(Player player, Point2D.Float position)
   {
@@ -43,21 +42,9 @@ class LineZombie extends ZombieModel
       }
       else
       {
-        // A* to player
-        int tileSize = Settings.tileSize;
-        Point zombieCenter = findCurrentlyOccupiedTile(numFailedAttempts);
-        Point playerCenter = new Point((int)(playerPosition.getX()+tileSize/2)/tileSize, (int)(playerPosition.getY()+tileSize/2)/tileSize);
-        Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
-        if(pointToAimAt.getY()-zombieCenter.getY() > 0) directionAngle = (Math.PI/2);
-        else if(pointToAimAt.getY()-zombieCenter.getY() < 0) directionAngle = -(Math.PI/2);
-        else if(pointToAimAt.getX()-zombieCenter.getX() > 0) directionAngle = 0;
-        else if(pointToAimAt.getX()-zombieCenter.getX() < 0) directionAngle = Math.PI;
-        //directionAngle = Math.atan((pointToAimAt.getY()-zombieCenter.getY())/(pointToAimAt.getX()-zombieCenter.getX()));
-        triedAStar = true;
-        moving = true;
+        pathFinding();
       }
     }
-
 
     if (moving)
     {
@@ -66,7 +53,8 @@ class LineZombie extends ZombieModel
 
       // Change Position
       float velocity = Util.tilesPerSecondToPixelsPerFrame(speed);
-      position.setLocation((float) (lastX + Math.cos(directionAngle) * velocity), (float) (lastY + Math.sin(directionAngle) * velocity));
+      position.setLocation((float) (lastX + Math.cos(directionAngle) * velocity),
+          (float) (lastY + Math.sin(directionAngle) * velocity));
       aStarWorked = true;
 
       // Check for collisions after moving
@@ -79,7 +67,7 @@ class LineZombie extends ZombieModel
             e.remove(this);
             return;
           }
-          if(triedAStar)
+          if (triedAStar)
           {
             numFailedAttempts++;
             aStarWorked = false;
@@ -89,7 +77,7 @@ class LineZombie extends ZombieModel
           moving = false;
         }
       });
-      if(aStarWorked) numFailedAttempts = 0;
+      if (aStarWorked) numFailedAttempts = 0;
     }
 
     if (!moving)
@@ -105,7 +93,7 @@ class LineZombie extends ZombieModel
       //double volume = 10;
       if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && loud)
       {
-        double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize ;
+        double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
         zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
       //zombieStep.stop();
@@ -116,22 +104,25 @@ class LineZombie extends ZombieModel
 
   /**
    * Draws the zombie.
-   * @param local Draws at the position of the zombie.
-   * @param global Draws at the top left corner of the screen.
+   *
+   * @param local          Draws at the position of the zombie.
+   * @param global         Draws at the top left corner of the screen.
    * @param drawingManager The drawing manager for this object.
    */
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     AffineTransform transformer = new AffineTransform();
-    transformer.rotate(directionAngle, Settings.tileSize /2, Settings.tileSize /2); // must rotate first then scale otherwise it will cause a bug
+    transformer.rotate(directionAngle, Settings.tileSize / 2,
+        Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
     local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
   }
 
   /**
    * Informs the zombie to react to a collision.
-   * @param other The object that collides with this object.
+   *
+   * @param other            The object that collides with this object.
    * @param collisionManager The manager for this collision.
    */
   @Override
