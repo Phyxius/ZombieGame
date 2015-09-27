@@ -170,7 +170,7 @@ public class Graph<T>
       for (T neighbor : neighbors)
       {
         float newCost = costsSoFar.getOrDefault(currentNode, Float.MAX_VALUE);
-        if (newCost >= costsSoFar.get(neighbor)) continue;
+        if (newCost >= costsSoFar.getOrDefault(neighbor, Float.MAX_VALUE)) continue;
         costsSoFar.put(neighbor, newCost);
         previousNodes.put(neighbor, currentNode);
       }

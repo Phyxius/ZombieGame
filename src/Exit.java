@@ -19,21 +19,27 @@ public class Exit extends Entity
     {
       case NORTH:
         exitImg = ResourceManager.getImage("exit/north.png");
-        position.setLocation(startX+Util.rng.nextInt(width-2)*tilSz, startY);
+        position.setLocation(startX+Util.rng.nextInt(width-2)*tilSz, startY-1);
         break;
       case WEST:
         exitImg = ResourceManager.getImage("exit/west.png");
-        position.setLocation(startX, startY+tilSz*(1+Util.rng.nextInt(height-2)));
+        position.setLocation(startX+1, startY+tilSz*(1+Util.rng.nextInt(height-2)));
         break;
       case EAST:
         exitImg = ResourceManager.getImage("exit/east.png");
-        position.setLocation(startX, startY+tilSz*(1+Util.rng.nextInt(height-2)));
+        position.setLocation(startX-1, startY+tilSz*(1+Util.rng.nextInt(height-2)));
         break;
       case SOUTH:
         exitImg = ResourceManager.getImage("exit/south.png");
-        position.setLocation(startX+Util.rng.nextInt(width-2), startY);
+        position.setLocation(startX+Util.rng.nextInt(width-2), startY+1);
         break;
     }
+  }
+
+  @Override
+  public boolean isSolid()
+  {
+    return false;
   }
 
   @Override
@@ -46,5 +52,11 @@ public class Exit extends Entity
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     local.drawImage(exitImg, 0,0, Settings.tileSize, Settings.tileSize,null);
+  }
+
+  @Override
+  public void onCollision(Entity other, CollisionManager c)
+  {
+    if(other instanceof Player) c.remove(this);
   }
 }

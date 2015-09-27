@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class Player extends Entity implements LightSource, Detonator
 {
   private final SoundEffect FOOTSTEP_SFX = new SoundEffect("soundfx/player_footstep.mp3");
-  ;
   private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
   private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
   private final ProgressBar STAMINA_PROGRESS_BAR = new ProgressBar("gui/label_stamina.png");

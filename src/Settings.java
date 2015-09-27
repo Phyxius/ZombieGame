@@ -22,7 +22,7 @@ public class Settings
 
   static //ensures correct order of assignment
   {
-    tileSize = 80;
+    tileSize = 10;
     frameRate = 60;
     numObjectsGuranteed = 11;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
