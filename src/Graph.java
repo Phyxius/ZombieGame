@@ -184,7 +184,7 @@ public class Graph<T>
       currentNode = previousNode;
     }
     if (path.isEmpty()) return Optional.empty();
-    path.add(startNode);
+    //path.add(startNode);
     Collections.reverse(path);
     return Optional.of(new Path<>(new LinkedHashSet<>(path), costsSoFar.get(endNode)));
   }

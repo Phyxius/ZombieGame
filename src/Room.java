@@ -185,7 +185,7 @@ public class Room
     {
       for (int j = startX+1; j < (startX+width-2); j++)
       {
-        if(Util.rng.nextDouble() < 0.01)
+        if(Util.rng.nextDouble() < 0.09)
         {
           if (Util.rng.nextBoolean())
           {
