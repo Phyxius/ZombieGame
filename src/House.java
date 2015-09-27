@@ -48,7 +48,7 @@ public class House extends Entity
     initDoorways = new ArrayList<>();
     graphOfGrid = new Graph<>();
     fullGrid = new Tile[gridHeight][gridWidth];
-    houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
+    //houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 40;
     int roomStartY = 40;
     int startWidth = 8;
@@ -64,7 +64,7 @@ public class House extends Entity
     copyObjectsToGrid();
     makeGraph();
     makeExit();
-    generateBuffImgHouse();
+    //generateBuffImgHouse();
   }
 
   /**
@@ -79,9 +79,19 @@ public class House extends Entity
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
-    local.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
-    local.setColor(Color.green);
-    connections.forEach(Line -> local.draw(Line));
+    //local.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
+    int tileSize = Settings.tileSize;
+
+    for(int i = 0; i < gridHeight; i++)
+    {
+      for(int j = 0; j < gridWidth; j++)
+      {
+        if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
+        local.drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
+      }
+    }
+    //local.setColor(Color.green);
+    //connections.forEach(Line -> local.draw(Line));
   }
 
   public Point2D.Float getPosition() //returns upper left point of the object

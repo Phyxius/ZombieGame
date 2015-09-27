@@ -50,6 +50,7 @@ class LineZombie extends ZombieModel
         Point playerCenter = new Point((int)playerPosition.getX()/tileSize, (int)playerPosition.getY()/tileSize);
         Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
         directionAngle = Math.atan(pointToAimAt.getY()/pointToAimAt.getX());
+        moving = true;
 
       }
     }

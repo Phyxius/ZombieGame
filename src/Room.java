@@ -185,7 +185,7 @@ public class Room
     {
       for (int j = startX+1; j < (startX+width-2); j++)
       {
-        if(Util.rng.nextDouble() < 0.1)
+        if(Util.rng.nextDouble() < 0.01)
         {
           LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
           entityManager.add(zombie);
