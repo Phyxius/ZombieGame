@@ -50,7 +50,7 @@ public class SightDrawer extends Entity
       overlayDrawer.fill(LIGHT_ELLIPSE);*/
       List<Point2D.Float> points = entry.getValue().parallelStream()
           .map(point -> new Point2D.Float(point.x - cameraX, point.y - cameraY))
-          .sorted(Comparator.comparing(point -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x)))
+          .sorted(Comparator.comparing((Point2D.Float point) -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x)).thenComparing(point -> lightSource.distanceSq(point)))
           .collect(Collectors.toList());
       //overlayDrawer.setColor(Color.green);
       Polygon litArea = new Polygon();
@@ -105,6 +105,7 @@ public class SightDrawer extends Entity
                   /*.filter(p -> potentiallyLitEntities.stream()
                       .noneMatch(ent -> ent.getBoundingBox().intersectsLine(
                           Util.getLongerLine(new Line2D.Float(lightSource, p), -2)))))*/
+              .flatMap(tuple -> tuple.value2 == null ? Stream.of(tuple.value1) : Stream.of(tuple.value1, tuple.value2))
               .collect(Collectors.toList()));
       relevantCorners.put(lightSource, lightPoints);
     }
@@ -112,23 +113,29 @@ public class SightDrawer extends Entity
 
   private boolean doRectanglesContainPoint(float x, float y, Collection<Rectangle2D.Float> rectangles)
   {
-    return rectangles.stream().anyMatch(r -> r.contains(x, y));
+    return rectangles.parallelStream().anyMatch(r -> r.contains(x, y));
   }
 
-  private Point2D.Float castRays(Point2D.Float origin, Point2D.Float towardsPoint, Collection<Entity> interestingEntities)
+  private Tuple<Point2D.Float, Point2D.Float> castRays(Point2D.Float origin, Point2D.Float towardsPoint, Collection<Entity> interestingEntities)
   {
     List<Rectangle2D.Float> rectangles = interestingEntities.parallelStream().map(Entity::getBoundingBox).collect(Collectors.toList());
     double angle = Math.atan2(towardsPoint.y - origin.y, towardsPoint.x - origin.x);
     float dx = (float)Math.cos(angle), dy = (float)Math.sin(angle);
     float x = origin.x, y = origin.y;
     int iterations = 0;
-    while (!(doRectanglesContainPoint(x, y, rectangles) && doRectanglesContainPoint(x + dx, y + dy, rectangles)) && iterations < Settings.playerSightRadius)
+    Point2D.Float previousPoint = null;
+    while (iterations < Settings.playerSightRadius)
     {
+      if ((doRectanglesContainPoint(x, y, rectangles)))
+      {
+        if (doRectanglesContainPoint(x + dx, y + dy, rectangles)) break;
+        previousPoint = new Point2D.Float(x, y);
+      }
       iterations++;
       x += 3 * dx;
       y += 3 * dy;
     }
-    return new Point2D.Float(x, y);
+    return new Tuple<>(new Point2D.Float(x, y), previousPoint);
   }
 
   @Override
