@@ -41,6 +41,11 @@ public class ResourceManager
       imagePaths.add("animation/player/idle_" + i + ".png");
     }
 
+    imagePaths.add("gui/trapIcon.png");
+    for (int i = 0; i < 10; i++)
+    {
+      imagePaths.add("gui/digit_" + i + ".png");
+    }
   }
 
   public static void populateImageHashMap()

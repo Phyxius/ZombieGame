@@ -18,6 +18,7 @@ public class Player extends Entity implements Detonator
   private final ProgressBar STAMINA_BAR = new ProgressBar("gui/label_stamina.png");
   private final SoundEffect TRAP_SFX = new SoundEffect("soundfx/player_pickup.mp3");
   private final ProgressBar TRAP_BAR = new ProgressBar("");
+  private final GuiCounter TRAP_COUNTER = new GuiCounter("gui/trapIcon.png");
   private final Point2D.Float CENTER;
   private Trap collidingTrap = null;
   private boolean flipAnimation;
@@ -35,6 +36,7 @@ public class Player extends Entity implements Detonator
   public Player()
   {
     CENTER = new Point2D.Float((float) getBoundingBox().getCenterX(), (float) getBoundingBox().getCenterY());
+    TRAP_COUNTER.setValue(trapsInInventory);
   }
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
@@ -67,13 +69,9 @@ public class Player extends Entity implements Detonator
       STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
           Settings.tileSize);
     STAMINA_BAR.draw(global);
-      global.drawImage(ResourceManager.getImage("fire/firetrap.png"), Settings.tileSize,
-        (int) (global.getClipBounds().getHeight() - 2.5 * Settings.tileSize), Settings.tileSize, Settings.tileSize,
-        null);
-    global.setFont(UI_FONT);
-    global.setColor(Color.GREEN);
-    global.drawString("X " + trapsInInventory, (int) (2.3 * Settings.tileSize),
-        (int) (global.getClipBounds().getHeight() - 1.8 * Settings.tileSize));
+    TRAP_COUNTER.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
+        2.15f * Settings.tileSize);
+    TRAP_COUNTER.draw(global);
   }
 
   @Override
@@ -114,7 +112,7 @@ public class Player extends Entity implements Detonator
         updatePickUpBar();
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
-          trapsInInventory++;
+          TRAP_COUNTER.setValue(++trapsInInventory);
           e.remove(collidingTrap);
           collidingTrap = null;
           isPickingUp = false;
@@ -127,7 +125,7 @@ public class Player extends Entity implements Detonator
         updatePickUpBar();
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
-          trapsInInventory--;
+          TRAP_COUNTER.setValue(--trapsInInventory);
           Trap trap = new Trap(new Point2D.Float((int) (CENTER.getX() / Settings.tileSize) * Settings.tileSize,
               (int) (CENTER.getY() / Settings.tileSize) * Settings.tileSize));
           e.add(trap);
@@ -303,7 +301,7 @@ public class Player extends Entity implements Detonator
 
   private class ProgressBar
   {
-    private final BufferedImage[] imageList = new BufferedImage[5];
+    private final BufferedImage[] IMAGE_LIST = new BufferedImage[5];
     private final Point2D.Float POSITION;
     private boolean changeColor;
     private int currentValue;
@@ -312,11 +310,11 @@ public class Player extends Entity implements Detonator
     ProgressBar(String labelPath)
     {
 
-      if (!labelPath.equals("")) imageList[0] =  ResourceManager.getImage(labelPath);
-      imageList[1] = ResourceManager.getImage("gui/progress_border_green.png");
-      imageList[2] = ResourceManager.getImage("gui/progress_fill_green.png");
-      imageList[3] = ResourceManager.getImage("gui/progress_border_red.png");
-      imageList[4] = ResourceManager.getImage("gui/progress_fill_red.png");
+      if (labelPath != null) IMAGE_LIST[0] =  ResourceManager.getImage(labelPath);
+      IMAGE_LIST[1] = ResourceManager.getImage("gui/progress_border_green.png");
+      IMAGE_LIST[2] = ResourceManager.getImage("gui/progress_fill_green.png");
+      IMAGE_LIST[3] = ResourceManager.getImage("gui/progress_border_red.png");
+      IMAGE_LIST[4] = ResourceManager.getImage("gui/progress_fill_red.png");
       setCurrentValue(-1);
       setMaxValue(-1);
       this.POSITION = new Point2D.Float();
@@ -329,21 +327,21 @@ public class Player extends Entity implements Detonator
       int imageWidth = 2 * Settings.tileSize;
       int imageHeight = (int) (0.375 * Settings.tileSize);
       int offset = 0;
-      if (imageList[0] != null)
+      if (IMAGE_LIST[0] != null)
       {
         offset = imageWidth;
-        global.drawImage(imageList[0], xPosition, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(IMAGE_LIST[0], xPosition, yPosition, imageWidth, imageHeight, null);
       }
       int fillWidth = (int) ((float) currentValue / maxValue * imageWidth);
       if (changeColor)
       {
-        global.drawImage(imageList[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
-        global.drawImage(imageList[4], xPosition + offset, yPosition, fillWidth , imageHeight, null);
+        global.drawImage(IMAGE_LIST[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(IMAGE_LIST[4], xPosition + offset, yPosition, fillWidth , imageHeight, null);
       }
       else
       {
-        global.drawImage(imageList[1], xPosition + offset, yPosition, imageWidth, imageHeight, null);
-        global.drawImage(imageList[2], xPosition + offset, yPosition, fillWidth, imageHeight, null);
+        global.drawImage(IMAGE_LIST[1], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(IMAGE_LIST[2], xPosition + offset, yPosition, fillWidth, imageHeight, null);
       }
     }
 
@@ -366,7 +364,84 @@ public class Player extends Entity implements Detonator
     {
       this.changeColor = changeColor;
     }
+  }
+
+  private class GuiCounter
+  {
+
+    private final BufferedImage[] IMAGE_LIST = new BufferedImage[12];
+    private final Point2D.Float POSITION = new Point2D.Float();
+    private int value;
+    int imageHeight = Settings.tileSize;
+    int imageWidth = 0;
 
 
+    GuiCounter (String imagePath)
+    {
+
+      for (int i = 0; i < 10; i++)
+      {
+        IMAGE_LIST[i] = ResourceManager.getImage("gui/digit_" + i + ".png");
+      }
+      if (imagePath != null) IMAGE_LIST[10] = ResourceManager.getImage(imagePath);
+      setValue(0);
+    }
+
+    public int getValue()
+    {
+      return value;
+    }
+
+    public void setValue(int value)
+    {
+      if (value >= 0)
+      {
+        this.value = value;
+        updateImage();
+      }
+      else this.value = 0;
+    }
+
+    private void updateImage()
+    {
+      int digitWidth = (int) (((float) IMAGE_LIST[0].getWidth() / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize);
+      int iconWidth = 0;
+
+      if (IMAGE_LIST[10] != null)
+      {
+        iconWidth = (int) (((float) IMAGE_LIST[10].getWidth() / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize);
+      }
+
+      int value = this.value;
+      int order;
+      if (value == 0) order = 1;
+      else order = 1 + (int) Math.log10(value);
+
+      imageWidth = iconWidth + order * digitWidth;
+      IMAGE_LIST[11] = new BufferedImage(imageWidth, imageHeight, IMAGE_LIST[0].getType());
+      Graphics2D graphics = IMAGE_LIST[11].createGraphics();
+      if (IMAGE_LIST[10] != null) graphics.drawImage(IMAGE_LIST[10], null, 0, 0);
+      int digit;
+      int offset = iconWidth;
+      while (order > 0)
+      {
+        int div = (int) Math.pow(10, order - 1);
+        digit = (value / div) % 10;
+        value -= digit * div;
+        graphics.drawImage(IMAGE_LIST[digit], null, offset, 0);
+        order--;
+        offset+= digitWidth;
+      }
+    }
+
+    public void draw (Graphics2D global)
+    {
+      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(), imageWidth, imageHeight, null);
+    }
+
+    public void setPosition(float xPosition, float yPosition)
+    {
+      POSITION.setLocation(xPosition, yPosition);
+    }
   }
 }
