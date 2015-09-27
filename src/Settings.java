@@ -29,10 +29,34 @@ public class Settings
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);
     playerRun = Util.tilesPerSecondToPixelsPerFrame(2);
     playerStamina = 5f * Settings.frameRate;
-    playerStaminaRegen = 0.20f * Settings.frameRate;
+    playerStaminaRegen = 0.20f;
     minAngle = 0.25 * Math.PI;
     fireDuration = 15 * frameRate;
     playerHearing = 10;
     playerSightRadius = 5 * tileSize;
+  }
+
+  public static void updateFrameRate(int value)
+  {
+    float pStamina = playerStamina / Settings.frameRate;
+    float pRegen = playerStaminaRegen / Settings.frameRate;
+    float pWalk = playerWalk * Settings.frameRate / Settings.tileSize;
+    float pRun = playerRun * Settings.frameRate / Settings.tileSize;
+    int fDuration = fireDuration / Settings.frameRate;
+    Settings.frameRate = value;
+    playerStamina = pStamina * Settings.frameRate;
+    playerStaminaRegen = pRegen * Settings.frameRate;
+    fireDuration = fDuration * Settings.frameRate;
+    playerWalk = Util.tilesPerSecondToPixelsPerFrame(pWalk);
+    playerRun = Util.tilesPerSecondToPixelsPerFrame(pRun);
+  }
+
+  public static void updateTileSize(int value)
+  {
+    float pWalk = playerWalk * Settings.frameRate / Settings.tileSize;
+    float pRun = playerRun * Settings.frameRate / Settings.tileSize;
+    Settings.tileSize = value;
+    playerWalk = Util.tilesPerSecondToPixelsPerFrame(pWalk);
+    playerRun = Util.tilesPerSecondToPixelsPerFrame(pRun);
   }
 }
