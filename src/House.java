@@ -67,7 +67,7 @@ public class House extends Entity
     startRoom.init();
     copyObjectsToGrid();
     makeGraph();
-    makeExit();
+    if(!makeExit(true)) makeExit(false);
     //generateBuffImgHouse();
   }
 
@@ -251,8 +251,8 @@ public class House extends Entity
     Room newRoom = null;
     Random generator = new Random();
     int offsetFromCenter = 2;//generator.nextInt(2)+2;
-    int newWidth = generator.nextInt(4)+8;
-    int newHeight = generator.nextInt(4)+8;
+    int newWidth = generator.nextInt(6)+8;
+    int newHeight = generator.nextInt(6)+8;
     switch(comingFrom)
     {
       case NORTH:
@@ -538,23 +538,25 @@ public class House extends Entity
     }
   }
 
-  private void makeExit()
+  private boolean makeExit(boolean makeFarAway)
   {
     Collections.shuffle(roomList);
+    Point roomStart = new Point();
     for(Room room: roomList)
     {
+      roomStart.setLocation(room.getStartX()*Settings.tileSize, room.getStartY()*Settings.tileSize);
       Collections.shuffle(room.wallList);
-      if(room.isLeaf() && !room.equals(startRoom) )
+      if(room.isLeaf() && !room.equals(startRoom) &&
+         (!makeFarAway || roomStart.distance(player.getPosition()) > Settings.distanceAwayExit * Settings.tileSize))
       {
-        for(Wall wall: room.wallList)
-        {
-          if(wall!=null)
-          {
-            entityManager.add(new Exit(wall.getDirection(),wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
-            return;
+        for (Wall wall : room.wallList) {
+          if (wall != null) {
+            entityManager.add(new Exit(wall.getDirection(), wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
+            return true;
           }
         }
       }
     }
+    return false;
   }
 }
