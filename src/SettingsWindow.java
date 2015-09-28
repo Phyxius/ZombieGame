@@ -17,6 +17,7 @@ public class SettingsWindow extends JFrame implements ActionListener
   private final Dimension TEXT_FIELD_DIMENSIONS = new Dimension(75, 30);
   private final FieldListener TEXT_FIELD_LISTENER = new FieldListener();
   private JButton closeButton;
+  private JButton launchButton;
   private JPanel content;
   private JPanel controlPanel;
   private JComboBox<String> gameSettingsBox;
@@ -46,6 +47,16 @@ public class SettingsWindow extends JFrame implements ActionListener
   @Override
   public void actionPerformed(ActionEvent e)
   {
+    if (e.getSource() == launchButton)
+    {
+      JFrame zombieFrame = new JFrame();
+      ZombiePanel zombiePanel = new ZombiePanel(zombieFrame);
+      zombiePanel.init();
+      zombieFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+      zombieFrame.setSize(new Dimension(20 * Settings.tileSize, 20 * Settings.tileSize));
+      zombieFrame.setContentPane(zombiePanel);
+      zombieFrame.setVisible(true);
+    }
     dispose();
   }
 
@@ -134,8 +145,11 @@ public class SettingsWindow extends JFrame implements ActionListener
   private void initControlPanel()
   {
     controlPanel = new JPanel(new FlowLayout());
+    launchButton = new JButton("Launch");
     closeButton = new JButton("Close");
+    launchButton.addActionListener(this);
     closeButton.addActionListener(this);
+    controlPanel.add(launchButton);
     controlPanel.add(closeButton);
   }
 
