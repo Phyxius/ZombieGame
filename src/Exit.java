@@ -57,6 +57,10 @@ public class Exit extends Entity
   @Override
   public void onCollision(Entity other, CollisionManager c)
   {
-    if(other instanceof Player) c.remove(this);
+    if(other instanceof Player)
+    {
+        c.remove(c.getAllEntities());
+        NewGame.makeNewGame(c, House.levelNum++);
+    }
   }
 }

@@ -5,10 +5,10 @@ import javax.swing.*;
  */
 public class NewGame
 {
-    public static void makeNewGame (UpdateManager updateManager)
+    public static void makeNewGame (UpdateManager updateManager, int levelNum)
     {
-        updateManager.add(new House(100, 100, updateManager));
+        updateManager.add(new House(100, 100, levelNum, updateManager));
         updateManager.add(new UpdateCounter());
-        updateManager.add(new SightDrawer());
+        //updateManager.add(new SightDrawer());
     }
 }

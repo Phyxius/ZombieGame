@@ -9,11 +9,12 @@ import java.awt.event.KeyEvent;
  */
 public class ZombiePanel extends JPanel
 {
+  private EntityManager entityManager;
   private JFrame frame;
-  EntityManager entityManager = new EntityManager();
 
-  public ZombiePanel(JFrame frame)
+  public ZombiePanel(JFrame frame, EntityManager entityManager)
   {
+    this.entityManager = entityManager;
     this.frame = frame;
   }
 
@@ -23,8 +24,6 @@ public class ZombiePanel extends JPanel
     ResourceManager.populateImageHashMap();
     repaint();
     frame.addKeyListener(new KeyboardHandler());
-    UpdateManager updateManager = new UpdateManager(entityManager);
-    NewGame.makeNewGame(updateManager);
     //entityManager.add(new House(100, 100, updateManager));
     ////entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
     ////entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));

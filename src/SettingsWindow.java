@@ -21,6 +21,7 @@ public class SettingsWindow extends JFrame implements ActionListener
   private JPanel content;
   private JPanel controlPanel;
   private JComboBox<String> gameSettingsBox;
+  private EntityManager entityManager;
   private JLabel gameSettingsLabel;
   private JPanel gameSettingsPanel;
   private JTextField gameSettingsText;
@@ -35,6 +36,7 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   public SettingsWindow()
   {
+    House.seed = System.currentTimeMillis();
     initWindow();
     showWindows();
   }
@@ -50,7 +52,10 @@ public class SettingsWindow extends JFrame implements ActionListener
     if (e.getSource() == launchButton)
     {
       JFrame zombieFrame = new JFrame();
-      ZombiePanel zombiePanel = new ZombiePanel(zombieFrame);
+      entityManager = new EntityManager();
+      ZombiePanel zombiePanel = new ZombiePanel(zombieFrame, entityManager);
+      UpdateManager updateManager = new UpdateManager(entityManager);
+      NewGame.makeNewGame(updateManager, 1);
       zombiePanel.init();
       zombieFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
       zombieFrame.setSize(new Dimension(20 * Settings.tileSize, 20 * Settings.tileSize));

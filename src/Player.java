@@ -225,7 +225,11 @@ public class Player extends Entity implements Detonator
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(CENTER)) collidingTrap = (Trap) entity;
-      if(entity instanceof ZombieModel) manager.remove(this);
+      if(entity instanceof ZombieModel)
+      {
+        manager.remove(manager.getAllEntities());
+        NewGame.makeNewGame(manager, House.levelNum);
+      }
     });
     return returnValue[0];
   }

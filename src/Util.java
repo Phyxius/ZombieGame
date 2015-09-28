@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class Util
 {
-  static final Random rng = new Random();
+  static Random rng = new Random();
   static final int NUM_DIRECTIONS = 4;
   public static int[] dx = {1, 0, -1, 0};
   public static int[] dy = {0, 1, 0, -1};
