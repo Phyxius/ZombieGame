@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Set;
 
 /**
  * Created by Mohammad R. Yousefi on 9/26/2015.
@@ -12,10 +11,10 @@ import java.util.Set;
  */
 public class SettingsWindow extends JFrame implements ActionListener
 {
-  private final Dimension COMBO_BOX_DIMENSIONS = new Dimension(200, 30);
-  private final BoxListener COMBO_BOX_LISTENER = new BoxListener();
-  private final Dimension TEXT_FIELD_DIMENSIONS = new Dimension(75, 30);
-  private final FieldListener TEXT_FIELD_LISTENER = new FieldListener();
+  private final Dimension comboBoxDimensions = new Dimension(200, 30);
+  private final BoxListener comboBoxListener = new BoxListener();
+  private final Dimension textFieldDimensions = new Dimension(75, 30);
+  private final FieldListener textFieldListener = new FieldListener();
   private JButton closeButton;
   private JButton launchButton;
   private JPanel content;
@@ -167,14 +166,14 @@ public class SettingsWindow extends JFrame implements ActionListener
     gameSettingsPanel.add(gameSettingsLabel);
     String[] optionStrings = {"Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"};
     gameSettingsBox = new JComboBox<>(optionStrings);
-    gameSettingsBox.setPreferredSize(COMBO_BOX_DIMENSIONS);
+    gameSettingsBox.setPreferredSize(comboBoxDimensions);
     gameSettingsBox.setName(gameSettingsLabel.getText());
-    gameSettingsBox.addActionListener(COMBO_BOX_LISTENER);
+    gameSettingsBox.addActionListener(comboBoxListener);
     gameSettingsPanel.add(gameSettingsBox);
     gameSettingsText = new JTextField();
-    gameSettingsText.setPreferredSize(TEXT_FIELD_DIMENSIONS);
-    gameSettingsText.addActionListener(TEXT_FIELD_LISTENER);
-    gameSettingsText.addKeyListener(TEXT_FIELD_LISTENER);
+    gameSettingsText.setPreferredSize(textFieldDimensions);
+    gameSettingsText.addActionListener(textFieldListener);
+    gameSettingsText.addKeyListener(textFieldListener);
     gameSettingsPanel.add(gameSettingsText);
   }
 
@@ -186,14 +185,14 @@ public class SettingsWindow extends JFrame implements ActionListener
     playerSettingsPanel.add(playerSettingsLabel);
     String[] optionStrings = {"Hearing", "Stamina", "Regeneration", "Run Speed", "Traps", "Walk Speed"};
     playerSettingsBox = new JComboBox<>(optionStrings);
-    playerSettingsBox.setPreferredSize(COMBO_BOX_DIMENSIONS);
+    playerSettingsBox.setPreferredSize(comboBoxDimensions);
     playerSettingsBox.setName(playerSettingsLabel.getText());
-    playerSettingsBox.addActionListener(COMBO_BOX_LISTENER);
+    playerSettingsBox.addActionListener(comboBoxListener);
     playerSettingsPanel.add(playerSettingsBox);
     playerSettingsText = new JTextField();
-    playerSettingsText.setPreferredSize(TEXT_FIELD_DIMENSIONS);
-    playerSettingsText.addActionListener(TEXT_FIELD_LISTENER);
-    playerSettingsText.addKeyListener(TEXT_FIELD_LISTENER);
+    playerSettingsText.setPreferredSize(textFieldDimensions);
+    playerSettingsText.addActionListener(textFieldListener);
+    playerSettingsText.addKeyListener(textFieldListener);
     playerSettingsPanel.add(playerSettingsText);
   }
 
@@ -215,14 +214,14 @@ public class SettingsWindow extends JFrame implements ActionListener
     zombieSettingsPanel.add(zombieSettingsLabel);
     String[] optionStrings = {"Decision Rate", "Smell", "Speed", "Turn Angle"};
     zombieSettingsBox = new JComboBox<>(optionStrings);
-    zombieSettingsBox.setPreferredSize(COMBO_BOX_DIMENSIONS);
+    zombieSettingsBox.setPreferredSize(comboBoxDimensions);
     zombieSettingsBox.setName(zombieSettingsLabel.getText());
-    zombieSettingsBox.addActionListener(COMBO_BOX_LISTENER);
+    zombieSettingsBox.addActionListener(comboBoxListener);
     zombieSettingsPanel.add(zombieSettingsBox);
     zombieSettingsText = new JTextField();
-    zombieSettingsText.setPreferredSize(TEXT_FIELD_DIMENSIONS);
-    zombieSettingsText.addActionListener(TEXT_FIELD_LISTENER);
-    zombieSettingsText.addKeyListener(TEXT_FIELD_LISTENER);
+    zombieSettingsText.setPreferredSize(textFieldDimensions);
+    zombieSettingsText.addActionListener(textFieldListener);
+    zombieSettingsText.addKeyListener(textFieldListener);
     zombieSettingsPanel.add(zombieSettingsText);
   }
 
