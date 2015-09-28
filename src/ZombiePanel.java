@@ -1,5 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -29,6 +34,7 @@ public class ZombiePanel extends JPanel
     ////entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
     //entityManager.add(new UpdateCounter());
     //entityManager.add(new SightDrawer());
+    addComponentListener(new ResizeHandler());
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 
@@ -62,6 +68,15 @@ public class ZombiePanel extends JPanel
     public void keyReleased(KeyEvent e)
     {
       entityManager.keyReleased(e);
+    }
+  }
+
+  private class ResizeHandler extends ComponentAdapter
+  {
+    @Override
+    public void componentResized(ComponentEvent componentEvent)
+    {
+      Settings.updateTileSize((int)(componentEvent.getComponent().getWidth() / 1080f * Settings.DEFAULT_TILE_SIZE));
     }
   }
 }

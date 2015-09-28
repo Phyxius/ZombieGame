@@ -3,7 +3,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 /**
@@ -13,7 +12,8 @@ import java.awt.image.BufferedImage;
 public class Player extends Entity implements Detonator
 {
   public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
-  private final SoundEffect WALK_SFX = new SoundEffect("soundfx/player_footstep.wav");
+  private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
+  private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
 //  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
   private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving_small_", 9, true);
   //  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
@@ -42,6 +42,9 @@ public class Player extends Entity implements Detonator
   {
     CENTER = new Point2D.Float((float) getBoundingBox().getCenterX(), (float) getBoundingBox().getCenterY());
     TRAP_COUNTER.setValue(trapsInInventory);
+    walkSFX.loop();
+    runSFX.loop();
+    TRAP_SFX.loop();
   }
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
@@ -181,6 +184,8 @@ public class Player extends Entity implements Detonator
       else
       {
 //        IDLE_ANIMATION.nextFrame(moving);
+        walkSFX.stop();
+        runSFX.stop();
         moving = false;
         increaseStamina();
       }
@@ -278,12 +283,14 @@ public class Player extends Entity implements Detonator
       position.setLocation(x + xMovement * Settings.playerRun, y + yMovement * Settings.playerRun);
       if (checkCollision(manager, (float) getPosition().getX(), (float) getPosition().getY()))
       {
+        runSFX.stop();
         position.setLocation(x, y);
         increaseStamina();
       }
       else // successful movement
       {
-        if (soundCounter % (Settings.frameRate / 2) == 0) WALK_SFX.play(0.0, 0.75);
+        if (walkSFX.isPlaying()) walkSFX.stop();
+        if (!runSFX.isPlaying()) runSFX.play(0.0, 1.0);
         soundCounter++;
         CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
         decreaseStamina();
@@ -295,11 +302,13 @@ public class Player extends Entity implements Detonator
       position.setLocation(x + xMovement * Settings.playerWalk, y + yMovement * Settings.playerWalk);
       if (checkCollision(manager, (float) getPosition().getX(), (float) getPosition().getY()))
       {
+        walkSFX.stop();
         position.setLocation(x, y);
       }
       else //successful movement
       {
-        if (soundCounter % Settings.frameRate == 0) WALK_SFX.play(0.0, 0.5);
+        if (runSFX.isPlaying()) runSFX.stop();
+        if (!walkSFX.isPlaying()) walkSFX.play(0.0, 1.0);
         soundCounter++;
         CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
       }

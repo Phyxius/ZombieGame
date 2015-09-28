@@ -33,7 +33,7 @@ public class UpdateManager
     entityManager.add(entities);
   }
 
-  public void add(Collection<Entity> entities)
+  public void add(Collection<? extends Entity> entities)
   {
     entityManager.add(entities);
   }
