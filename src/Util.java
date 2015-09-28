@@ -10,13 +10,26 @@ import java.util.Random;
 public class Util
 {
   static final Random rng = new Random();
+  static final int NUM_DIRECTIONS = 4;
+  public static int[] dx = {1, 0, -1, 0};
+  public static int[] dy = {0, 1, 0, -1};
+
+  /**
+   * Converts seconds to frames.
+   * Uses Settings.framerate for conversion.
+   * @param seconds the number of seconds
+   * @return the number of frames in the number of seconds
+   */
   static float secondsToFrames(float seconds)
   {
     return seconds / Settings.frameRate;
   }
-  static final int NUM_DIRECTIONS = 4;
-  public static int[] dx = {1, 0, -1, 0};
-  public static int[] dy = {0, 1, 0, -1};
+
+  /**
+   * Converts tiles per second to pixels per frame, using Settings.tileSize and Settings.framerate
+   * @param tilesPerSec the number of tiles per second to convert
+   * @return the corresponding number of tiles per second
+   */
   static float tilesPerSecondToPixelsPerFrame(float tilesPerSec)
   {
     return tilesPerSec * Settings.tileSize / Settings.frameRate;
