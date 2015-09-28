@@ -16,8 +16,7 @@ public class SoundEffect
 {
     // Each sound effect has its own clip, loaded with its own sound file.
     private AudioClip audioClip;
-
-
+  private boolean playing;
     // Constructor to construct each element of the enum with its own sound file.
 
     /**
@@ -51,4 +50,14 @@ public class SoundEffect
     {
       audioClip.stop();
     }
+
+  public void loop()
+  {
+    audioClip.setCycleCount(AudioClip.INDEFINITE);
+  }
+
+  public boolean isPlaying()
+  {
+    return audioClip.isPlaying();
+  }
   }
