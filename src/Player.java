@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
@@ -13,8 +14,9 @@ public class Player extends Entity implements Detonator
 {
   public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
   private final SoundEffect WALK_SFX = new SoundEffect("soundfx/player_footstep.wav");
-  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
-  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
+//  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
+  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving_small_", 9, true);
+  //  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
   //private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
   //private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
   private final ProgressBar STAMINA_BAR = new ProgressBar("gui/label_stamina.png");
@@ -34,6 +36,7 @@ public class Player extends Entity implements Detonator
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
   private int trapsInInventory = Settings.playerTraps;
+  private double directionAngle;
 
   public Player()
   {
@@ -44,23 +47,31 @@ public class Player extends Entity implements Detonator
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     AffineTransform transformer = new AffineTransform();
-    if (flipAnimation)
-    {
-      BufferedImage frame = (moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame());
-      transformer.scale(-1, 1);
-      transformer.translate(-frame.getWidth(), 0);
-      AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-      frame = opTransformer.filter(frame, null);
-      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
-          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
-      local.drawImage(frame, transformer, null);
-    }
-    else
-    {
-      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
-          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
-      local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), transformer, null);
-    }
+    transformer.rotate(directionAngle, getBoundingBox().getWidth() / 2,
+        getBoundingBox().getHeight()/2); // must rotate first then scale otherwise it will cause a bug
+    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+    local.drawImage((moving ? MOVE_ANIMATION.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")), transformer, null); // IDLE_ANIMATION.getFrame()), transformer, null);
+//    local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), 0,0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight(), null);
+
+
+//    AffineTransform transformer = new AffineTransform();
+//    if (flipAnimation)
+//    {
+//      BufferedImage frame = (moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame());
+//      transformer.scale(-1, 1);
+//      transformer.translate(-frame.getWidth(), 0);
+//      AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+//      frame = opTransformer.filter(frame, null);
+//      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
+//          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
+//      local.drawImage(frame, transformer, null);
+//    }
+//    else
+//    {
+//      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
+//          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
+//      local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), transformer, null);
+//    }
     if (isPickingUp() || isPlacing)
     {
       TRAP_BAR
@@ -106,7 +117,7 @@ public class Player extends Entity implements Detonator
     if (isPickingUp() || isPlacing)
     {
       increaseStamina();
-      IDLE_ANIMATION.nextFrame(moving);
+//      IDLE_ANIMATION.nextFrame(moving);
       moving = false;
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
@@ -151,6 +162,7 @@ public class Player extends Entity implements Detonator
       if (e.isKeyPressed(KeyEvent.VK_RIGHT) || e.isKeyPressed(KeyEvent.VK_D)) xMovement += 1;
       if (e.isKeyPressed(KeyEvent.VK_UP) || e.isKeyPressed(KeyEvent.VK_W)) yMovement -= 1;
       if (e.isKeyPressed(KeyEvent.VK_DOWN) || e.isKeyPressed(KeyEvent.VK_S)) yMovement += 1;
+
       if (xMovement > 0) flipAnimation = false;
       else if (xMovement < 0) flipAnimation = true;
       // Normalize movement vector.
@@ -160,6 +172,7 @@ public class Player extends Entity implements Detonator
 
       if (movementMagnitude != 0)
       {
+        directionAngle = Math.atan2(yMovement, xMovement);
         isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
         MOVE_ANIMATION.nextFrame(!moving);
@@ -167,7 +180,7 @@ public class Player extends Entity implements Detonator
       }
       else
       {
-        IDLE_ANIMATION.nextFrame(moving);
+//        IDLE_ANIMATION.nextFrame(moving);
         moving = false;
         increaseStamina();
       }
@@ -445,5 +458,14 @@ public class Player extends Entity implements Detonator
     {
       POSITION.setLocation(xPosition, yPosition);
     }
+  }
+
+  @Override
+  public Rectangle2D.Float getBoundingBox()
+  {
+    Point2D.Float position = getPosition();
+    if (position == null) return null;
+    return new Rectangle2D.Float(position.x, position.y,
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize), (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
   }
 }

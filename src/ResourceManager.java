@@ -47,14 +47,23 @@ public class ResourceManager
     //  imagePaths.add("animation/player/idle_" + i + ".png");
     //}
 
+//    for (int i = 0; i < 10; i++)
+//    {
+//      imagePaths.add("animation/player1/moving-" + i + ".png");
+//    }
+//    for (int i = 0; i <= 1; i++)
+//    {
+//      imagePaths.add("animation/player1/idle-" + i + ".png");
+//    }
+
     for (int i = 0; i < 10; i++)
     {
-      imagePaths.add("animation/player1/moving-" + i + ".png");
+      imagePaths.add("animation/player1/moving_small_" + i + ".png");
     }
-    for (int i = 0; i <= 1; i++)
-    {
-      imagePaths.add("animation/player1/idle-" + i + ".png");
-    }
+//    for (int i = 0; i <= 1; i++)
+//    {
+//      imagePaths.add("animation/player1/idle-" + i + ".png");
+//    }
 
     imagePaths.add("gui/trapIcon.png");
     for (int i = 0; i < 10; i++)
