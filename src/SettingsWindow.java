@@ -51,8 +51,11 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void changeGameValues(float value)
   {
-    switch ((String) gameSettingsBox.getSelectedItem()) //  Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
+    switch ((String) gameSettingsBox.getSelectedItem()) // "Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
     {
+      case "Exit Distance":
+        Settings.distanceAwayExit = (int) value;
+        break;
       case "Frame Rate":
         Settings.updateFrameRate((int) value);
         break;
@@ -148,7 +151,7 @@ public class SettingsWindow extends JFrame implements ActionListener
     gameSettingsPanel.setLayout(new BoxLayout(gameSettingsPanel, BoxLayout.LINE_AXIS));
     gameSettingsLabel = new JLabel("Game Settings    ");
     gameSettingsPanel.add(gameSettingsLabel);
-    String[] optionStrings = {"Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"};
+    String[] optionStrings = {"Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"};
     gameSettingsBox = new JComboBox<>(optionStrings);
     gameSettingsBox.setPreferredSize(COMBO_BOX_DIMENSIONS);
     gameSettingsBox.setName(gameSettingsLabel.getText());
@@ -220,8 +223,11 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void updateGameTextField()
   {
-    switch ((String) gameSettingsBox.getSelectedItem()) // "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
+    switch ((String) gameSettingsBox.getSelectedItem()) // "Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
     {
+      case "Exit Distance":
+        gameSettingsText.setText(String.format("%d", Settings.distanceAwayExit));
+        break;
       case "Frame Rate":
         gameSettingsText.setText(String.format("%d", Settings.frameRate));
         break;

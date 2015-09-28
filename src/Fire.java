@@ -12,11 +12,13 @@ public class Fire extends Entity implements Detonator
   private BufferedImage frame;
   private BufferedImage fireBackground;
   private int age = 0; //frames
+  private final boolean LIGHT_SOURCE;
   Animation fireAnimation;
 
-  public Fire(Rectangle2D.Float explosionArea)
+  public Fire(Rectangle2D.Float explosionArea, boolean isLightSource)
   {
     this.explosionArea = explosionArea;
+    LIGHT_SOURCE = isLightSource;
     numFireFrames = 318;
     fireBackground = ResourceManager.getImage("fire/firebackground.png");
     fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
@@ -58,6 +60,6 @@ public class Fire extends Entity implements Detonator
   @Override
   public boolean isLightSource()
   {
-    return true;
+    return LIGHT_SOURCE;
   }
 }

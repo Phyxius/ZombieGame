@@ -13,7 +13,6 @@ class RandomZombie extends ZombieModel
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
-  private boolean moving = true;
 
   RandomZombie(Player player, Point2D.Float position)
   {
@@ -123,23 +122,6 @@ class RandomZombie extends ZombieModel
         Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
     local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
-  }
-
-  /**
-   * Informs the zombie to react to a collision.
-   *
-   * @param other            The object that collides with this object.
-   * @param collisionManager The manager for this collision.
-   */
-  @Override
-  public void onCollision(Entity other, CollisionManager collisionManager)
-  {
-    if (other.isSolid())
-    {
-      collision = true;
-      moving = false;
-    }
-    if (other instanceof Fire) collisionManager.remove(this);
   }
 
   @Override

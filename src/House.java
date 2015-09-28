@@ -25,6 +25,7 @@ public class House extends Entity
   private ArrayList<Line2D.Float> connections;
   private ArrayList<Doorway> initDoorways;
   private Player player;
+  private MasterZombie master;
   private BufferedImage houseImg;
   private JFrame frame;
   private Room startRoom;
@@ -70,6 +71,7 @@ public class House extends Entity
     copyObjectsToGrid();
     makeBookcases();
     makeGraph();
+    makeMasterZombie();
     if(!makeExit(true)) makeExit(false);
     //generateBuffImgHouse();
   }
@@ -565,6 +567,26 @@ public class House extends Entity
           }
         }
       }
+    }
+  }
+
+  private void makeMasterZombie()
+  {
+    ArrayList<Entity> zombies = new ArrayList<>();
+    entityManager.getAllEntities(true).forEach(entity ->
+    {
+      if (entity instanceof ZombieModel) zombies.add(entity);
+    });
+
+    if (zombies.size() > 0)
+    {
+      int index = Util.rng.nextInt(zombies.size());
+      Entity zombie = zombies.get(index);
+      master = new MasterZombie(player, new Point2D.Float(zombie.getPosition().x, zombie.getPosition().y));
+      entityManager.remove(zombie);
+      zombies.remove(index);
+      zombies.forEach(entity -> ((ZombieModel) entity).setMasterZombie(master));
+      entityManager.add(master);
     }
   }
 

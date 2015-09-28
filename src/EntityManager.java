@@ -155,6 +155,15 @@ public class EntityManager
     return new ArrayList<>(entities);
   }
 
+  public Collection<Entity> getAllEntities(boolean includeUnprocessed)
+  {
+    if (!includeUnprocessed) return getAllEntities();
+    ArrayList<Entity> entities = new ArrayList<>(this.entities);
+    entities.removeAll(entitiesToRemove);
+    entities.addAll(entitiesToAdd);
+    return entities;
+  }
+
   public Collection<Entity> getCollidingEntities(Shape boundingBox)
   {
     return entities.parallelStream().filter(e -> e.getBoundingBox() != null)

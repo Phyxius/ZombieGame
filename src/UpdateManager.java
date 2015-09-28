@@ -52,6 +52,11 @@ public class UpdateManager
     return entityManager.getAllEntities();
   }
 
+  public Collection<Entity> getAllEnties(boolean includeUnprocessed)
+  {
+    return entityManager.getAllEntities(includeUnprocessed);
+  }
+
   public Collection<Entity> getCollidingEntities(Shape boundingBox)
   {
     return entityManager.getCollidingEntities(boundingBox);
