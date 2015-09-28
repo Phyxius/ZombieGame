@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Room
 {
-  private EntityManager entityManager;
+  private UpdateManager updateManager;
   private int width, height;
   private int startX, startY;
   private Tile[][] tiles;
@@ -27,14 +27,14 @@ public class Room
    * @param height The height of the Room.
    * @param isHallway Whether the Room is a Hallway or not
    * @param player The player, needed for added zombies
-   * @param entityManager a referenence to the global entityManger for adding new Entities
+   * @param updateManager referenence to the global entityManger for adding new Entities
    *
    */
-  public Room(int startX, int startY, int width, int height, boolean isHallway, Player player, EntityManager entityManager)
+  public Room(int startX, int startY, int width, int height, boolean isHallway, Player player, UpdateManager updateManager)
   {
     this.isHallway = isHallway;
     this.player = player;
-    this.entityManager = entityManager;
+    this.updateManager = updateManager;
     isLeaf = false;
     if(startX+width > 0 && startY+height > 0)
     {
@@ -190,12 +190,12 @@ public class Room
           if (Util.rng.nextBoolean())
           {
             LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
-            entityManager.add(zombie);
+            updateManager.add(zombie);
           }
           else
           {
             RandomZombie zombie = new RandomZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
-            entityManager.add(zombie);
+            updateManager.add(zombie);
           }
         }
       }
@@ -215,7 +215,7 @@ public class Room
         if(Util.rng.nextDouble() < Settings.trapSpawnRate)
         {
           Trap trap = new Trap(new Point2D.Float(j*Settings.tileSize, i*Settings.tileSize));
-          entityManager.add(trap);
+          updateManager.add(trap);
         }
       }
     }
@@ -242,13 +242,13 @@ public class Room
         hasDoor = true;
         tmpEndX = (i)*tileSize;
         newWall = new Wall(tmpStartX, tmpEndX, tmpStartY, tmpStartY+tileSize, dir);
-        entityManager.add(newWall);
+        updateManager.add(newWall);
         tmpStartX = (i+1)*tileSize;
       }
       if(i == endX-2)
       {
         newWall = new Wall(tmpStartX, (endX-1)*tileSize, tmpStartY, tmpStartY+tileSize, dir);
-        entityManager.add(newWall);
+        updateManager.add(newWall);
         if(!hasDoor) wallList.add(newWall);
       }
     }
@@ -271,13 +271,13 @@ public class Room
         hasDoor = true;
         tmpEndY = (i)*tileSize;
         newWall = new Wall(startX*tileSize,(startX+1)*tileSize, tmpStartY, tmpEndY, dir);
-        entityManager.add(newWall);
+        updateManager.add(newWall);
         tmpStartY = (i+1)*tileSize;
       }
       if(i == endY)
       {
         newWall = new Wall(startX*tileSize, (startX+1)*tileSize, tmpStartY, (endY+1)*tileSize, dir);
-        entityManager.add(newWall);
+        updateManager.add(newWall);
         if(!hasDoor) wallList.add(newWall);
       }
     }
