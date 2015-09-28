@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Random;
 import java.util.jar.JarFile;
 
@@ -26,7 +27,6 @@ public class House extends Entity
   private ArrayList<Doorway> initDoorways;
   private Player player;
   private MasterZombie master;
-  private BufferedImage houseImg;
   private JFrame frame;
   private Room startRoom;
   private int gridHeight, gridWidth;
@@ -64,11 +64,10 @@ public class House extends Entity
     roomList.add(startRoom);
     Doorway randStartDoor = initDoorways.get(0);
     generateRoomList(randStartDoor, randStartDoor.getSideOfRoom(), startRoom, 1);
-    //Doorway randStartDoor2 = initDoorways.get(1);
-    //generateRoomList(randStartDoor2, randStartDoor2.getSideOfRoom(), startRoom, 1);
     startRoom.addDoorways();
     startRoom.init();
     copyObjectsToGrid();
+    makeExit();
     makeBookcases();
     makeGraph();
     makeMasterZombie();
@@ -144,8 +143,8 @@ public class House extends Entity
   {
     Point firstPoint = null;
     ArrayList<Point> solution = null;
-    Path path = graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2))).get();
-    if(path != null) solution = path.getNodes();
+    Optional<Path<Point>> path = graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2)));
+    if(path.isPresent()) solution = path.get().getNodes();
     if(solution != null) firstPoint = solution.get(0);
     return firstPoint;
   }
@@ -492,6 +491,27 @@ public class House extends Entity
         for(int j = startX; j < width; j++)
         {
           fullGrid[i][j] = room.getTileAt(i,j);
+          graphOfGrid.add(new Point(j,i));
+        }
+      }
+    }
+  }
+
+  private void makeExit()
+  {
+    Collections.shuffle(roomList);
+    for(Room room: roomList)
+    {
+      Collections.shuffle(room.wallList);
+      if(room.isLeaf())
+      {
+        for(Wall wall: room.wallList)
+        {
+          if(wall!=null)
+          {
+            entityManager.add(new Exit(wall.getDirection(),wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
+            return;
+          }
         }
       }
     }
