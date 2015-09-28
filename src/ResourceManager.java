@@ -38,13 +38,22 @@ public class ResourceManager
       imagePaths.add("animation/zombie/move_" + i + ".png");
     }
 
-    for (int i = 0; i <= 13; i++)
+    //for (int i = 0; i <= 13; i++)
+    //{
+    //  imagePaths.add("animation/player/move_" + i + ".png");
+    //}
+    //for (int i = 0; i <= 8; i++)
+    //{
+    //  imagePaths.add("animation/player/idle_" + i + ".png");
+    //}
+
+    for (int i = 0; i < 10; i++)
     {
-      imagePaths.add("animation/player/move_" + i + ".png");
+      imagePaths.add("animation/player1/moving-" + i + ".png");
     }
-    for (int i = 0; i <= 8; i++)
+    for (int i = 0; i <= 1; i++)
     {
-      imagePaths.add("animation/player/idle_" + i + ".png");
+      imagePaths.add("animation/player1/idle-" + i + ".png");
     }
 
     imagePaths.add("gui/trapIcon.png");
