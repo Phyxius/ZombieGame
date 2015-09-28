@@ -67,7 +67,7 @@ public class House extends Entity
     startRoom.init();
     copyObjectsToGrid();
     makeGraph();
-    makeExit();
+    if(!makeExit(true)) makeExit(false);
     //generateBuffImgHouse();
   }
 
@@ -251,8 +251,8 @@ public class House extends Entity
     Room newRoom = null;
     Random generator = new Random();
     int offsetFromCenter = 2;//generator.nextInt(2)+2;
-    int newWidth = generator.nextInt(4)+8;
-    int newHeight = generator.nextInt(4)+8;
+    int newWidth = generator.nextInt(6)+8;
+    int newHeight = generator.nextInt(6)+8;
     switch(comingFrom)
     {
       case NORTH:
@@ -524,11 +524,11 @@ public class House extends Entity
               }
               else
               {
-                Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
-                             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
-                Point neigbTile = new Point((int) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
-                                                            (int)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
-                connections.add(new Line2D.Float(newPointTile,neigbTile));
+                //Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
+                //             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
+                //Point neigbTile = new Point((int) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
+                //                                            (int)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
+                //connections.add(new Line2D.Float(newPointTile,neigbTile));
                 graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
               }
             }
@@ -538,37 +538,25 @@ public class House extends Entity
     }
   }
 
-  private void makeExit()
+  private boolean makeExit(boolean makeFarAway)
   {
     Collections.shuffle(roomList);
+    Point roomStart = new Point();
     for(Room room: roomList)
     {
+      roomStart.setLocation(room.getStartX()*Settings.tileSize, room.getStartY()*Settings.tileSize);
       Collections.shuffle(room.wallList);
-      if(room.isLeaf() && !room.equals(startRoom))
+      if(room.isLeaf() && !room.equals(startRoom) &&
+         (!makeFarAway || roomStart.distance(player.getPosition()) > Settings.distanceAwayExit * Settings.tileSize))
       {
-        for(Wall wall: room.wallList)
-        {
-          if(wall!=null)
-          {
-            entityManager.add(new Exit(wall.getDirection(),wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
-            return;
+        for (Wall wall : room.wallList) {
+          if (wall != null) {
+            entityManager.add(new Exit(wall.getDirection(), wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
+            return true;
           }
         }
       }
     }
-  }
-
-  private void generateBuffImgHouse()
-  {
-    int tileSize = Settings.tileSize;
-
-    for(int i = 0; i < gridHeight; i++)
-    {
-      for(int j = 0; j < gridWidth; j++)
-      {
-        if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
-        houseImg.createGraphics().drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
-      }
-    }
+    return false;
   }
 }

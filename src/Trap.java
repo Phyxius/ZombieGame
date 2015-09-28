@@ -11,8 +11,8 @@ public class Trap extends Entity
   protected int tileSize;
   protected Point2D.Float position;
   private BufferedImage trapImg;
-  private int[] dx = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
-  private int[] dy = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
+  private int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1}; // The Center is a special case
+  private int[] dy = {-1, -1, -1, 0, 0, 1, 1, 1}; // The Center is a special case
 
   public Trap(Point2D.Float position)
   {
@@ -62,12 +62,14 @@ public class Trap extends Entity
 
   private void detonate(CollisionManager c)
   {
-    for (int i = 0; i < 9; i++)
+    Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x, position.y, tileSize, tileSize);
+    c.add(new Fire(explosionArea, true));
+    for (int i = 0; i < dx.length; i++)
     {
       int curDx = dx[i];
       int curDy = dy[i];
-      Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x + tileSize * curDx, position.y + tileSize * curDy, tileSize, tileSize);
-      c.add(new Fire(explosionArea));
+      explosionArea = new Rectangle2D.Float(position.x + tileSize * curDx, position.y + tileSize * curDy, tileSize, tileSize);
+      c.add(new Fire(explosionArea, false));
     }
     //Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x-tileSize, position.y-tileSize, tileSize*3, tileSize*3);
     //entityManager.add(new Fire(explosionArea));
