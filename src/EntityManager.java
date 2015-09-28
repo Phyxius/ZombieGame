@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
@@ -23,6 +22,7 @@ public class EntityManager
   public boolean debugModeEnabled = true;
   private Entity entityToFollow = null;
   private Point2D.Float cameraOrigin = new Point2D.Float(0, 0);
+  private float scale;
 
   public EntityManager()
   {
@@ -78,14 +78,16 @@ public class EntityManager
   public void draw(Graphics2D g, GraphicsConfiguration graphicsConfiguration)
   {
     if (entityToFollow != null) updateCameraOrigin(g.getClipBounds());
-    DrawingManager drawingManager = new DrawingManager(this, graphicsConfiguration);
+    DrawingManager drawingManager = new DrawingManager(this, graphicsConfiguration, g.getClipBounds().width / scale, g.getClipBounds().height / scale);
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
       Graphics2D screen = (Graphics2D) g.create();
+      Graphics2D scaledScreen = (Graphics2D) screen.create();
+      scaledScreen.scale(scale, scale);
       if (boundingBox != null)
       {
-        Graphics2D local = (Graphics2D) g.create((int)(boundingBox.x - cameraOrigin.x), (int) (boundingBox.y - cameraOrigin.y),
+        Graphics2D local = (Graphics2D) scaledScreen.create((int)(boundingBox.x - cameraOrigin.x), (int) (boundingBox.y - cameraOrigin.y),
             ((int) boundingBox.width), ((int) boundingBox.height));
         entity.draw(local, screen, drawingManager);
         if (debugModeEnabled)
@@ -108,8 +110,8 @@ public class EntityManager
 
   private void updateCameraOrigin(Rectangle cameraBounds)
   {
-    cameraOrigin.setLocation(entityToFollow.getBoundingBox().getCenterX() - cameraBounds.getWidth() / 2,
-        entityToFollow.getBoundingBox().getCenterY() - cameraBounds.getHeight() / 2);
+    cameraOrigin.setLocation(entityToFollow.getBoundingBox().getCenterX() - cameraBounds.getWidth() / scale / 2,
+        entityToFollow.getBoundingBox().getCenterY() - cameraBounds.getHeight() / scale / 2);
   }
 
   /**
@@ -284,5 +286,10 @@ public class EntityManager
   public void setEntityToFollow(Entity entityToFollow)
   {
     this.entityToFollow = entityToFollow;
+  }
+
+  public void setScale(float scale)
+  {
+    this.scale = scale;
   }
 }
