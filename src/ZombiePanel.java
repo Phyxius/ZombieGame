@@ -3,10 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
 
 /**
  * Created by arirappaport on 9/8/15.
@@ -28,11 +24,12 @@ public class ZombiePanel extends JPanel
     repaint();
     frame.addKeyListener(new KeyboardHandler());
     UpdateManager updateManager = new UpdateManager(entityManager);
-    entityManager.add(new House(100, 100, updateManager));
-    //entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
-    //entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
-    entityManager.add(new UpdateCounter());
-    entityManager.add(new SightDrawer());
+    NewGame.makeNewGame(updateManager);
+    //entityManager.add(new House(100, 100, updateManager));
+    ////entityManager.add(new Trap(new Point2D.Float(Settings.tileSize*4,Settings.tileSize*4),entityManager));
+    ////entityManager.add(new Fire(new Rectangle2D.Float(Settings.tileSize*2,Settings.tileSize*2, Settings.tileSize*3, Settings.tileSize*3)));
+    //entityManager.add(new UpdateCounter());
+    //entityManager.add(new SightDrawer());
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 

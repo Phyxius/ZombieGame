@@ -586,7 +586,7 @@ public class House extends Entity
   private void makeMasterZombie()
   {
     ArrayList<Entity> zombies = new ArrayList<>();
-    updateManager.getAllEntities().forEach(entity ->
+    updateManager.getAllEntities(true).forEach(entity ->
     {
       if (entity instanceof ZombieModel) zombies.add(entity);
     });
