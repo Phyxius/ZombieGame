@@ -135,7 +135,7 @@ public class MasterZombie extends ZombieModel implements Detonator
   void detectPlayer()
   {
     final boolean[] searchResult = {false};
-    reportingZombies.forEach((ZombieModel zombie) ->
+    new LinkedList<>(reportingZombies).forEach((ZombieModel zombie) ->
     {
       if (zombie.isTrackingPlayer()) searchResult[0] = true;
       else reportingZombies.remove(zombie);

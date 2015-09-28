@@ -76,7 +76,7 @@ public class Player extends Entity implements Detonator
     {
       TRAP_BAR
           .setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2),
-                  (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
+              (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
       TRAP_BAR.draw(global);
     }
     STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
@@ -435,7 +435,7 @@ public class Player extends Entity implements Detonator
       imageWidth = iconWidth + order * digitWidth;
       IMAGE_LIST[11] = new BufferedImage(imageWidth, imageHeight, IMAGE_LIST[0].getType());
       Graphics2D graphics = IMAGE_LIST[11].createGraphics();
-      if (IMAGE_LIST[10] != null) graphics.drawImage(IMAGE_LIST[10], null, 0, 0);
+      if (IMAGE_LIST[10] != null) graphics.drawImage(IMAGE_LIST[10], 0, 0, iconWidth, imageHeight, null);
       int digit;
       int offset = iconWidth;
       while (order > 0)
@@ -443,7 +443,7 @@ public class Player extends Entity implements Detonator
         int div = (int) Math.pow(10, order - 1);
         digit = (value / div) % 10;
         value -= digit * div;
-        graphics.drawImage(IMAGE_LIST[digit], null, offset, 0);
+        graphics.drawImage(IMAGE_LIST[digit], offset, 0, digitWidth, imageHeight, null);
         order--;
         offset += digitWidth;
       }
