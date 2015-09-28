@@ -58,7 +58,7 @@ public class UpdateManager
     return entityManager.getAllEntities();
   }
 
-  public Collection<Entity> getAllEnties(boolean includeUnprocessed)
+  public Collection<Entity> getAllEntities(boolean includeUnprocessed)
   {
     return entityManager.getAllEntities(includeUnprocessed);
   }

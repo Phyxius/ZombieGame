@@ -279,7 +279,7 @@ public class Player extends Entity implements Detonator
       }
       else // successful movement
       {
-        if (soundCounter % (Settings.frameRate / 2) == 0) WALK_SFX.play(0.0, 10);
+        if (soundCounter % (Settings.frameRate / 2) == 0) WALK_SFX.play(0.0, 0.75);
         soundCounter++;
         CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
         decreaseStamina();
@@ -295,7 +295,7 @@ public class Player extends Entity implements Detonator
       }
       else //successful movement
       {
-        if (soundCounter % Settings.frameRate == 0) WALK_SFX.play(0.0, 10);
+        if (soundCounter % Settings.frameRate == 0) WALK_SFX.play(0.0, 0.5);
         soundCounter++;
         CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
       }
