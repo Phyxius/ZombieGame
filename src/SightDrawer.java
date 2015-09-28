@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 /**
  * Shea Polansky
- * Class name and description goes here
+ * SightDrawer: performs line-of-sight testing and raytracing, and overlays the screen with the results
  */
 public class SightDrawer extends Entity
 {

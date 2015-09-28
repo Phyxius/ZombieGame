@@ -4,13 +4,17 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Created by Shea on 2015-09-23.
- * Class name and description go here.
+ * Ash: Overlays a transparent black square over burned squares
  */
 public class Ash extends Entity
 {
   private final Rectangle2D.Float boundingBox;
   private final Point2D.Float position;
 
+  /**
+   * Creates a new Ash with the given bounding box
+   * @param boundingBox the bounding box to use
+   */
   public Ash(Rectangle2D.Float boundingBox)
   {
     this.boundingBox = boundingBox;

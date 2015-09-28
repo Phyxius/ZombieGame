@@ -1,6 +1,7 @@
 /**
  * Created by Shea on 2015-09-07.
- * Class name and description go here.
+ * CollisionManager: Wraps an EntityManager to expose a subset
+ * of its methods to Entities on collision events.
  */
 public class CollisionManager extends UpdateManager
 {

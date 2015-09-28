@@ -6,12 +6,17 @@ import java.util.HashMap;
 
 /**
  * Created by arirappaport on 9/8/15.
- * Class name and description go here.
+ * ResourceManager: Handles loading and memoization of resources.
  */
 public class ResourceManager
 {
   public static HashMap<String, BufferedImage> imageHashMap;
   public static ArrayList<String> imagePaths;
+
+  /**
+   * Populates imagePaths with known resources so they can
+   * be loaded in a batch.
+   */
   static
   {
     imageHashMap = new HashMap<>();
@@ -49,11 +54,20 @@ public class ResourceManager
     }
   }
 
+  /**
+   * Loads known resources to reduce in-game stuttering.
+   */
   public static void populateImageHashMap()
   {
     imagePaths.forEach(ResourceManager::getImage);
   }
 
+  /**
+   * Gets Image at the given path, loading from the filesystem if it has not already
+   * been loaded.
+   * @param path the path to the image
+   * @return the loaded image
+   */
   public static BufferedImage getImage(String path)
   {
     if (imageHashMap.containsKey(path)) return imageHashMap.get(path);

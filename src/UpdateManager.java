@@ -6,12 +6,18 @@ import java.util.Collection;
 
 /**
  * Created by Shea on 2015-09-07.
- * Class name and description go here.
+ * UpdateManager: Wrapper class to allow Entities limited access to global game state
+ * The methods in the class are a direct subset of the ones available in EntityManager; see that class
+ * for documentation.
  */
 public class UpdateManager
 {
   private final EntityManager entityManager;
 
+  /**
+   * Creates a new UpdateManager wrapping the given EntityManager
+   * @param entityManager the EntityManager to wrap
+   */
   public UpdateManager(EntityManager entityManager)
   {
     this.entityManager = entityManager;

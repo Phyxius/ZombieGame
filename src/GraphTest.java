@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Shea Polansky
- * Class name and description goes here
+ * GraphTest: Graph unit tests.
  */
 public class GraphTest extends TestCase
 {

@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -6,7 +5,7 @@ import java.util.Random;
 
 /**
  * Created by Shea on 2015-09-07.
- * Class name and description go here.
+ * Util: miscellaneous utility methods.
  */
 public class Util
 {

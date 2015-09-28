@@ -4,13 +4,20 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Created by Shea on 2015-09-13.
- * Class name and description go here.
+ * TestObstacle: Basic test obstacle that draws a filled
+ * rectangle of a given color
+ * isSolid() returns true.
  */
 public class TestObstacle extends Entity
 {
   private Rectangle2D.Float bounds;
   private Color color;
 
+  /**
+   * Creates a new test obstacle
+   * @param bounds the bounds of the obstacle
+   * @param color the color of the obstacle
+   */
   public TestObstacle(Rectangle2D.Float bounds, Color color)
   {
     this.bounds = bounds;
@@ -46,10 +53,5 @@ public class TestObstacle extends Entity
   {
     bounds.x = position.x;
     bounds.y = position.y;
-  }
-
-  public void setBounds(Rectangle2D.Float bounds)
-  {
-    bounds.setRect(bounds);
   }
 }

@@ -3,7 +3,8 @@ import java.awt.*;
 
 /**
  * Created by Shea on 2015-09-13.
- * Class name and description go here.
+ * UpdateCounter: keeps a count of how many update ticks occur
+ * each second.
  */
 public class UpdateCounter extends Entity
 {
