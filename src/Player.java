@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 public class Player extends Entity implements Detonator
 {
   public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
-  private final SoundEffect WALK_SFX = new SoundEffect("soundfx/player_footstep.wav");
+  private final SoundEffect WALK_SFX = new SoundEffect("soundfx/player_footstep.mp3");
 //  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
   private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving_small_", 9, true);
   //  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
