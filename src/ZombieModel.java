@@ -25,6 +25,7 @@ abstract class ZombieModel extends Entity implements Detonator
   protected boolean loud;
   protected double distanceFromPlayer;
   protected boolean moving = true;
+  protected MasterZombie master;
   /**
    * Constructs a zombie using default values in Settings.
    *
@@ -86,6 +87,7 @@ abstract class ZombieModel extends Entity implements Detonator
     {
       playerPosition =
           new Point2D.Float((float) player.getBoundingBox().getCenterX(), (float) player.getBoundingBox().getCenterY());
+      if (master != null) master.reportPlayer(playerPosition, this);
     }
     else
     {
@@ -141,5 +143,36 @@ abstract class ZombieModel extends Entity implements Detonator
     directionAngle = Math.atan2((pointToAimAt.getY()-zombieCenter.getY()),(pointToAimAt.getX()-zombieCenter.getX()));
     moving = true;
     triedAStar = true;
+  }
+
+  public void setMasterZombie(MasterZombie master)
+  {
+    this.master = master;
+  }
+
+  public boolean isTrackingPlayer()
+  {
+    return playerPosition != null;
+  }
+
+  /**
+   * Informs the zombie to react to a collision.
+   *
+   * @param other            The object that collides with this object.
+   * @param collisionManager The manager for this collision.
+   */
+  @Override
+  public void onCollision(Entity other, CollisionManager collisionManager)
+  {
+    if (other.isSolid())
+    {
+      collision = true;
+      moving = false;
+    }
+    if (other instanceof Fire)
+    {
+      playerPosition = null;
+      collisionManager.remove(this);
+    }
   }
 }

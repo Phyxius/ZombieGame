@@ -2,26 +2,22 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
- * Created by Mohammad R. Yousefi on 07/09/15.
- * A simple zombie that moves in straight lines until reaching a solid obstacle.
+ * Created by Mohammad R. Yousefi on 9/27/2015.
  */
-class LineZombie extends ZombieModel
+public class MasterZombie extends ZombieModel implements Detonator
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
+  private LinkedList <ZombieModel> reportingZombies = new LinkedList<>();
 
-  LineZombie(Player player, Point2D.Float position)
+  MasterZombie(Player player, Point2D.Float position)
   {
     super(player, position);
-  }
-
-  LineZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
-  {
-    super(player, position, speed, decisionRate, smell, minAngle);
   }
 
   @Override
@@ -102,13 +98,6 @@ class LineZombie extends ZombieModel
     updateCount++;
   }
 
-  /**
-   * Draws the zombie.
-   *
-   * @param local          Draws at the position of the zombie.
-   * @param global         Draws at the top left corner of the screen.
-   * @param drawingManager The drawing manager for this object.
-   */
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
@@ -120,8 +109,38 @@ class LineZombie extends ZombieModel
   }
 
   @Override
+  public void onCollision(Entity other, CollisionManager collisionManager)
+  {
+    if (other.isSolid())
+    {
+      collision = true;
+      moving = false;
+    }
+    if (other instanceof Fire) collisionManager.remove(this);
+  }
+
+  @Override
   public int getDepth()
   {
     return 100;
+  }
+
+  public void reportPlayer(Point2D.Float position, ZombieModel zombie)
+  {
+    playerPosition = position;
+    if (!reportingZombies.contains(zombie)) reportingZombies.add(zombie);
+  }
+
+  @Override
+  void detectPlayer()
+  {
+    final boolean[] searchResult = {false};
+    reportingZombies.forEach((ZombieModel zombie) ->
+    {
+      if (zombie.isTrackingPlayer()) searchResult[0] = true;
+      else reportingZombies.remove(zombie);
+    });
+    if (searchResult[0]) return;
+    super.detectPlayer();
   }
 }
