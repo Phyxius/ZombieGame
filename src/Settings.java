@@ -21,8 +21,8 @@ public class Settings
   public static int numObjectsGuranteed; //Rooms + hallways
   public static int fireDuration; //frames
   public static int playerSightRadius; //pixels
-  public static float zombieSpawnRate = 0.09f;
-  public static float trapSpawnRate = 0.001f;
+  public static float zombieSpawnRate = 0.01f;
+  public static float trapSpawnRate = 0.01f;
   public static int playerTraps = 1;
 
   static //ensures correct order of assignment

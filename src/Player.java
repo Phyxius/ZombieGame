@@ -13,8 +13,10 @@ public class Player extends Entity implements Detonator
 {
   public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
   private final SoundEffect WALK_SFX = new SoundEffect("soundfx/player_footstep.wav");
-  private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
-  private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
+  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
+  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
+  //private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
+  //private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
   private final ProgressBar STAMINA_BAR = new ProgressBar("gui/label_stamina.png");
   private final SoundEffect TRAP_SFX = new SoundEffect("soundfx/player_pickup.mp3");
   private final ProgressBar TRAP_BAR = new ProgressBar("");
@@ -63,11 +65,11 @@ public class Player extends Entity implements Detonator
     {
       TRAP_BAR
           .setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2),
-              (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
+                  (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
       TRAP_BAR.draw(global);
     }
-      STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
-          Settings.tileSize);
+    STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
+            Settings.tileSize);
     STAMINA_BAR.draw(global);
     TRAP_COUNTER.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
         2.15f * Settings.tileSize);
@@ -430,7 +432,7 @@ public class Player extends Entity implements Detonator
         value -= digit * div;
         graphics.drawImage(IMAGE_LIST[digit], null, offset, 0);
         order--;
-        offset+= digitWidth;
+        offset += digitWidth;
       }
     }
 
