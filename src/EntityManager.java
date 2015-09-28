@@ -193,7 +193,7 @@ public class EntityManager
    * Schedules the given entities for addition next tick
    * @param entities the entities to add
    */
-  public void add(Collection<Entity> entities)
+  public void add(Collection<? extends Entity> entities)
   {
     entitiesToAdd.addAll(entities);
   }

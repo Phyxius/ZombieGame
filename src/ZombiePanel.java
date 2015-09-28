@@ -36,7 +36,6 @@ public class ZombiePanel extends JPanel
     //entityManager.add(new UpdateCounter());
     //entityManager.add(new SightDrawer());
     addComponentListener(new ResizeHandler());
-    //entityManager.add(new SightDrawer());
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 
@@ -78,8 +77,7 @@ public class ZombiePanel extends JPanel
     @Override
     public void componentResized(ComponentEvent componentEvent)
     {
-      //Settings.updateTileSize((int)(componentEvent.getComponent().getWidth() / 1080f * Settings.DEFAULT_TILE_SIZE));
-      entityManager.setScale(componentEvent.getComponent().getWidth() / 1080f);
+      Settings.updateTileSize((int)(componentEvent.getComponent().getWidth() / 1080f * Settings.DEFAULT_TILE_SIZE));
     }
   }
 }
