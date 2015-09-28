@@ -19,6 +19,7 @@ public class ResourceManager
     imagePaths.add("tileset/nonwall.png");
     imagePaths.add("tileset/wall.png");
     imagePaths.add("tileset/outofbounds.png");
+    imagePaths.add("objects/bookshelf02.png");
     imagePaths.add("fire/firetrap.png");
     imagePaths.add("fire/firebackground.png");
     imagePaths.add("gui/label_stamina.png");

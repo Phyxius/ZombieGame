@@ -18,19 +18,19 @@ public class Exit extends Entity
     switch (dir)
     {
       case NORTH:
-        exitImg = ResourceManager.getImage("exit/north.png");
+        exitImg = ResourceManager.getImage("objects/north.png");
         position.setLocation(startX+Util.rng.nextInt(width-2)*tilSz, startY+1);
         break;
       case WEST:
-        exitImg = ResourceManager.getImage("exit/west.png");
+        exitImg = ResourceManager.getImage("objects/west.png");
         position.setLocation(startX+1, startY+tilSz*(1+Util.rng.nextInt(height-2)));
         break;
       case EAST:
-        exitImg = ResourceManager.getImage("exit/east.png");
+        exitImg = ResourceManager.getImage("objects/east.png");
         position.setLocation(startX-1, startY+tilSz*(1+Util.rng.nextInt(height-2)));
         break;
       case SOUTH:
-        exitImg = ResourceManager.getImage("exit/south.png");
+        exitImg = ResourceManager.getImage("objects/south.png");
         position.setLocation(startX+Util.rng.nextInt(width-2), startY-1);
         break;
     }

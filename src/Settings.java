@@ -22,12 +22,12 @@ public class Settings
   public static int fireDuration; //frames
   public static int playerSightRadius; //pixels
   public static float zombieSpawnRate = 0.09f;
-  public static float trapSpawnRate = 0.09f;
+  public static float trapSpawnRate = 0.001f;
   public static int playerTraps = 1;
 
   static //ensures correct order of assignment
   {
-    tileSize = 10;
+    tileSize = 80;
     frameRate = 60;
     numObjectsGuranteed = 11;
     playerWalk = Util.tilesPerSecondToPixelsPerFrame(1);

@@ -99,13 +99,11 @@ abstract class ZombieModel extends Entity implements Detonator
     int tileSize = Settings.tileSize;
     int upperLeftX = (int) getPosition().getX();
     int upperLeftY = (int) getPosition().getY();
-    if (numFailedAttempts == 0)
-      return new Point((upperLeftX + (tileSize / 2)) / tileSize, (upperLeftY + (tileSize / 2)) / tileSize);
+    if (numFailedAttempts == 0) return new Point((upperLeftX + (tileSize / 2)) / tileSize, (upperLeftY + (tileSize / 2)) / tileSize);
     if (numFailedAttempts == 1) return new Point(upperLeftX / tileSize, upperLeftY / tileSize);
     if (numFailedAttempts == 2) return new Point((upperLeftX + tileSize) / tileSize, upperLeftY / tileSize);
     if (numFailedAttempts == 3) return new Point(upperLeftX / tileSize, (upperLeftY + tileSize) / tileSize);
-    if (numFailedAttempts == 4)
-      return new Point((upperLeftX + tileSize) / tileSize, (upperLeftY + tileSize) / tileSize);
+    if (numFailedAttempts == 4) return new Point((upperLeftX + tileSize) / tileSize, (upperLeftY + tileSize) / tileSize);
     else return null;
     //int varX = (int) getPosition().getX();
     //if(varX % Settings.tileSize != 0) varX += Settings.tileSize;
@@ -134,11 +132,7 @@ abstract class ZombieModel extends Entity implements Detonator
     Point zombieCenter = findCurrentlyOccupiedTile(numFailedAttempts);
     Point playerCenter = new Point((int)(playerPosition.getX()+tileSize/2)/tileSize, (int)(playerPosition.getY()+tileSize/2)/tileSize);
     Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
-//        if(pointToAimAt.getY()-zombieCenter.getY() > 0) directionAngle = (Math.PI/2);
-//        else if(pointToAimAt.getY()-zombieCenter.getY() < 0) directionAngle = -(Math.PI/2);
-//        else if(pointToAimAt.getX()-zombieCenter.getX() > 0) directionAngle = 0;
-//        else if(pointToAimAt.getX()-zombieCenter.getX() < 0) directionAngle = Math.PI;
-    directionAngle = Math.atan2((pointToAimAt.getY()-zombieCenter.getY()),(pointToAimAt.getX()-zombieCenter.getX()));
+    if(pointToAimAt != null) directionAngle = Math.atan2((pointToAimAt.getY()-zombieCenter.getY()),(pointToAimAt.getX()-zombieCenter.getX()));
     moving = true;
     triedAStar = true;
   }

@@ -19,6 +19,7 @@ public class House extends Entity
 {
   public static Graph<Point> graphOfGrid;
   private Tile[][] fullGrid;
+  private boolean[][] bookshelves;
   private EntityManager entityManager;
   private ArrayList<Room> roomList;
   private ArrayList<Line2D.Float> connections;
@@ -47,6 +48,7 @@ public class House extends Entity
     this.entityManager = entityManager;
     this.frame = frame;
     connections = new ArrayList<>();
+    bookshelves = new boolean[gridHeight][gridWidth];
     int tileSize = Settings.tileSize;
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
@@ -66,6 +68,7 @@ public class House extends Entity
     startRoom.addDoorways();
     startRoom.init();
     copyObjectsToGrid();
+    makeBookcases();
     makeGraph();
     if(!makeExit(true)) makeExit(false);
     //generateBuffImgHouse();
@@ -137,7 +140,12 @@ public class House extends Entity
 
   public static Point calculateAStar(Point startPoint, Point endPoint)
   {
-    return graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2))).get().getNodes().get(0);
+    Point firstPoint = null;
+    ArrayList<Point> solution = null;
+    Path path = graphOfGrid.findPath(startPoint, endPoint,  (Point p1, Point p2) -> ((float) p1.distance(p2))).get();
+    if(path != null) solution = path.getNodes();
+    if(solution != null) firstPoint = solution.get(0);
+    return firstPoint;
   }
 
   private Room makeNewHallway(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom, int prevRoomDoorSize)
@@ -487,6 +495,37 @@ public class House extends Entity
     }
   }
 
+  private void makeBookcases()
+  {
+    int numBookcases = 0;
+    int startX, startY;
+    int width, height;
+    while(numBookcases < 5)
+    {
+      for(Room room: roomList)
+      {
+        startX = room.getStartX();
+        startY = room.getStartY();
+        width = room.getWidth()+startX;
+        height = room.getHeight()+startY;
+
+        for(int i = startY; i < height; i++)
+        {
+          for(int j = startX; j < width; j++)
+          {
+            if(Util.rng.nextDouble() < 0.005 && !room.isAHallway() &&
+                    i != startY && j != startX && i != height-1 && j != width-1)
+            {
+              numBookcases++;
+              entityManager.add(new Bookshelf(new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize)));
+              bookshelves[i][j] = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
   private void makeGraph()
   {
     int startX, startY;
@@ -511,18 +550,9 @@ public class House extends Entity
             {
               Point neighbor = new Point(j + dx, i + dy);
               if (fullGrid[i + dy][j + dx] == null) continue;
-              if (fullGrid[i + dy][j + dx].isSolid() ||
-                  fullGrid[i][j].isSolid())
-              {
-                //graphOfGrid.setEdge(newPoint, neighbor, Float.MAX_VALUE);
-                //Point2D.Float newPointTile = new Point2D.Float((float) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
-                //             (float)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
-                //Point2D.Float neigbTile = new Point2D.Float((float) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
-                //                                            (float)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
-                //connections.add(new Line2D.Float(newPointTile,neigbTile));
-
-              }
-              else
+              if (!(fullGrid[i + dy][j + dx].isSolid() ||
+                    fullGrid[i][j].isSolid() ||
+                    bookshelves[i][j] || bookshelves[i+dy][j+dx]))
               {
                 //Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
                 //             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));

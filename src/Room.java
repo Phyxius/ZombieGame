@@ -221,7 +221,6 @@ public class Room
     }
   }
 
-
   public boolean isLeaf()
   {
     return isLeaf;
