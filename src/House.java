@@ -67,7 +67,6 @@ public class House extends Entity
     startRoom.addDoorways();
     startRoom.init();
     copyObjectsToGrid();
-    makeExit();
     makeBookcases();
     makeGraph();
     makeMasterZombie();

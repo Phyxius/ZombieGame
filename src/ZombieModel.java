@@ -107,13 +107,6 @@ abstract class ZombieModel extends Entity implements Detonator
     if (numFailedAttempts == 3) return new Point(upperLeftX / tileSize, (upperLeftY + tileSize) / tileSize);
     if (numFailedAttempts == 4) return new Point((upperLeftX + tileSize) / tileSize, (upperLeftY + tileSize) / tileSize);
     else return null;
-    //int varX = (int) getPosition().getX();
-    //if(varX % Settings.tileSize != 0) varX += Settings.tileSize;
-    //int varY = (int) getPosition().getY()+Settings.tileSize;
-    //if(varY % Settings.tileSize != 0) varY += Settings.tileSize;
-    //while(varX % Settings.tileSize != 0) varX--;
-    //while(varY % Settings.tileSize != 0) varY--;
-    //return new Point(varX/Settings.tileSize, varY/Settings.tileSize);
   }
 
   /**

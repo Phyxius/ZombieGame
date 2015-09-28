@@ -19,26 +19,28 @@ public class SoundEffect
 
 
     // Constructor to construct each element of the enum with its own sound file.
+
+    /**
+     * SoundEffect is a wrapper class for AudioCLip.
+     * It allows multiple clips to be played at once and
+     * automatically mixes them.
+     * @param soundFileName The name of file. Can be loaded from
+     *                      jar.
+     */
     SoundEffect(String soundFileName)
     {
       URL url = this.getClass().getClassLoader().getResource(soundFileName);
       String urlString = url.toString();
       audioClip = new AudioClip(urlString);
-      //audioClip.play();
-      //try{
-      //  URL url = this.getClass().getClassLoader().getResource(soundFileName);
-      //  AudioInputStream ais = AudioSystem.getAudioInputStream(url);
-      //  audioClip = AudioSystem.getClip();
-      //  audioClip.open(ais);
-      //  audioClip.setFramePosition(0);
-      //}
-      //catch(UnsupportedAudioFileException ex){}
-      //catch(LineUnavailableException ex){}
-      //catch (IOException ex) {}
-
     }
 
     // Play or Re-play the sound effect from the beginning, by rewinding.
+
+    /**
+     * Plays the clip
+     * @param balance Changes the left/right balance of the clip
+     * @param volume changes the volume level of the clip.
+     */
     public void play(double balance, double volume)
     {
       audioClip.setBalance(balance);

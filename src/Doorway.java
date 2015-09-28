@@ -11,6 +11,9 @@ public class Doorway
   private int lengthOfDoor;
   private House.Direction sideOfRoom;
 
+  /**
+   *
+   */
   public Doorway()
   {
     pointsinDoor = new ArrayList<>();
