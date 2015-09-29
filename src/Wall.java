@@ -9,9 +9,10 @@ public class Wall extends Entity
 {
   Rectangle2D.Float box;
   private House.Direction direction;
-  private int startX, startY;
   private int endX, endY;
-  public Wall(int startX, int endX,int startY, int endY, House.Direction direction)
+  private int startX, startY;
+
+  public Wall(int startX, int endX, int startY, int endY, House.Direction direction)
   {
     this.direction = direction;
     this.startX = startX;
@@ -22,11 +23,10 @@ public class Wall extends Entity
   }
 
   @Override
-  public boolean isSolid()
+  public boolean blocksLight()
   {
     return true;
   }
-
 
   @Override
   public Rectangle2D.Float getBoundingBox()
@@ -35,19 +35,6 @@ public class Wall extends Entity
   }
 
   /**
-   *
-   * @param startX Start X coord of box.
-   * @param endX End X coord of box.
-   * @param startY Start Y coord of box.
-   * @param endY End Y coord of box.
-   */
-  private void makeBoundingBox(int startX, int endX,int startY, int endY)
-  {
-    box = new Rectangle2D.Float(startX, startY, endX-startX, endY-startY);
-  }
-
-  /**
-   *
    * @return Returns the side of the Room the wall is on.
    */
   public House.Direction getDirection()
@@ -56,25 +43,6 @@ public class Wall extends Entity
   }
 
   /**
-   *
-   * @return Returns the start X coord.
-   */
-  public int getStartX()
-  {
-    return startX;
-  }
-
-  /**
-   *
-   * @return Returns the start Y coord.
-   */
-  public int getStartY()
-  {
-    return startY;
-  }
-
-  /**
-   *
    * @return Returns the end X coord.
    */
   public int getEndX()
@@ -83,16 +51,43 @@ public class Wall extends Entity
   }
 
   /**
-  *
-  * @return Returns the end Y coord.
-  */
+   * @return Returns the end Y coord.
+   */
   public int getEndY()
   {
     return endY;
   }
 
+  /**
+   * @return Returns the start X coord.
+   */
+  public int getStartX()
+  {
+    return startX;
+  }
+
+  /**
+   * @return Returns the start Y coord.
+   */
+  public int getStartY()
+  {
+    return startY;
+  }
+
   @Override
-  public boolean blocksLight() {
+  public boolean isSolid()
+  {
     return true;
+  }
+
+  /**
+   * @param startX Start X coord of box.
+   * @param endX   End X coord of box.
+   * @param startY Start Y coord of box.
+   * @param endY   End Y coord of box.
+   */
+  private void makeBoundingBox(int startX, int endX, int startY, int endY)
+  {
+    box = new Rectangle2D.Float(startX, startY, endX - startX, endY - startY);
   }
 }

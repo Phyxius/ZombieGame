@@ -112,6 +112,14 @@ public abstract class Entity
   }
 
   /**
+   * Called when the entity is removed from the game
+   */
+  public void onRemoved()
+  {
+
+  }
+
+  /**
    * Updates the object's state, and allows read-write access to global
    * state via an UpdateManager.
    * Called as close to Settings.framerate times per second as is feasible.
@@ -120,14 +128,6 @@ public abstract class Entity
    */
   public void update(
       UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
-  {
-
-  }
-
-  /**
-   * Called when the entity is removed from the game
-   */
-  public void onRemoved()
   {
 
   }

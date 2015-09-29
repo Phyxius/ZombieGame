@@ -1,5 +1,7 @@
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.VolatileImage;
 import java.util.*;
 import java.util.List;
@@ -13,11 +15,11 @@ import java.util.stream.Stream;
  */
 public class SightDrawer extends Entity
 {
-  private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
   private final static float[] GRADIENT_FRACTIONS = new float[]{0, 1f};
+  private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
   private final static Color[] GRADIENT_COLORS = new Color[]{TRANSPARENT, Color.black};
-  private ArrayList<Point2D.Float> lightSources = new ArrayList<>();
   private final HashMap<Point2D.Float, HashSet<Point2D.Float>> relevantCorners = new HashMap<>();
+  private ArrayList<Point2D.Float> lightSources = new ArrayList<>();
   //private VolatileImage screenOverlay = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
   @Override
@@ -27,7 +29,9 @@ public class SightDrawer extends Entity
     //if (screenOverlay.getWidth() != screen.getClipBounds().width || screenOverlay.getHeight() != screen.getClipBounds().height)
     //screenOverlay = new BufferedImage(screen.getClipBounds().width, screen.getClipBounds().height, BufferedImage.TYPE_INT_ARGB);
     GraphicsConfiguration graphicsConfiguration = drawingManager.getGraphicsConfiguration();
-    VolatileImage screenOverlay = graphicsConfiguration.createCompatibleVolatileImage(screen.getClipBounds().width, screen.getClipBounds().height, VolatileImage.TRANSLUCENT);
+    VolatileImage screenOverlay = graphicsConfiguration
+        .createCompatibleVolatileImage(screen.getClipBounds().width, screen.getClipBounds().height,
+            VolatileImage.TRANSLUCENT);
     screenOverlay.validate(graphicsConfiguration);
     Graphics2D overlayDrawer = screenOverlay.createGraphics();
     overlayDrawer.setColor(Color.black);
@@ -37,16 +41,18 @@ public class SightDrawer extends Entity
     {
       Point2D.Float lightSource = entry.getKey();
       lightSource.setLocation(drawingManager.gamePositionToScreenPosition(lightSource));
-      RadialGradientPaint p = new RadialGradientPaint(lightSource, Settings.playerSightRadius * drawingManager.getScale(), GRADIENT_FRACTIONS, GRADIENT_COLORS);
+      RadialGradientPaint p =
+          new RadialGradientPaint(lightSource, Settings.playerSightRadius * drawingManager.getScale(),
+              GRADIENT_FRACTIONS, GRADIENT_COLORS);
       overlayDrawer.setPaint(p);
       /*LIGHT_ELLIPSE.setFrameFromCenter(lightSource,
           new Point2D.Float((float) (lightSource.getX() + Settings.playerSightRadius),
               (float) (lightSource.getY() + Settings.playerSightRadius)));
       overlayDrawer.fill(LIGHT_ELLIPSE);*/
-      List<Point2D.Float> points = entry.getValue().parallelStream()
-          .map(drawingManager::gamePositionToScreenPosition)
-          .sorted(Comparator.comparing((Point2D.Float point) -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x)).thenComparing((Function<Point2D.Float, Double>) lightSource::distanceSq))
-          .collect(Collectors.toList());
+      List<Point2D.Float> points = entry.getValue().parallelStream().map(drawingManager::gamePositionToScreenPosition)
+          .sorted(Comparator
+              .comparing((Point2D.Float point) -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x))
+              .thenComparing((Function<Point2D.Float, Double>) lightSource::distanceSq)).collect(Collectors.toList());
       //overlayDrawer.setColor(Color.green);
       Polygon litArea = new Polygon();
       for (Point2D.Float point : points)
@@ -68,20 +74,25 @@ public class SightDrawer extends Entity
   }
 
   @Override
+  public int getDepth()
+  {
+    return 1000;
+  }
+
+  @Override
   public void update(UpdateManager e)
   {
     lightSources.clear();
-    lightSources.addAll(e.getAllEntities().parallelStream()
-        .filter(Entity::isLightSource)
-        .map(Entity::getBoundingBox)
-        .map(Util::getRectangleCenterPoint)
-        .collect(Collectors.toList()));
+    lightSources.addAll(e.getAllEntities().parallelStream().filter(Entity::isLightSource).map(Entity::getBoundingBox)
+        .map(Util::getRectangleCenterPoint).collect(Collectors.toList()));
     relevantCorners.clear();
     for (Point2D.Float lightSource : lightSources)
     {
       int playerSightRadius = Settings.playerSightRadius;
-      Collection<Entity> potentiallyLitEntities = e.getCollidingEntities(new Ellipse2D.Float(lightSource.x - playerSightRadius, lightSource.y - playerSightRadius,
-          2 * playerSightRadius, 2 * playerSightRadius)).stream().filter(Entity::blocksLight).collect(Collectors.toList());
+      Collection<Entity> potentiallyLitEntities = e.getCollidingEntities(
+          new Ellipse2D.Float(lightSource.x - playerSightRadius, lightSource.y - playerSightRadius,
+              2 * playerSightRadius, 2 * playerSightRadius)).stream().filter(Entity::blocksLight)
+          .collect(Collectors.toList());
       /*
         The following code is using the Streams API even though a foreach loop would be more readable because
         Streams provide free parallelism. It takes the list of 'interesting' (i.e. light blocking within sight range) entities,
@@ -89,15 +100,12 @@ public class SightDrawer extends Entity
         light source intersect any light blocking entity. If they do intersect, they are removed from the stream.
         Yes, I have profiled this method and it does benefit from the parallelism.
       */
-      HashSet<Point2D.Float> lightPoints = new HashSet<>(potentiallyLitEntities.parallelStream()
-              .map(Entity::getBoundingBox)
-              .flatMap(rect -> Stream.of(
-                  new Point2D.Float(rect.x, rect.y),
-                  new Point2D.Float(rect.x + rect.width, rect.y),
+      HashSet<Point2D.Float> lightPoints = new HashSet<>(
+          potentiallyLitEntities.parallelStream().map(Entity::getBoundingBox).flatMap(rect -> Stream
+              .of(new Point2D.Float(rect.x, rect.y), new Point2D.Float(rect.x + rect.width, rect.y),
                   new Point2D.Float(rect.x, rect.y + rect.height),
-                  new Point2D.Float(rect.x + rect.width, rect.y + rect.height)))
-              .distinct()
-              .map(p -> castRays(lightSource, p, potentiallyLitEntities))
+                  new Point2D.Float(rect.x + rect.width, rect.y + rect.height))).distinct().map(
+              p -> castRays(lightSource, p, potentiallyLitEntities))
                   /*.filter(p -> potentiallyLitEntities.stream()
                       .noneMatch(ent -> ent.getBoundingBox().intersectsLine(
                           Util.getLongerLine(new Line2D.Float(lightSource, p), -2)))))*/
@@ -107,16 +115,13 @@ public class SightDrawer extends Entity
     }
   }
 
-  private boolean doRectanglesContainPoint(float x, float y, Collection<Rectangle2D.Float> rectangles)
+  private Tuple<Point2D.Float, Point2D.Float> castRays(Point2D.Float origin, Point2D.Float towardsPoint,
+                                                       Collection<Entity> interestingEntities)
   {
-    return rectangles.parallelStream().anyMatch(r -> r.contains(x, y));
-  }
-
-  private Tuple<Point2D.Float, Point2D.Float> castRays(Point2D.Float origin, Point2D.Float towardsPoint, Collection<Entity> interestingEntities)
-  {
-    List<Rectangle2D.Float> rectangles = interestingEntities.parallelStream().map(Entity::getBoundingBox).collect(Collectors.toList());
+    List<Rectangle2D.Float> rectangles =
+        interestingEntities.parallelStream().map(Entity::getBoundingBox).collect(Collectors.toList());
     double angle = Math.atan2(towardsPoint.y - origin.y, towardsPoint.x - origin.x);
-    float dx = (float)Math.cos(angle), dy = (float)Math.sin(angle);
+    float dx = (float) Math.cos(angle), dy = (float) Math.sin(angle);
     float x = origin.x, y = origin.y;
     int iterations = 0;
     Point2D.Float previousPoint = null;
@@ -134,9 +139,8 @@ public class SightDrawer extends Entity
     return new Tuple<>(new Point2D.Float(x, y), previousPoint);
   }
 
-  @Override
-  public int getDepth()
+  private boolean doRectanglesContainPoint(float x, float y, Collection<Rectangle2D.Float> rectangles)
   {
-    return 1000;
+    return rectangles.parallelStream().anyMatch(r -> r.contains(x, y));
   }
 }

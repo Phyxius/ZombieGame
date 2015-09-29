@@ -27,11 +27,11 @@ public class Player extends Entity implements Detonator
   private boolean moving;
   private Point2D.Float position;
   private int progressCounter = 0;
+  private boolean resetFlag;
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
   private boolean trapAction;
   private int trapsInInventory = Settings.playerTraps;
-  private boolean resetFlag;
 
   /**
    * Constructs a default player.

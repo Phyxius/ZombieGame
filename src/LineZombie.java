@@ -17,7 +17,8 @@ public class LineZombie extends ZombieModel
 
   /**
    * Creates a new zombie.
-   * @param player The player tracked by this zombie.
+   *
+   * @param player   The player tracked by this zombie.
    * @param position The location of the zombie.
    */
   public LineZombie(Player player, Point2D.Float position)
@@ -29,7 +30,7 @@ public class LineZombie extends ZombieModel
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     local.setColor(new Color(0, 255, 255, 50));
-    local.fillOval(0,0,(int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
+    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle, Settings.tileSize / 2,
         Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
@@ -118,7 +119,7 @@ public class LineZombie extends ZombieModel
       if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && audibleFootSteps)
       {
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
-        if (!zombieStep.isPlaying())zombieStep.play(balance, 0.5 / distanceFromPlayer);
+        if (!zombieStep.isPlaying()) zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
       soundCounter++;
     }

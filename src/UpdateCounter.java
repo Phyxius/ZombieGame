@@ -16,12 +16,6 @@ public class UpdateCounter extends Entity
   }
 
   @Override
-  public void update(UpdateManager e)
-  {
-    updates++;
-  }
-
-  @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     screen.setColor(Color.green);
@@ -32,5 +26,11 @@ public class UpdateCounter extends Entity
   public int getDepth()
   {
     return Integer.MAX_VALUE;
+  }
+
+  @Override
+  public void update(UpdateManager e)
+  {
+    updates++;
   }
 }
