@@ -60,6 +60,11 @@ public class Trap extends Entity
     }
   }
 
+  public void setPosition(Point2D.Float position)
+  {
+    this.position = position;
+  }
+
   private void detonate(CollisionManager c)
   {
     Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x, position.y, tileSize, tileSize);

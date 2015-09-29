@@ -101,7 +101,6 @@ public class Room
   {
     makeRoom();
     makeWalls();
-    spawnFireTraps();
   }
 
   public boolean isAHallway()
@@ -208,8 +207,9 @@ public class Room
    * Given a random chance < 0.01 for each tile in the room,
    * make a firetrap on that tile
    */
-  public void spawnFireTraps()
+  public List<Trap> spawnFireTraps()
   {
+    ArrayList<Trap> traps = new ArrayList<>();
     for (int i = startY+1; i < (startY+height-2); i++)
     {
       for (int j = startX+1; j < (startX+width-2); j++)
@@ -217,10 +217,12 @@ public class Room
         if(Util.rng.nextDouble() < Settings.trapSpawnRate)
         {
           Trap trap = new Trap(new Point2D.Float(j*Settings.tileSize, i*Settings.tileSize));
+          traps.add(trap);
           updateManager.add(trap);
         }
       }
     }
+    return traps;
   }
 
   public boolean isLeaf()

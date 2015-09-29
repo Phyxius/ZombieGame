@@ -48,6 +48,11 @@ public class Exit extends Entity
     return (Point2D.Float) position;
   }
 
+  public void setPosition(Point2D position)
+  {
+    this.position = position;
+  }
+
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
@@ -60,7 +65,7 @@ public class Exit extends Entity
     if(other instanceof Player)
     {
         c.remove(c.getAllEntities());
-        //NewGame.makeNewGame(c, House.levelNum++);
+        NewGame.makeNewGame(c, House.levelNum++);
     }
   }
 }

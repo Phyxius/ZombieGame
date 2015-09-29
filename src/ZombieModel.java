@@ -63,6 +63,12 @@ abstract class ZombieModel extends Entity implements Detonator
     this.directionAngle = 2 * Util.rng.nextDouble() * Math.PI;
   }
 
+
+  public void setPosition(Point2D.Float position)
+  {
+    this.position = position;
+  }
+
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {

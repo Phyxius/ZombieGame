@@ -115,6 +115,11 @@ public class Player extends Entity implements Detonator
     return isRunning();
   }
 
+  public void setPosition(Point2D.Float position)
+  {
+    this.position = position;
+  }
+
   @Override
   public void update(UpdateManager e)
   {
@@ -234,7 +239,7 @@ public class Player extends Entity implements Detonator
       if(entity instanceof ZombieModel)
       {
         manager.remove(manager.getAllEntities());
-        //NewGame.makeNewGame(manager, House.levelNum);
+        NewGame.makeNewGame(manager, House.levelNum);
       }
     });
     return returnValue[0];

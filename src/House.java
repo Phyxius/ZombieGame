@@ -11,6 +11,7 @@ import java.util.*;
 public class House extends Entity
 {
   public static Graph<Point> graphOfGrid;
+  private HashMap<Entity, Point2D.Float> initialPosition;
   private Tile[][] fullGrid;
   private boolean[][] bookshelves;
   private UpdateManager updateManager;
@@ -20,10 +21,14 @@ public class House extends Entity
   private Player player;
   private MasterZombie master;
   private Room startRoom;
+  private Exit exit;
   private int gridHeight, gridWidth;
   private int prevHallDoorX, prevHallDoorY;
   public static long seed;
+  public static int levelNum = 1;
   private java.util.List<ZombieModel> zombies = new LinkedList<>();
+  private java.util.List<Trap> traps = new ArrayList<>();
+  private java.util.List<Bookshelf> books = new ArrayList<>();
 
   /**
    * Makes a new House object of specified height and width at (0,0).
@@ -35,14 +40,16 @@ public class House extends Entity
    * @param gridHeight Height of House
    * @param updateManager a reference to global EntityManager
    */
-  public House(int gridWidth, int gridHeight, int numLevel, UpdateManager updateManager)
+  public House(int gridWidth, int gridHeight, int levelNum, UpdateManager updateManager)
   {
+    if(House.levelNum != levelNum) seed = System.currentTimeMillis();
+    Util.rng = new Random(seed);
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
     this.updateManager = updateManager;
     connections = new ArrayList<>();
     bookshelves = new boolean[gridHeight][gridWidth];
-    int tileSize = Settings.tileSize;
+    initialPosition = new HashMap<>();
     roomList = new ArrayList<>();
     initDoorways = new ArrayList<>();
     graphOfGrid = new Graph<>();
@@ -62,6 +69,7 @@ public class House extends Entity
     makeBookcases();
     makeGraph();
     makeMasterZombie();
+    initializeMap();
     updateManager.setEntityToFollow(player);
 //    updateManager.setEntityToFollow(master);
     if(!makeExit(true)) makeExit(false);
@@ -87,12 +95,12 @@ public class House extends Entity
     int curStartX = (int) curOrigin.getX()/tileSize;
     int curEndY = (int)( curStartY + (drawingManager.screenHeight/tileSize));
     int curEndX = (int) (curStartX + (drawingManager.screenWidth/tileSize));
-    for(int i = curStartY; i < curEndY+1; i++)
+    for(int i = curStartY; i < curEndY+2; i++)
     {
-      for(int j = curStartX; j < curEndX+1; j++)
+      for(int j = curStartX; j < curEndX+2; j++)
       {
         float screenX = drawingManager.gameXToScreenX(j*tileSize);
-        float screenY= drawingManager.gameYToScreenY(i*tileSize);
+        float screenY= drawingManager.gameYToScreenY(i * tileSize);
         if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
         screen.drawImage(fullGrid[i][j].getTileImg(), (int) screenX, (int) screenY,
                          (int)(tileSize*drawingManager.getScale()),(int)(tileSize*drawingManager.getScale()), null);
@@ -100,6 +108,34 @@ public class House extends Entity
     }
     //local.setColor(Color.green);
     //connections.forEach(Line -> local.draw(Line));
+  }
+
+  public void resetHouse()
+  {
+    for(Entity entity: initialPosition.keySet())
+    {
+
+      if(entity instanceof LineZombie)
+      {
+        ((LineZombie) entity).setPosition(initialPosition.get(entity));
+        updateManager.add(entity);
+      }
+      if(entity instanceof RandomZombie)
+      {
+        ((RandomZombie) entity).setPosition(initialPosition.get(entity));
+        updateManager.add(entity);
+      }
+      if(entity instanceof Player)
+      {
+        ((Player) entity).setPosition(initialPosition.get(entity));
+        updateManager.add(entity);
+      }
+      if(entity instanceof Exit)
+      {
+        ((Exit) entity).setPosition(initialPosition.get(entity));
+        updateManager.add(entity);
+      }
+    }
   }
 
   public Point2D.Float getPosition() //returns upper left point of the object
@@ -151,7 +187,6 @@ public class House extends Entity
     Doorway entrance = new Doorway();
     Doorway exit = new Doorway();
     Room newHallway = null;
-    Random generator = new Random();
     int offsetFromCenter = 1;//generator.nextInt(2)+2;
     int newWidth;
     int newHeight;
@@ -160,7 +195,7 @@ public class House extends Entity
 
       case NORTH:
         newWidth = prevRoomDoorSize+2;
-        newHeight = 4+generator.nextInt(4);
+        newHeight = 4+Util.rng.nextInt(4);
         newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY-newHeight,newWidth, newHeight,true,player, updateManager);
         prevHallDoorX = prevRoomDoorX;
         prevHallDoorY = prevRoomDoorY-newHeight;
@@ -175,7 +210,7 @@ public class House extends Entity
         }
       break;
       case WEST:
-        newWidth = 4+generator.nextInt(4);
+        newWidth = 4+Util.rng.nextInt(4);
         newHeight = prevRoomDoorSize+2;
         newHallway = new Room(prevRoomDoorX-newWidth, prevRoomDoorY-offsetFromCenter,newWidth, newHeight, true,player, updateManager);
         prevHallDoorX = prevRoomDoorX-newWidth;
@@ -192,7 +227,7 @@ public class House extends Entity
       break;
       case SOUTH:
         newWidth = prevRoomDoorSize+2;
-        newHeight = 4+generator.nextInt(4);
+        newHeight = 4+Util.rng.nextInt(4);
         newHallway = new Room(prevRoomDoorX-offsetFromCenter, prevRoomDoorY+1,newWidth, newHeight, true,player, updateManager);
         prevHallDoorX = prevRoomDoorX;
         prevHallDoorY = prevRoomDoorY+newHeight;
@@ -207,7 +242,7 @@ public class House extends Entity
         }
       break;
       case EAST:
-        newWidth = 4+generator.nextInt(4);
+        newWidth = 4+Util.rng.nextInt(4);
         newHeight = prevRoomDoorSize+2;
         newHallway = new Room(prevRoomDoorX+1, prevRoomDoorY-offsetFromCenter,newWidth, newHeight,true,player, updateManager);
         prevHallDoorX = prevRoomDoorX+newWidth;
@@ -254,10 +289,9 @@ public class House extends Entity
                                   Doorway firstdoor, int prevRoomDoorSize)
   {
     Room newRoom = null;
-    Random generator = new Random();
     int offsetFromCenter = 2;//generator.nextInt(2)+2;
-    int newWidth = generator.nextInt(6)+8;
-    int newHeight = generator.nextInt(6)+8;
+    int newWidth = Util.rng.nextInt(6)+8;
+    int newHeight = Util.rng.nextInt(6)+8;
     switch(comingFrom)
     {
       case NORTH:
@@ -302,7 +336,7 @@ public class House extends Entity
   private int calculateNumDoors(int depth)
   {
     int numDoors = 0;
-    double rand = Math.random();
+    double rand = Util.rng.nextDouble();
     if(depth == 1) numDoors = 4;
     if(depth == 2) //|| depth == 3)
     {
@@ -324,12 +358,11 @@ public class House extends Entity
 
   private Doorway makeDoorwayAt(Direction dir , int startX, int startY, int widthOrHeight)
   {
-    Random generator = new Random();
     Doorway newDoorway = new Doorway();
-    int doorwaySize = generator.nextInt(2)+2;
+    int doorwaySize = Util.rng.nextInt(2)+2;
     if(dir == Direction.EAST || dir == Direction.WEST)
     {
-      int startDoorY = generator.nextInt(widthOrHeight - 4) + startY + 2;
+      int startDoorY = Util.rng.nextInt(widthOrHeight - 4) + startY + 2;
       for (int i = 0; i < doorwaySize; i++)
       {
         if (startDoorY + i == startY + widthOrHeight - 1)
@@ -346,7 +379,7 @@ public class House extends Entity
     else
     {
       int startDoorX;
-      startDoorX = generator.nextInt(widthOrHeight-4)+startX+2;
+      startDoorX = Util.rng.nextInt(widthOrHeight-4)+startX+2;
       for (int i = 0; i < doorwaySize; i++)
       {
         //Corner
@@ -469,6 +502,7 @@ public class House extends Entity
     newRoom.addDoorways();
     newRoom.init();
     zombies.addAll(newRoom.spawnZombies());
+    traps.addAll(newRoom.spawnFireTraps());
   }
 
   private void copyObjectsToGrid()
@@ -532,14 +566,27 @@ public class House extends Entity
           for(int j = startX; j < width; j++)
           {
             if(Util.rng.nextDouble() < 0.005 && !room.isAHallway() &&
-                    i != startY && j != startX && i != height-1 && j != width-1)
+                    i != startY && j != startX && i != height-1 && j != width-1
+                    )
             {
               numBookcases++;
-              updateManager.add(new Bookshelf(new Point2D.Float(j * Settings.tileSize, i * Settings.tileSize)));
+              Bookshelf b = new Bookshelf(new Point2D.Float(j * Settings.tileSize, i * Settings.tileSize));
+              books.add(b);
+              updateManager.add(b);
               bookshelves[i][j] = true;
             }
           }
         }
+      }
+    }
+    for(ZombieModel zombie: zombies)
+    {
+      int x = (int)(zombie.getPosition().getX()/Settings.tileSize);
+      int y = (int)(zombie.getPosition().getY()/Settings.tileSize);
+      if(bookshelves[y][x])
+      {
+        bookshelves[y][x] = false;
+        updateManager.remove(new Bookshelf(new Point2D.Float(x * Settings.tileSize, y * Settings.tileSize)));
       }
     }
   }
@@ -572,11 +619,6 @@ public class House extends Entity
                     fullGrid[i][j].isSolid() ||
                     bookshelves[i][j] || bookshelves[i+dy][j+dx]))
               {
-                //Point newPointTile = new Point((int) newPoint.getX()*Settings.tileSize+(Settings.tileSize/2),
-                //             (int)newPoint.getY()*Settings.tileSize+(Settings.tileSize/2));
-                //Point neigbTile = new Point((int) neighbor.getX()*Settings.tileSize+(Settings.tileSize/2),
-                //                                            (int)neighbor.getY()*Settings.tileSize+(Settings.tileSize/2));
-                //connections.add(new Line2D.Float(newPointTile,neigbTile));
                 graphOfGrid.setEdge(newPoint, neighbor, 1.0f);
               }
             }
@@ -584,6 +626,24 @@ public class House extends Entity
         }
       }
     }
+  }
+
+  private void initializeMap()
+  {
+    for(ZombieModel zombie: zombies)
+    {
+      initialPosition.put(zombie, new Point2D.Float((int) zombie.getPosition().getX(), (int) zombie.getPosition().getY()));
+    }
+    for(Trap trap: traps)
+    {
+      initialPosition.put(trap, new Point2D.Float((int) trap.getPosition().getX(), (int) trap.getPosition().getY()));
+    }
+    for(Bookshelf book: books)
+    {
+      initialPosition.put(book, new Point2D.Float((int) book.getPosition().getX(), (int) book.getPosition().getY()));
+    }
+    initialPosition.put(player, new Point2D.Float((int) player.getPosition().getX(), (int) player.getPosition().getY()));
+    initialPosition.put(exit, new Point2D.Float((int) player.getPosition().getX(), (int) player.getPosition().getY()));
   }
 
   private void makeMasterZombie()
@@ -595,7 +655,7 @@ public class House extends Entity
     zombies.forEach(entity -> ((ZombieModel) entity).setMasterZombie(master));
     zombies.add(master);
     updateManager.add(zombies);
-    zombies = null;
+    //zombies = null;
   }
 
   private boolean makeExit(boolean makeFarAway)
@@ -609,9 +669,12 @@ public class House extends Entity
       if(room.isLeaf() && !room.equals(startRoom) &&
          (!makeFarAway || roomStart.distance(player.getPosition()) > Settings.distanceAwayExit * Settings.tileSize))
       {
-        for (Wall wall : room.wallList) {
-          if (wall != null) {
-            updateManager.add(new Exit(wall.getDirection(), wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
+        for (Wall wall : room.wallList)
+        {
+          if (wall != null)
+          {
+            exit = new Exit(wall.getDirection(), wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY());
+            updateManager.add(exit);
             return true;
           }
         }
