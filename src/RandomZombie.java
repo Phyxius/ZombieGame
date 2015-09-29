@@ -105,6 +105,7 @@ class RandomZombie extends ZombieModel
           }
           position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
           collision = true;
+          if (entity instanceof Wall && audibleBump) bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
           moving = false;
         }
       });
@@ -122,7 +123,7 @@ class RandomZombie extends ZombieModel
       moving = true;
 
       //double volume = 10;
-      if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && loud)
+      if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && audibleFootSteps)
       {
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
         zombieStep.play(balance, 0.5 / distanceFromPlayer);

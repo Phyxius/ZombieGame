@@ -8,7 +8,7 @@
  * @param decisionRate The delay between each decision.
  * @param directionAngle The current direction of movement.
  * @param distanceFromPlayer The current distance from player.
- * @param loud Current audio playback state. Zombies play sound when they are loud.
+ * @param audibleFootSteps Current audio playback state. Zombies play sound when they are audibleFootSteps.
  * @param master The master zombie that the zombie reports to when detecting the player.
  * @param minAngle Minimum change in heading upon collisions.
  * @param moving The movement state of the zombie.
@@ -31,7 +31,7 @@ abstract class ZombieModel extends Entity implements Detonator
   protected int decisionRate; // New decision every decisionRate updates.
   protected double directionAngle; // 0 - 2 * PI
   protected double distanceFromPlayer;
-  protected boolean loud;
+  protected boolean audibleFootSteps;
   protected MasterZombie master;
   protected double minAngle;
   protected boolean moving = true;
@@ -42,6 +42,8 @@ abstract class ZombieModel extends Entity implements Detonator
   protected float speed; // displacement = speed * tiles
   protected boolean triedAStar;
   protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
+  protected SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
+  protected boolean audibleBump;
 
   /**
    * Constructs a zombie using default values in Settings.
@@ -161,7 +163,8 @@ abstract class ZombieModel extends Entity implements Detonator
     {
       playerPosition = null;
     }
-    loud = distanceFromPlayer <= Settings.playerHearing;
+    audibleFootSteps = distanceFromPlayer <= Settings.playerHearing;
+    audibleBump = distanceFromPlayer <= 2 * Settings.playerHearing;
   }
 
   Point findCurrentlyOccupiedTile(int numFailedAttempts)
