@@ -12,15 +12,16 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Entity implements Detonator
 {
-  private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
-  private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
+  private final Point2D.Float center;
   private final Animation moveAnimation = new Animation("animation/player1/moving_small_", 9, true);
+  private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
   private final ProgressBar staminaBar = new ProgressBar("gui/label_stamina.png", true);
-  private final SoundEffect trapSFX = new SoundEffect("soundfx/player_pickup.mp3");
   private final ProgressBar trapBar = new ProgressBar("", false);
   private final GuiCounter trapCounter = new GuiCounter("gui/trapIcon.png");
-  private final Point2D.Float center;
+  private final SoundEffect trapSFX = new SoundEffect("soundfx/player_pickup.mp3");
+  private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
   private Trap collidingTrap = null;
+  private double directionAngle;
   private boolean isPickingUp;
   private boolean isPlacing;
   private boolean isRunning = false;
@@ -30,7 +31,6 @@ public class Player extends Entity implements Detonator
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
   private int trapsInInventory = Settings.playerTraps;
-  private double directionAngle;
 
   /**
    * Constructs a default player.
@@ -73,21 +73,31 @@ public class Player extends Entity implements Detonator
   }
 
   @Override
+  public Rectangle2D.Float getBoundingBox()
+  {
+    Point2D.Float position = getPosition();
+    if (position == null) return null;
+    return new Rectangle2D.Float(position.x, position.y,
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize),
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
+  }
+
+  @Override
   public int getDepth()
   {
     return 1100;
   }
 
   @Override
-  public boolean isLightSource()
-  {
-    return true;
-  }
-
-  @Override
   public Point2D.Float getPosition()
   {
     return this.position;
+  }
+
+  @Override
+  public boolean isLightSource()
+  {
+    return true;
   }
 
   @Override
@@ -304,14 +314,83 @@ public class Player extends Entity implements Detonator
     staminaBar.setMaxValue((int) Settings.playerStamina);
   }
 
-  @Override
-  public Rectangle2D.Float getBoundingBox()
+  private class GuiCounter
   {
-    Point2D.Float position = getPosition();
-    if (position == null) return null;
-    return new Rectangle2D.Float(position.x, position.y,
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize),
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
+
+    private final BufferedImage[] IMAGE_LIST = new BufferedImage[12];
+    private final Point2D.Float POSITION = new Point2D.Float();
+    int imageHeight = Settings.tileSize;
+    int imageWidth = 0;
+    private int value;
+
+    GuiCounter(String imagePath)
+    {
+
+      for (int i = 0; i < 10; i++)
+      {
+        IMAGE_LIST[i] = ResourceManager.getImage("gui/digit_" + i + ".png");
+      }
+      if (imagePath != null) IMAGE_LIST[10] = ResourceManager.getImage(imagePath);
+      setValue(0);
+    }
+
+    public void draw(Graphics2D global, DrawingManager drawingManager)
+    {
+      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(),
+          (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
+    }
+
+    public int getValue()
+    {
+      return value;
+    }
+
+    public void setValue(int value)
+    {
+      if (value >= 0)
+      {
+        this.value = value;
+        updateImage();
+      }
+      else this.value = 0;
+    }
+
+    public void setPosition(float xPosition, float yPosition)
+    {
+      POSITION.setLocation(xPosition, yPosition);
+    }
+
+    private void updateImage()
+    {
+      int digitWidth = (int) (((float) IMAGE_LIST[0].getWidth() / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize);
+      int iconWidth = 0;
+
+      if (IMAGE_LIST[10] != null)
+      {
+        iconWidth = (int) (((float) IMAGE_LIST[10].getWidth() / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize);
+      }
+
+      int value = this.value;
+      int order;
+      if (value == 0) order = 1;
+      else order = 1 + (int) Math.log10(value);
+
+      imageWidth = iconWidth + order * digitWidth;
+      IMAGE_LIST[11] = new BufferedImage(imageWidth, imageHeight, IMAGE_LIST[0].getType());
+      Graphics2D graphics = IMAGE_LIST[11].createGraphics();
+      if (IMAGE_LIST[10] != null) graphics.drawImage(IMAGE_LIST[10], 0, 0, iconWidth, imageHeight, null);
+      int digit;
+      int offset = iconWidth;
+      while (order > 0)
+      {
+        int div = (int) Math.pow(10, order - 1);
+        digit = (value / div) % 10;
+        value -= digit * div;
+        graphics.drawImage(IMAGE_LIST[digit], offset, 0, digitWidth, imageHeight, null);
+        order--;
+        offset += digitWidth;
+      }
+    }
   }
 
   private class ProgressBar
@@ -334,6 +413,11 @@ public class Player extends Entity implements Detonator
       setCurrentValue(-1);
       setMaxValue(-1);
       this.POSITION = new Point2D.Float();
+    }
+
+    public void changeColor(boolean changeColor)
+    {
+      this.changeColor = changeColor;
     }
 
     public void draw(Graphics2D global, DrawingManager drawingManager)
@@ -385,90 +469,6 @@ public class Player extends Entity implements Detonator
     public void setPosition(float x, float y)
     {
       this.POSITION.setLocation(x, y);
-    }
-
-    public void changeColor(boolean changeColor)
-    {
-      this.changeColor = changeColor;
-    }
-  }
-
-  private class GuiCounter
-  {
-
-    private final BufferedImage[] IMAGE_LIST = new BufferedImage[12];
-    private final Point2D.Float POSITION = new Point2D.Float();
-    int imageHeight = Settings.tileSize;
-    int imageWidth = 0;
-    private int value;
-
-    GuiCounter(String imagePath)
-    {
-
-      for (int i = 0; i < 10; i++)
-      {
-        IMAGE_LIST[i] = ResourceManager.getImage("gui/digit_" + i + ".png");
-      }
-      if (imagePath != null) IMAGE_LIST[10] = ResourceManager.getImage(imagePath);
-      setValue(0);
-    }
-
-    public int getValue()
-    {
-      return value;
-    }
-
-    public void setValue(int value)
-    {
-      if (value >= 0)
-      {
-        this.value = value;
-        updateImage();
-      }
-      else this.value = 0;
-    }
-
-    private void updateImage()
-    {
-      int digitWidth = (int) (((float) IMAGE_LIST[0].getWidth() / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize);
-      int iconWidth = 0;
-
-      if (IMAGE_LIST[10] != null)
-      {
-        iconWidth = (int) (((float) IMAGE_LIST[10].getWidth() / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize);
-      }
-
-      int value = this.value;
-      int order;
-      if (value == 0) order = 1;
-      else order = 1 + (int) Math.log10(value);
-
-      imageWidth = iconWidth + order * digitWidth;
-      IMAGE_LIST[11] = new BufferedImage(imageWidth, imageHeight, IMAGE_LIST[0].getType());
-      Graphics2D graphics = IMAGE_LIST[11].createGraphics();
-      if (IMAGE_LIST[10] != null) graphics.drawImage(IMAGE_LIST[10], 0, 0, iconWidth, imageHeight, null);
-      int digit;
-      int offset = iconWidth;
-      while (order > 0)
-      {
-        int div = (int) Math.pow(10, order - 1);
-        digit = (value / div) % 10;
-        value -= digit * div;
-        graphics.drawImage(IMAGE_LIST[digit], offset, 0, digitWidth, imageHeight, null);
-        order--;
-        offset += digitWidth;
-      }
-    }
-
-    public void draw(Graphics2D global, DrawingManager drawingManager)
-    {
-      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(),
-          (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
-    }
-
-    public void setPosition(float xPosition, float yPosition)
-    {
-      POSITION.setLocation(xPosition, yPosition);
     }
   }
 }

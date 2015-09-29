@@ -9,8 +9,8 @@ import java.awt.image.BufferedImage;
 
 public class Exit extends Entity
 {
-  private Point2D position;
   private BufferedImage exitImg;
+  private Point2D position;
 
   public Exit(House.Direction dir, int startX, int startY, int endX, int endY)
   {
@@ -40,9 +40,9 @@ public class Exit extends Entity
   }
 
   @Override
-  public boolean isSolid()
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
-    return false;
+    local.drawImage(exitImg, 0, 0, Settings.tileSize, Settings.tileSize, null);
   }
 
   @Override
@@ -52,9 +52,9 @@ public class Exit extends Entity
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
+  public boolean isSolid()
   {
-    local.drawImage(exitImg, 0, 0, Settings.tileSize, Settings.tileSize, null);
+    return false;
   }
 
   @Override

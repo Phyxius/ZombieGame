@@ -1,6 +1,23 @@
 /**
  * Created by Mohammad R. Yousefi on 07/09/15.
  * Basic model for the zombies in the Zombie House game.
+ *
+ * @param player The player object that the zombie tracks.
+ * @param aStarWorked The success state of path finding.
+ * @param collision Collision state of the zombie object.
+ * @param decisionRate The delay between each decision.
+ * @param directionAngle The current direction of movement.
+ * @param distanceFromPlayer The current distance from player.
+ * @param loud Current audio playback state. Zombies play sound when they are loud.
+ * @param master The master zombie that the zombie reports to when detecting the player.
+ * @param minAngle Minimum change in heading upon collisions.
+ * @param moving The movement state of the zombie.
+ * @param playerPosition The last known location of the player.
+ * @param position Location of the zombie.
+ * @param smell Maximum detection distance for the zombie.
+ * @param speed Movement speed of the zombie.
+ * @param triedAStar Indicates whether path finding has beed attempted.
+ * @param updateCount The number of update calls.
  */
 
 import java.awt.*;
@@ -8,23 +25,23 @@ import java.awt.geom.Point2D;
 
 abstract class ZombieModel extends Entity implements Detonator
 {
-  protected float speed; // displacement = speed * tiles
-  protected int decisionRate; // New decision every decisionRate updates.
-  protected float smell; // smell radius = smell * tiles
-  protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
-  protected int numFailedAttempts = 0;
-  protected boolean triedAStar;
-  protected boolean aStarWorked;
   protected final Player player; // Reference to the player on the current board.
+  protected boolean aStarWorked;
+  protected boolean collision;
+  protected int decisionRate; // New decision every decisionRate updates.
+  protected double directionAngle; // 0 - 2 * PI
+  protected double distanceFromPlayer;
+  protected boolean loud;
+  protected MasterZombie master;
+  protected double minAngle;
+  protected boolean moving = true;
+  protected int numFailedAttempts = 0;
   protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
   protected Point2D.Float position = new Point2D.Float(); // Top Left Corner.
-  protected double directionAngle; // 0 - 2 * PI
-  protected boolean collision;
-  protected double minAngle;
-  protected boolean loud;
-  protected double distanceFromPlayer;
-  protected boolean moving = true;
-  protected MasterZombie master;
+  protected float smell; // smell radius = smell * tiles
+  protected float speed; // displacement = speed * tiles
+  protected boolean triedAStar;
+  protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
 
   /**
    * Constructs a zombie using default values in Settings.
@@ -78,6 +95,57 @@ abstract class ZombieModel extends Entity implements Detonator
   }
 
   /**
+   * Determines whether the object is solid.
+   *
+   * @return By default all zombies are solid.
+   */
+  @Override
+  public boolean isSolid()
+  {
+    return true;
+  }
+
+  /**
+   * Informs the zombie to react to a collision.
+   *
+   * @param other            The object that collides with this object.
+   * @param collisionManager The manager for this collision.
+   */
+  @Override
+  public void onCollision(Entity other, CollisionManager collisionManager)
+  {
+    if (other.isSolid())
+    {
+      collision = true;
+      moving = false;
+    }
+    if (other instanceof Fire)
+    {
+      playerPosition = null;
+      collisionManager.remove(this);
+    }
+  }
+
+  public void setMasterZombie(MasterZombie master)
+  {
+    this.master = master;
+  }
+
+  protected void pathFinding()
+  {
+    // A* to player
+    int tileSize = Settings.tileSize;
+    Point zombieCenter = findCurrentlyOccupiedTile(numFailedAttempts);
+    Point playerCenter = new Point((int) (playerPosition.getX() + tileSize / 2) / tileSize,
+        (int) (playerPosition.getY() + tileSize / 2) / tileSize);
+    Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
+    if (pointToAimAt != null) directionAngle =
+        Math.atan2((pointToAimAt.getY() - zombieCenter.getY()), (pointToAimAt.getX() - zombieCenter.getX()));
+    moving = true;
+    triedAStar = true;
+  }
+
+  /**
    * Determines whether the zombie detects the player.
    */
   void detectPlayer()
@@ -109,56 +177,5 @@ abstract class ZombieModel extends Entity implements Detonator
     if (numFailedAttempts == 4)
       return new Point((upperLeftX + tileSize) / tileSize, (upperLeftY + tileSize) / tileSize);
     else return null;
-  }
-
-  /**
-   * Determines whether the object is solid.
-   *
-   * @return By default all zombies are solid.
-   */
-  @Override
-  public boolean isSolid()
-  {
-    return true;
-  }
-
-  protected void pathFinding()
-  {
-    // A* to player
-    int tileSize = Settings.tileSize;
-    Point zombieCenter = findCurrentlyOccupiedTile(numFailedAttempts);
-    Point playerCenter = new Point((int) (playerPosition.getX() + tileSize / 2) / tileSize,
-        (int) (playerPosition.getY() + tileSize / 2) / tileSize);
-    Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
-    if (pointToAimAt != null) directionAngle =
-        Math.atan2((pointToAimAt.getY() - zombieCenter.getY()), (pointToAimAt.getX() - zombieCenter.getX()));
-    moving = true;
-    triedAStar = true;
-  }
-
-  public void setMasterZombie(MasterZombie master)
-  {
-    this.master = master;
-  }
-
-  /**
-   * Informs the zombie to react to a collision.
-   *
-   * @param other            The object that collides with this object.
-   * @param collisionManager The manager for this collision.
-   */
-  @Override
-  public void onCollision(Entity other, CollisionManager collisionManager)
-  {
-    if (other.isSolid())
-    {
-      collision = true;
-      moving = false;
-    }
-    if (other instanceof Fire)
-    {
-      playerPosition = null;
-      collisionManager.remove(this);
-    }
   }
 }

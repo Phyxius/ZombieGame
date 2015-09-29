@@ -12,8 +12,8 @@ class RandomZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
-  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
+  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
 
   RandomZombie(Player player, Point2D.Float position)
   {
@@ -23,6 +23,31 @@ class RandomZombie extends ZombieModel
   RandomZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
   {
     super(player, position, speed, decisionRate, smell, minAngle);
+  }
+
+  /**
+   * Draws the zombie.
+   *
+   * @param local          Draws at the position of the zombie.
+   * @param global         Draws at the top left corner of the screen.
+   * @param drawingManager The drawing manager for this object.
+   */
+  @Override
+  public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
+  {
+    local.setColor(new Color(0, 255, 0, 50));
+    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
+    AffineTransform transformer = new AffineTransform();
+    transformer.rotate(directionAngle, Settings.tileSize / 2,
+        Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
+    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+    local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return 100;
   }
 
   @Override
@@ -106,31 +131,6 @@ class RandomZombie extends ZombieModel
       soundCounter++;
     }
     updateCount++;
-  }
-
-  /**
-   * Draws the zombie.
-   *
-   * @param local          Draws at the position of the zombie.
-   * @param global         Draws at the top left corner of the screen.
-   * @param drawingManager The drawing manager for this object.
-   */
-  @Override
-  public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
-  {
-    local.setColor(new Color(0, 255, 0, 50));
-    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
-    AffineTransform transformer = new AffineTransform();
-    transformer.rotate(directionAngle, Settings.tileSize / 2,
-        Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
-    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
-  }
-
-  @Override
-  public int getDepth()
-  {
-    return 100;
   }
 }
 

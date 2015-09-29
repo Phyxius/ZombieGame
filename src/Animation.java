@@ -19,9 +19,9 @@ public class Animation
   protected final int maxFrameIndex;
   private BufferedImage frame;
   private int frameIndex = 0;
-  private boolean synchronize = false;
   private int syncOffset;
   private int syncTarget;
+  private boolean synchronize = false;
 
   /**
    * Creates an animation object with no synchronization.

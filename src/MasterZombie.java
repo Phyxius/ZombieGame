@@ -11,13 +11,52 @@ public class MasterZombie extends ZombieModel implements Detonator
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
-  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
-  private int soundCounter = 0;
   private Point2D.Float reportedPosition;
+  private int soundCounter = 0;
+  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
 
   MasterZombie(Player player, Point2D.Float position)
   {
     super(player, position);
+  }
+
+  @Override
+  public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
+  {
+    local.setColor(new Color(255, 0, 0, 50));
+    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
+    AffineTransform transformer = new AffineTransform();
+    transformer.rotate(directionAngle, Settings.tileSize / 2,
+        Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
+    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
+    local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return super.getDepth() + 100;
+  }
+
+  @Override
+  public void onCollision(Entity other, CollisionManager collisionManager)
+  {
+    if (other.isSolid())
+    {
+      collision = true;
+      moving = false;
+    }
+    if (other instanceof Fire) collisionManager.remove(this);
+  }
+
+  /**
+   * Used by normal zombies to notify the master zombie of the player position.
+   *
+   * @param position current player position.
+   */
+  public void reportPlayer(Point2D.Float position)
+  {
+    reportedPosition = position;
   }
 
   @Override
@@ -99,48 +138,9 @@ public class MasterZombie extends ZombieModel implements Detonator
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
-  {
-    local.setColor(new Color(255, 0, 0, 50));
-    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
-    AffineTransform transformer = new AffineTransform();
-    transformer.rotate(directionAngle, Settings.tileSize / 2,
-        Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
-    transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    local.drawImage((moving ? moveAnimation.getFrame() : idleAnimation.getFrame()), transformer, null);
-  }
-
-  @Override
-  public void onCollision(Entity other, CollisionManager collisionManager)
-  {
-    if (other.isSolid())
-    {
-      collision = true;
-      moving = false;
-    }
-    if (other instanceof Fire) collisionManager.remove(this);
-  }
-
-  /**
-   * Used by normal zombies to notify the master zombie of the player position.
-   *
-   * @param position current player position.
-   */
-  public void reportPlayer(Point2D.Float position)
-  {
-    reportedPosition = position;
-  }
-
-  @Override
   void detectPlayer()
   {
     super.detectPlayer();
     if (playerPosition == null) playerPosition = reportedPosition;
-  }
-
-  @Override
-  public int getDepth()
-  {
-    return super.getDepth() + 100;
   }
 }

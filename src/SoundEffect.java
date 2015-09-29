@@ -29,6 +29,24 @@ public class SoundEffect
   // Play or Re-play the sound effect from the beginning, by rewinding.
 
   /**
+   * Indicated whether the audio is playing.
+   *
+   * @return Returns true if audio is playing.
+   */
+  public boolean isPlaying()
+  {
+    return audioClip.isPlaying();
+  }
+
+  /**
+   * Causes the audio to loop upon play until stop method is called.
+   */
+  public void loop()
+  {
+    audioClip.setCycleCount(AudioClip.INDEFINITE);
+  }
+
+  /**
    * Plays the clip
    *
    * @param balance Changes the left/right balance of the clip
@@ -41,18 +59,11 @@ public class SoundEffect
     audioClip.play();
   }
 
+  /**
+   * Stops playback.
+   */
   public void stop()
   {
     audioClip.stop();
-  }
-
-  public void loop()
-  {
-    audioClip.setCycleCount(AudioClip.INDEFINITE);
-  }
-
-  public boolean isPlaying()
-  {
-    return audioClip.isPlaying();
   }
 }
