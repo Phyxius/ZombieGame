@@ -22,7 +22,7 @@ public class EntityManager
   public boolean debugModeEnabled = true;
   private Entity entityToFollow = null;
   private Point2D.Float cameraOrigin = new Point2D.Float(0, 0);
-  private float scale;
+  private float scale = 1;
 
   public EntityManager()
   {
