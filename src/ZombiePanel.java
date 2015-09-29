@@ -78,7 +78,7 @@ public class ZombiePanel extends JPanel
     public void componentResized(ComponentEvent componentEvent)
     {
       //Settings.updateTileSize((int)(componentEvent.getComponent().getWidth() / 1080f * Settings.DEFAULT_TILE_SIZE));
-      entityManager.setScale(componentEvent.getComponent().getWidth() / 1080f );
+      entityManager.setScale(componentEvent.getComponent().getWidth() / 1920f );
     }
   }
 }
