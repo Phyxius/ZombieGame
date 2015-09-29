@@ -20,7 +20,7 @@ public class MasterZombie extends ZombieModel implements Detonator
    * @param  player The player tracked by this zombie.
    * @param position The location of the zombie.
    */
-  MasterZombie(Player player, Point2D.Float position)
+  public MasterZombie(Player player, Point2D.Float position)
   {
     super(player, position);
   }

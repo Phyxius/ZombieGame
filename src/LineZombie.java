@@ -25,11 +25,6 @@ public class LineZombie extends ZombieModel
     super(player, position);
   }
 
-  public LineZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
-  {
-    super(player, position, speed, decisionRate, smell, minAngle);
-  }
-
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {

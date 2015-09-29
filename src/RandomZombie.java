@@ -20,11 +20,6 @@ public class RandomZombie extends ZombieModel
     super(player, position);
   }
 
-  public RandomZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
-  {
-    super(player, position, speed, decisionRate, smell, minAngle);
-  }
-
   /**
    * Draws the zombie.
    *
