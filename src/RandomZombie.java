@@ -105,7 +105,7 @@ class RandomZombie extends ZombieModel
           }
           position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
           collision = true;
-          if (entity instanceof Wall && audibleBump)
+          if (entity instanceof Wall || entity instanceof Obstacle && audibleBump)
           {
             zombieStep.stop();
             bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
