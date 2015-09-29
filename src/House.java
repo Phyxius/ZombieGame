@@ -116,6 +116,12 @@ public class House extends Entity
   }
 
 
+  /**
+   * Resets the houses entites when
+   * the player dies. Everything goes
+   * back to its original position, including
+   * dead entities.
+   */
   public void resetHouse()
   {
     for(Class c: initialPosition.keySet())
@@ -160,11 +166,13 @@ public class House extends Entity
     }
   }
 
+  @Override
   public Point2D.Float getPosition() //returns upper left point of the object
   {
     return new Point2D.Float(0,0);
   }
 
+  @Override
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
     Point2D.Float position = getPosition();
@@ -172,15 +180,18 @@ public class House extends Entity
     return new Rectangle2D.Float(position.x, position.y,
                                  gridWidth*Settings.tileSize, gridHeight*Settings.tileSize);
   }
+  @Override
   public boolean isSolid() //solid objects cannot move into each other
   {
     return false;
   }
+  @Override
   public void keyPressed(KeyEvent e) {}
   public void keyReleased(KeyEvent e)
   {
 
   }
+  @Override
   public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
   {
   }
@@ -188,11 +199,21 @@ public class House extends Entity
   {
   }
 
+  @Override
   public int getDepth() //lower numbers are drawn above higher numbers
   {
     return -100;
   }
 
+  /**
+   * Given two points in the house this
+   * uses the Graph class to calculated
+   * the best path between them. Returns
+   * the first point in the path.
+   * @param startPoint Starting node in graph.
+   * @param endPoint Ending node in graph.
+   * @return The first point in the Path.
+   */
   public static Point calculateAStar(Point startPoint, Point endPoint)
   {
     Point firstPoint = null;
@@ -384,6 +405,7 @@ public class House extends Entity
     return numDoors;
   }
 
+  //Makes a Doorway at the specified location
   private Doorway makeDoorwayAt(Direction dir , int startX, int startY, int widthOrHeight)
   {
     Doorway newDoorway = new Doorway();
@@ -423,6 +445,9 @@ public class House extends Entity
       return newDoorway;
     }
   }
+
+  //Makes a new Doorway on the side of the room specified
+  //at a random location
   private Doorway makeNewDoorway(Direction curSide, int startX, int startY, int width, int height)
   {
     Doorway newDoorway = new Doorway();
@@ -444,6 +469,7 @@ public class House extends Entity
     return newDoorway;
   }
 
+  //returns the opposite of the direciton specified
   private Direction oppositeDirOf(Direction dir)
   {
     switch(dir)
@@ -460,7 +486,7 @@ public class House extends Entity
     return null;
   }
 
-  //Will be very sophisticated at some point
+  //Recursive room generation
   private void generateRoomList(Doorway prevDoorway, Direction comingFrom, Room prevRoom, int depth)
   {
     ArrayList<Doorway> doorwayList = new ArrayList<>();
@@ -555,26 +581,7 @@ public class House extends Entity
     }
   }
 
-  private void makeExit()
-  {
-    Collections.shuffle(roomList);
-    for(Room room: roomList)
-    {
-      Collections.shuffle(room.wallList);
-      if(room.isLeaf())
-      {
-        for(Wall wall: room.wallList)
-        {
-          if(wall!=null)
-          {
-            updateManager.add(new Exit(wall.getDirection(), wall.getStartX(), wall.getStartY(), wall.getEndX(), wall.getEndY()));
-            return;
-          }
-        }
-      }
-    }
-  }
-
+  //Makes bookcases at random locations, checks for no zombies
   private void makeBookcases()
   {
     int numBookcases = 0;
@@ -620,6 +627,7 @@ public class House extends Entity
     }
   }
 
+  //Makes a graph of nodes that are tiles in the House
   private void makeGraph()
   {
     int startX, startY;
@@ -657,6 +665,8 @@ public class House extends Entity
     }
   }
 
+  //Makes map from entities classes in
+  //room to their initial positions
   private void initializeMap()
   {
     ArrayList<Point2D.Float> lineZombiePoints = new ArrayList<>();
@@ -704,6 +714,8 @@ public class House extends Entity
     //zombies = null;
   }
 
+  //Makes exit far away if possible, else
+  //wherever it can
   private boolean makeExit(boolean makeFarAway)
   {
     Collections.shuffle(roomList);

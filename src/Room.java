@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by arirappaport on 9/11/15.
+ * Room class is for making both rooms and
+ * hallways. Hallways are just skinny rooms,
+ * they have the same functionality.
  */
 public class Room
 {
@@ -170,6 +172,10 @@ public class Room
     }
   }
 
+  /**
+   *
+   * @return Returns the boundingbox.
+   */
   public Rectangle2D.Float getBoundingBox()
   {
     return (Rectangle2D.Float) boundingBox;
@@ -177,8 +183,11 @@ public class Room
 
 
   /**
-   * Given a random chance < 0.01 for each tile in the room,
-   * make a zombie on that tile
+   * Given a random chance, makes a zombie
+   * on the given tile.
+   *
+   * @return Returns all the zombies made in the
+   * Room.
    */
   public List<ZombieModel> spawnZombies()
   {

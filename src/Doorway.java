@@ -20,21 +20,39 @@ public class Doorway
     pointsinDoor = new ArrayList<>();
   }
 
+  /**
+   * Adds a point of the Doorway
+   * to the specified location
+   * @param point The Point to be added.
+   */
   public void addPoint(Point2D.Float point)
   {
     pointsinDoor.add(point);
   }
 
+  /**
+   * Adds a point in the doorway at a specified location
+   * @param i Location of point.
+   * @param point Point is used for Coords.
+   */
   public void addPointInDoorway(int i, Point2D.Float point)
   {
     pointsinDoor.add(i, point);
   }
 
+  /**
+   * Gets the length of the Doorway.
+   * @return Returns the length of the Doorway.
+   */
   public int getLengthOfDoorway()
   {
     return lengthOfDoor;
   }
 
+  /**
+   *
+   * @param lengthOfDoor
+   */
   public void setLengthOfDoorway(int lengthOfDoor)
   {
     this.lengthOfDoor = lengthOfDoor;

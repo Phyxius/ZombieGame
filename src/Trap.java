@@ -47,6 +47,7 @@ public class Trap extends Entity
     return super.getBoundingBox();
   }
 
+  @Override
   public boolean isSolid() //solid objects cannot move into each other
   {
     return false;
@@ -68,6 +69,10 @@ public class Trap extends Entity
     }
   }
 
+  /**
+   * Sets the position of the specified trap.
+   * @param position The new position.
+   */
   public void setPosition(Point2D.Float position)
   {
     this.position = position;
