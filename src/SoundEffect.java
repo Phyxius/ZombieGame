@@ -22,6 +22,7 @@ public class SoundEffect
   SoundEffect(String soundFileName)
   {
     URL url = this.getClass().getClassLoader().getResource(soundFileName);
+    assert url != null;
     String urlString = url.toString();
     audioClip = new AudioClip(urlString);
   }
@@ -64,6 +65,6 @@ public class SoundEffect
    */
   public void stop()
   {
-    audioClip.stop();
+    new Thread(audioClip::stop).run();
   }
 }
