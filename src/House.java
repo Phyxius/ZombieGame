@@ -101,6 +101,8 @@ public class House extends Entity
       {
         float screenX = drawingManager.gameXToScreenX(j*tileSize);
         float screenY= drawingManager.gameYToScreenY(i * tileSize);
+        if (fullGrid.length <= i) continue;
+        if (fullGrid[i].length <= j) continue;
         if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
         screen.drawImage(fullGrid[i][j].getTileImg(), (int) screenX, (int) screenY,
                          (int)(tileSize*drawingManager.getScale()),(int)(tileSize*drawingManager.getScale()), null);
