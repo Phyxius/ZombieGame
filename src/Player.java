@@ -228,6 +228,7 @@ public class Player extends Entity implements Detonator
           }
         }
         house.resetHouse();
+        return;
       }
     });
     return returnValue[0];
