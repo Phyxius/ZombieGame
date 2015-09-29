@@ -1,6 +1,8 @@
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by arirappaport on 9/11/15.
@@ -179,8 +181,9 @@ public class Room
    * Given a random chance < 0.01 for each tile in the room,
    * make a zombie on that tile
    */
-  public void spawnZombies()
+  public List<ZombieModel> spawnZombies()
   {
+    List<ZombieModel> list = new LinkedList<>();
     for (int i = startY+1; i < (startY+height-2); i++)
     {
       for (int j = startX+1; j < (startX+width-2); j++)
@@ -189,17 +192,16 @@ public class Room
         {
           if (Util.rng.nextBoolean())
           {
-            LineZombie zombie = new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
-            updateManager.add(zombie);
+            list.add(new LineZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize)));
           }
           else
           {
-            RandomZombie zombie = new RandomZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize));
-            updateManager.add(zombie);
+            list.add(new RandomZombie(player, new Point2D.Float(j*Settings.tileSize,i*Settings.tileSize)));
           }
         }
       }
     }
+    return list;
   }
 
   /**

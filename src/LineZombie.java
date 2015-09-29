@@ -112,6 +112,8 @@ class LineZombie extends ZombieModel
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
+    local.setColor(new Color (0,255,255,50));
+    local.fillOval(0,0,(int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle, Settings.tileSize / 2,
         Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
