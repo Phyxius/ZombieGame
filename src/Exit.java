@@ -4,11 +4,26 @@ import java.awt.image.BufferedImage;
 
 /**
  * Created by arirappaport on 9/24/15.
+ * The exit of the House. Drawn differently
+ * depending on what side of the room
+ * it's on. It is one pixel more inside the
+ * room than the walls so the player can touch it.
  */
 public class Exit extends Entity
 {
   private Point2D position;
   private BufferedImage exitImg;
+
+  /**
+   * Makes an exit on a different side
+   * of the room depending on dir. EndX
+   * and EndY are used for width and height.
+   * @param dir The side of room of the Exit.
+   * @param startX The start X of the exit.
+   * @param startY The start Y of the exit.
+   * @param endX The point that is the width of the exit.
+   * @param endY The point that is the height of the exit.
+   */
   public Exit(House.Direction dir, int startX, int startY, int endX, int endY)
   {
     int tilSz = Settings.tileSize;

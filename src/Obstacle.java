@@ -13,6 +13,11 @@ public class Obstacle extends Entity
   private final Point2D.Float position;
   private final Rectangle2D.Float boundingBox;
 
+  /**
+   * Makes a generic obstacle.
+   * @param sprite The image of the obstacle.
+   * @param boundingBox The bounding box of the obstacle.
+   */
   public Obstacle(BufferedImage sprite, Rectangle2D.Float boundingBox)
   {
     this.boundingBox = boundingBox;
@@ -20,6 +25,12 @@ public class Obstacle extends Entity
     position = new Point2D.Float(boundingBox.x, boundingBox.y);
   }
 
+  /**
+   * Alternate constructor, calls other constructor.
+   * @param sprite The image of the obstacle.
+   * @param position The position of the upper left
+   *                 corner of the bounding box.
+   */
   public Obstacle(BufferedImage sprite, Point2D.Float position)
   {
     this(sprite, new Rectangle2D.Float());
