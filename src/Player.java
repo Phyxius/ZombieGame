@@ -17,13 +17,11 @@ public class Player extends Entity implements Detonator
   private final Animation moveAnimation = new Animation("animation/player1/moving_small_", 9, true);
   private final ProgressBar staminaBar = new ProgressBar("gui/label_stamina.png", true);
   private final SoundEffect trapSFX = new SoundEffect("soundfx/player_pickup.mp3");
-  private final ProgressBar trapBar = new ProgressBar("", false);
+  private final ProgressBar trapBar = new ProgressBar(null, false);
   private final GuiCounter trapCounter = new GuiCounter("gui/trapIcon.png");
   private final Point2D.Float center;
   private House house;
   private Trap collidingTrap = null;
-  private boolean isPickingUp;
-  private boolean isPlacing;
   private boolean isRunning = false;
   private boolean moving;
   private Point2D.Float position;
@@ -32,6 +30,7 @@ public class Player extends Entity implements Detonator
   private boolean staminaDepleted;
   private int trapsInInventory = Settings.playerTraps;
   private double directionAngle;
+  private boolean trapAction;
 
   /**
    * Constructs a default player.
@@ -60,7 +59,7 @@ public class Player extends Entity implements Detonator
         transformer, null);
 
     // Drawing the trap progress bar
-    if (isPickingUp() || isPlacing)
+    if (trapAction)
     {
       trapBar.setPosition((float) (position.x - Settings.tileSize / 2), (float) (position.y - Settings.tileSize / 4));
       trapBar.draw(global, drawingManager);
@@ -107,27 +106,20 @@ public class Player extends Entity implements Detonator
   @Override
   public void update(UpdateManager e)
   {
-    if (isPickingUp() || isPlacing)
+    if (e.isKeyPressed(KeyEvent.VK_P))
     {
       increaseStamina();
       moving = false;
-      if (e.isKeyPressed(KeyEvent.VK_P))
+
+      if (collidingTrap == null)
       {
-        progressCounter++;
-        updatePickUpBar();
-        if (progressCounter % (5 * Settings.frameRate) == 0)
+        if (trapsInInventory > 0)
         {
-          trapCounter.setValue(++trapsInInventory);
-          e.remove(collidingTrap);
-          collidingTrap = null;
-          isPickingUp = false;
-          trapSFX.stop();
+          trapAction = true;
+          progressCounter++;
+          if (!trapSFX.isPlaying()) trapSFX.play(0.0, 1.0);
+          updatePickUpBar();
         }
-      }
-      else if (e.isKeyPressed(KeyEvent.VK_T))
-      {
-        progressCounter++;
-        updatePickUpBar();
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
           trapCounter.setValue(--trapsInInventory);
@@ -135,20 +127,33 @@ public class Player extends Entity implements Detonator
               (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
           e.add(trap);
           collidingTrap = trap;
-          isPlacing = false;
           trapSFX.stop();
+          progressCounter = 0;
+          trapAction = false;
         }
       }
       else
       {
-        isPlacing = false;
-        isPickingUp = false;
-        trapSFX.stop();
-        progressCounter = 0;
+        trapAction = true;
+        progressCounter++;
+        if (!trapSFX.isPlaying()) trapSFX.play(0.0, 1.0);
+        updatePickUpBar();
+        if (progressCounter % (5 * Settings.frameRate) == 0)
+        {
+          trapCounter.setValue(++trapsInInventory);
+          e.remove(collidingTrap);
+          collidingTrap = null;
+          trapSFX.stop();
+          progressCounter = 0;
+          trapAction = false;
+        }
       }
     }
     else
     {
+      progressCounter = 0;
+      trapAction = false;
+      if (trapSFX.isPlaying()) trapSFX.stop();
       float xMovement = 0, yMovement = 0;
       if (e.isKeyPressed(KeyEvent.VK_LEFT) || e.isKeyPressed(KeyEvent.VK_A)) xMovement -= 1;
       if (e.isKeyPressed(KeyEvent.VK_RIGHT) || e.isKeyPressed(KeyEvent.VK_D)) xMovement += 1;
@@ -176,31 +181,6 @@ public class Player extends Entity implements Detonator
         increaseStamina();
       }
 
-      if (e.isKeyPressed(KeyEvent.VK_P) && collidingTrap != null)
-      {
-        isPickingUp = true;
-        progressCounter++;
-        trapSFX.play(0.0, 1.0);
-        updatePickUpBar();
-      }
-      else
-      {
-        progressCounter = 0;
-        isPickingUp = false;
-      }
-
-      if (e.isKeyPressed(KeyEvent.VK_T) && trapsInInventory > 0 && collidingTrap == null)
-      {
-        progressCounter++;
-        isPlacing = true;
-        trapSFX.play(0.0, 1.0);
-        updatePickUpBar();
-      }
-      else
-      {
-        progressCounter = 0;
-        isPlacing = false;
-      }
     }
   }
 
@@ -218,11 +198,11 @@ public class Player extends Entity implements Detonator
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
       if (entity instanceof ZombieModel || entity instanceof Fire)
       {
-        for(Entity e: manager.getAllEntities())
+        for (Entity e : manager.getAllEntities())
         {
-          if(!(e instanceof Wall)&&
-             !(e instanceof Exit) &&
-             !(e instanceof House))
+          if (!(e instanceof Wall) &&
+              !(e instanceof Exit) &&
+              !(e instanceof House))
           {
             manager.remove(e);
           }
@@ -247,11 +227,6 @@ public class Player extends Entity implements Detonator
     if ((stamina += Settings.playerStaminaRegen) > Settings.playerStamina) stamina = Settings.playerStamina;
     isStaminaDepleted();
     updateStaminaBar();
-  }
-
-  private boolean isPickingUp()
-  {
-    return isPickingUp;
   }
 
   private boolean isRunning()
