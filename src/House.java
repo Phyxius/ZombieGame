@@ -62,7 +62,7 @@ public class House extends Entity
     makeGraph();
     makeMasterZombie();
     updateManager.setEntityToFollow(player);
-    updateManager.setEntityToFollow(master);
+//    updateManager.setEntityToFollow(master);
     if(!makeExit(true)) makeExit(false);
     //generateBuffImgHouse();
   }
