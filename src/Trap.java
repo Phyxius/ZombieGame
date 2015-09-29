@@ -1,6 +1,7 @@
 /**
  * Created by arirappaport on 9/7/15.
  * Trap objects explode upon contact with Detonators with active trigger.
+ *
  * @see Detonator
  */
 
@@ -9,18 +10,18 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-
 public class Trap extends Entity
 {
-  protected int tileSize;
   protected Point2D.Float position;
-  private BufferedImage trapImg;
+  protected int tileSize;
   private int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1}; // The Center is a special case
   private int[] dy = {-1, -1, -1, 0, 0, 1, 1, 1}; // The Center is a special case
+  private BufferedImage trapImg;
 
   /**
    * Makes a Trap at the specified position
-   * @param position
+   *
+   * @param position The Location of the trap.
    */
   public Trap(Point2D.Float position)
   {
@@ -36,27 +37,37 @@ public class Trap extends Entity
   }
 
   @Override
-  public Point2D.Float getPosition() //returns center point of object
-  {
-    return position;
-  }
-
-  @Override
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
     return super.getBoundingBox();
   }
 
   @Override
-  public boolean isSolid() //solid objects cannot move into each other
-  {
-    return false;
-  }
-
-  @Override
   public int getDepth()
   {
     return 0;
+  }
+
+  @Override
+  public Point2D.Float getPosition() //returns center point of object
+  {
+    return position;
+  }
+
+  /**
+   * Sets the position of the specified trap.
+   *
+   * @param position The new position.
+   */
+  public void setPosition(Point2D.Float position)
+  {
+    this.position = position;
+  }
+
+  @Override
+  public boolean isSolid() //solid objects cannot move into each other
+  {
+    return false;
   }
 
   @Override
@@ -67,15 +78,6 @@ public class Trap extends Entity
       detonate(c);
       c.remove(this);
     }
-  }
-
-  /**
-   * Sets the position of the specified trap.
-   * @param position The new position.
-   */
-  public void setPosition(Point2D.Float position)
-  {
-    this.position = position;
   }
 
   private void detonate(CollisionManager c)

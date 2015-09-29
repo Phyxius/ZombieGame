@@ -1,6 +1,8 @@
 import junit.framework.TestCase;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Shea Polansky
@@ -9,6 +11,7 @@ import java.util.*;
 public class GraphTest extends TestCase
 {
   Graph<String> graph = new Graph<>();
+
   public void setUp() throws Exception
   {
     super.setUp();
@@ -24,6 +27,13 @@ public class GraphTest extends TestCase
     graph.add("F", "G", 2);
   }
 
+  public void testAreNeighbors() throws Exception
+  {
+    assertTrue(graph.areNeighbors("B", "A"));
+    assertTrue(graph.areNeighbors("E", "H"));
+    assertFalse(graph.areNeighbors("A", "H"));
+  }
+
   public void testFindPath() throws Exception
   {
     Optional<Path<String>> result = graph.findPath("A", "H", (a, b) -> 0f);
@@ -34,18 +44,11 @@ public class GraphTest extends TestCase
     assertEquals(path.get(path.size() - 1), "H");
     assertEquals(path.get(0), "A");
     float realDistance = 0;
-    for(int i = 0; i < path.size() - 1; i++)
+    for (int i = 0; i < path.size() - 1; i++)
     {
       assertTrue(graph.getEdgeWeight(path.get(i), path.get(i + 1)).isPresent());
       realDistance += graph.getEdgeWeight(path.get(i), path.get(i + 1)).get();
     }
     assertEquals(purportedTotalDistance, realDistance);
-  }
-
-  public void testAreNeighbors() throws Exception
-  {
-    assertTrue(graph.areNeighbors("B", "A"));
-    assertTrue(graph.areNeighbors("E", "H"));
-    assertFalse(graph.areNeighbors("A", "H"));
   }
 }

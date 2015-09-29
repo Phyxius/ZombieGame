@@ -27,6 +27,7 @@ public class Player extends Entity implements Detonator
   private boolean moving;
   private Point2D.Float position;
   private int progressCounter = 0;
+  private boolean resetFlag;
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
   private boolean trapAction;
@@ -108,7 +109,12 @@ public class Player extends Entity implements Detonator
   @Override
   public void onCollision(Entity other, CollisionManager c)
   {
-    if (other instanceof Fire || other instanceof ZombieModel) triggerHouseReset(c);
+    if (resetFlag) return;
+    if (other instanceof Fire || other instanceof ZombieModel)
+    {
+      resetFlag = true;
+      triggerHouseReset(c);
+    }
   }
 
   @Override
@@ -129,6 +135,7 @@ public class Player extends Entity implements Detonator
   @Override
   public void update(UpdateManager e)
   {
+    resetFlag = false;
     if (e.isKeyPressed(KeyEvent.VK_P)) // Picking up or dropping traps.
     {
       increaseStamina();
@@ -296,6 +303,7 @@ public class Player extends Entity implements Detonator
 
   synchronized private void triggerHouseReset(UpdateManager manager)
   {
+    manager.cancelAdditions();
     manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
         !(e instanceof Exit) &&
         !(e instanceof House)).forEach(manager::remove);

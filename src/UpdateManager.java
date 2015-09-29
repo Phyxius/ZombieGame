@@ -1,7 +1,5 @@
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
 /**
@@ -16,6 +14,7 @@ public class UpdateManager
 
   /**
    * Creates a new UpdateManager wrapping the given EntityManager
+   *
    * @param entityManager the EntityManager to wrap
    */
   public UpdateManager(EntityManager entityManager)
@@ -38,6 +37,56 @@ public class UpdateManager
     entityManager.add(entities);
   }
 
+  public void cancelAdditions()
+  {
+    entityManager.cancelAdditions();
+  }
+
+  public Collection<Entity> getAllEntities()
+  {
+    return entityManager.getAllEntities();
+  }
+
+  public Collection<Entity> getAllEntities(boolean includeUnprocessed)
+  {
+    return entityManager.getAllEntities(includeUnprocessed);
+  }
+
+  public Point2D.Float getCameraOrigin()
+  {
+    return entityManager.getCameraOrigin();
+  }
+
+  public void setCameraOrigin(Point2D.Float cameraOrigin)
+  {
+    entityManager.setCameraOrigin(cameraOrigin);
+  }
+
+  public Collection<Entity> getCollidingEntities(Shape boundingBox)
+  {
+    return entityManager.getCollidingEntities(boundingBox);
+  }
+
+  public Entity getEntityToFollow()
+  {
+    return entityManager.getEntityToFollow();
+  }
+
+  public void setEntityToFollow(Entity entityToFollow)
+  {
+    entityManager.setEntityToFollow(entityToFollow);
+  }
+
+  public Collection<Entity> getIntersectingEntities(Point2D.Float point)
+  {
+    return entityManager.getIntersectingEntities(point);
+  }
+
+  public boolean isKeyPressed(int keyCode)
+  {
+    return entityManager.isKeyPressed(keyCode);
+  }
+
   public void remove(Entity e)
   {
     entityManager.remove(e);
@@ -51,50 +100,5 @@ public class UpdateManager
   public void remove(Collection<Entity> entities)
   {
     entityManager.remove(entities);
-  }
-
-  public Collection<Entity> getAllEntities()
-  {
-    return entityManager.getAllEntities();
-  }
-
-  public Collection<Entity> getAllEntities(boolean includeUnprocessed)
-  {
-    return entityManager.getAllEntities(includeUnprocessed);
-  }
-
-  public Collection<Entity> getCollidingEntities(Shape boundingBox)
-  {
-    return entityManager.getCollidingEntities(boundingBox);
-  }
-
-  public Collection<Entity> getIntersectingEntities(Point2D.Float point)
-  {
-    return entityManager.getIntersectingEntities(point);
-  }
-
-  public boolean isKeyPressed(int keyCode)
-  {
-    return entityManager.isKeyPressed(keyCode);
-  }
-
-  public Point2D.Float getCameraOrigin()
-  {
-    return entityManager.getCameraOrigin();
-  }
-
-  public void setCameraOrigin(Point2D.Float cameraOrigin)
-  {
-    entityManager.setCameraOrigin(cameraOrigin);
-  }
-
-  public Entity getEntityToFollow()
-  {
-    return entityManager.getEntityToFollow();
-  }
-
-  public void setEntityToFollow(Entity entityToFollow)
-  {
-    entityManager.setEntityToFollow(entityToFollow);
   }
 }

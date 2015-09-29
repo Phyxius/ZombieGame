@@ -53,14 +53,6 @@ public class ResourceManager
   }
 
   /**
-   * Loads known resources to reduce in-game stuttering.
-   */
-  public static void populateImageHashMap()
-  {
-    imagePaths.forEach(ResourceManager::getImage);
-  }
-
-  /**
    * Gets Image at the given path, loading from the filesystem if it has not already
    * been loaded.
    *
@@ -71,7 +63,7 @@ public class ResourceManager
   {
     if (imageHashMap.containsKey(path)) return imageHashMap.get(path);
     BufferedImage image = null;
-    ClassLoader classLoader = ResourceManager.class.getClassLoader();
+//    ClassLoader classLoader = ResourceManager.class.getClassLoader();
     try
     {
       final InputStream inputStream = ResourceManager.class.getResourceAsStream(path);
@@ -83,5 +75,13 @@ public class ResourceManager
     }
     imageHashMap.put(path, image);
     return image;
+  }
+
+  /**
+   * Loads known resources to reduce in-game stuttering.
+   */
+  public static void populateImageHashMap()
+  {
+    imagePaths.forEach(ResourceManager::getImage);
   }
 }
