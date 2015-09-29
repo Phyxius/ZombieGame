@@ -9,6 +9,6 @@ public class NewGame
     {
         updateManager.add(new House(100, 100, levelNum, updateManager));
         updateManager.add(new UpdateCounter());
-        //updateManager.add(new SightDrawer());
+        updateManager.add(new SightDrawer());
     }
 }

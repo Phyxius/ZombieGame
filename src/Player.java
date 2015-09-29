@@ -234,7 +234,7 @@ public class Player extends Entity implements Detonator
       if(entity instanceof ZombieModel)
       {
         manager.remove(manager.getAllEntities());
-        NewGame.makeNewGame(manager, House.levelNum);
+        //NewGame.makeNewGame(manager, House.levelNum);
       }
     });
     return returnValue[0];

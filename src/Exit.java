@@ -60,7 +60,7 @@ public class Exit extends Entity
     if(other instanceof Player)
     {
         c.remove(c.getAllEntities());
-        NewGame.makeNewGame(c, House.levelNum++);
+        //NewGame.makeNewGame(c, House.levelNum++);
     }
   }
 }

@@ -22,6 +22,7 @@ public class House extends Entity
   private Room startRoom;
   private int gridHeight, gridWidth;
   private int prevHallDoorX, prevHallDoorY;
+  public static long seed;
   private java.util.List<ZombieModel> zombies = new LinkedList<>();
 
   /**
@@ -34,7 +35,7 @@ public class House extends Entity
    * @param gridHeight Height of House
    * @param updateManager a reference to global EntityManager
    */
-  public House(int gridWidth, int gridHeight, UpdateManager updateManager)
+  public House(int gridWidth, int gridHeight, int numLevel, UpdateManager updateManager)
   {
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
@@ -84,19 +85,21 @@ public class House extends Entity
     Point2D.Float curOrigin = drawingManager.getCameraOrigin();
     int curStartY = (int) curOrigin.getY()/tileSize;
     int curStartX = (int) curOrigin.getX()/tileSize;
-    Rectangle windowBounds = screen.getClipBounds();
-    int curEndY = curStartY + (int)(windowBounds.getHeight()/tileSize);
-    int curEndX = curStartX + (int)(windowBounds.getWidth()/tileSize);
+    int curEndY = (int)( curStartY + (drawingManager.screenHeight/tileSize));
+    int curEndX = (int) (curStartX + (drawingManager.screenWidth/tileSize));
     for(int i = curStartY; i < curEndY+1; i++)
     {
       for(int j = curStartX; j < curEndX+1; j++)
       {
+        float screenX = drawingManager.gameXToScreenX(j*tileSize);
+        float screenY= drawingManager.gameYToScreenY(i*tileSize);
         if(fullGrid[i][j] == null) continue; //fullGrid[i][j] = new Tile("tileset/outofbounds1", true);
-        local.drawImage(fullGrid[i][j].getTileImg(), j*tileSize, i*tileSize, tileSize, tileSize, null);
+        screen.drawImage(fullGrid[i][j].getTileImg(), (int) screenX, (int) screenY,
+                         (int)(tileSize*drawingManager.getScale()),(int)(tileSize*drawingManager.getScale()), null);
       }
     }
-    local.setColor(Color.green);
-    connections.forEach(Line -> local.draw(Line));
+    //local.setColor(Color.green);
+    //connections.forEach(Line -> local.draw(Line));
   }
 
   public Point2D.Float getPosition() //returns upper left point of the object
