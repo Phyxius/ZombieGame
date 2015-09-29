@@ -118,7 +118,7 @@ public class MasterZombie extends ZombieModel implements Detonator
           if (entity instanceof Wall || entity instanceof Obstacle && audibleBump)
           {
             zombieStep.stop();
-            bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
+            bumpSound.play((this.getPosition().x - player.getPosition().x) / Settings.tileSize, 1.0);
           }
           moving = false;
         }
@@ -140,7 +140,7 @@ public class MasterZombie extends ZombieModel implements Detonator
       if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && audibleFootSteps)
       {
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
-        zombieStep.play(balance, 0.5 / distanceFromPlayer);
+        if (!zombieStep.isPlaying())zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
     }
     updateCount++;
