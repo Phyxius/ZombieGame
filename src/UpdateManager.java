@@ -97,4 +97,9 @@ public class UpdateManager
   {
     entityManager.setEntityToFollow(entityToFollow);
   }
+
+  public void cancelAdditions()
+  {
+    entityManager.cancelAdditions();
+  }
 }

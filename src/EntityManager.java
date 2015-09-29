@@ -306,4 +306,9 @@ public class EntityManager
   {
     return scale;
   }
+
+  public void cancelAdditions()
+  {
+    entitiesToAdd.clear();
+  }
 }

@@ -303,6 +303,7 @@ public class Player extends Entity implements Detonator
 
   synchronized private void triggerHouseReset(UpdateManager manager)
   {
+    manager.cancelAdditions();
     manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
         !(e instanceof Exit) &&
         !(e instanceof House)).forEach(manager::remove);
