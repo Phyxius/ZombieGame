@@ -29,7 +29,7 @@ abstract class ZombieModel extends Entity implements Detonator
 {
   protected final SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
   protected final Player player; // Reference to the player on the current board.
-  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
+
   protected boolean aStarWorked;
   protected boolean audibleBump;
   protected boolean audibleFootSteps;

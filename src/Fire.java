@@ -9,14 +9,19 @@ import java.awt.image.BufferedImage;
 
 public class Fire extends Entity implements Detonator
 {
+  private final Animation fireAnimation;
   private final boolean lightSource;
   private final int numFireFrames;
-  Animation fireAnimation;
   private int age = 0; //frames
   private Rectangle2D explosionArea;
   private BufferedImage fireBackground;
   private BufferedImage frame;
 
+  /**
+   * Creates a new fire object.
+   * @param explosionArea The area covered by the fire.
+   * @param isLightSource Indicates that this fire provides light.
+   */
   public Fire(Rectangle2D.Float explosionArea, boolean isLightSource)
   {
     this.explosionArea = explosionArea;
@@ -26,6 +31,7 @@ public class Fire extends Entity implements Detonator
     fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
   }
 
+  @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     //Animate fire
@@ -33,11 +39,13 @@ public class Fire extends Entity implements Detonator
     local.drawImage(frame, 0, 0, Settings.tileSize, Settings.tileSize, null);
   }
 
+  @Override
   public Rectangle2D.Float getBoundingBox() //returns bounding box of object
   {
     return (Rectangle2D.Float) explosionArea;
   }
 
+  @Override
   public int getDepth()
   {
     return 3;

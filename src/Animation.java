@@ -1,8 +1,8 @@
 /**
  * Created by arirappaport on 9/10/15.
+ * The animation frame is given by the ResourceManager using concatenated string, resources/ + filePath + index[0 - maxFrameIndex] + .png
  *
  * @param filePath The path to the frames for the animation.
- * The animation frame is given by the ResourceManager using concatenated string, resources/ + filePath + index[0 - maxFrameIndex] + .png
  * @param maxFrameIndex Greatest index of the animation frames.
  * @param frame Current animation frame.
  * @param frameIndex Index of the current frame.

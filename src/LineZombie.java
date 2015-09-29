@@ -1,19 +1,25 @@
+/**
+ * Created by Mohammad R. Yousefi on 07/09/15.
+ * A simple zombie that moves in straight lines until reaching a solid obstacle.
+ */
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
-/**
- * Created by Mohammad R. Yousefi on 07/09/15.
- * A simple zombie that moves in straight lines until reaching a solid obstacle.
- */
 class LineZombie extends ZombieModel
 {
   private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
+  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
 
-
+  /**
+   * Creates a new zombie.
+   * @param player The player tracked by this zombie.
+   * @param position The location of the zombie.
+   */
   LineZombie(Player player, Point2D.Float position)
   {
     super(player, position);
@@ -24,13 +30,6 @@ class LineZombie extends ZombieModel
     super(player, position, speed, decisionRate, smell, minAngle);
   }
 
-  /**
-   * Draws the zombie.
-   *
-   * @param local          Draws at the position of the zombie.
-   * @param global         Draws at the top left corner of the screen.
-   * @param drawingManager The drawing manager for this object.
-   */
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
@@ -99,7 +98,11 @@ class LineZombie extends ZombieModel
           }
           position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
           collision = true;
-          if (entity instanceof Wall && audibleBump) bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
+          if (entity instanceof Wall && audibleBump)
+          {
+            zombieStep.stop();
+            bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
+          }
           moving = false;
         }
       });
