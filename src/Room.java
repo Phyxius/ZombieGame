@@ -9,19 +9,21 @@ import java.util.List;
  * hallways. Hallways are just skinny rooms,
  * they have the same functionality.
  */
-public class Room
+class Room
 {
-  public ArrayList<Wall> wallList;
-  private Rectangle2D boundingBox;
+  public final ArrayList<Wall> wallList;
+  private final Rectangle2D boundingBox;
   private ArrayList<Doorway> doorwayList;
   private boolean[][] doorways;
-  private boolean isHallway;
+  private final boolean isHallway;
   private boolean isLeaf;
-  private Player player;
-  private int startX, startY;
+  private final Player player;
+  private final int startX;
+  private final int startY;
   private Tile[][] tiles;
-  private UpdateManager updateManager;
-  private int width, height;
+  private final UpdateManager updateManager;
+  private final int width;
+  private final int height;
 
   /**
    * Constructs a Room object at the given location
@@ -183,7 +185,7 @@ public class Room
    * @param x    coord of Tile object to be assigned
    * @param tile Tile to assign
    */
-  public void setTileAt(int y, int x, Tile tile)
+  private void setTileAt(int y, int x, Tile tile)
   {
     tiles[y][x] = tile;
   }

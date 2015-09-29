@@ -7,10 +7,12 @@ import java.awt.geom.Rectangle2D;
  */
 public class Wall extends Entity
 {
-  Rectangle2D.Float box;
-  private House.Direction direction;
-  private int endX, endY;
-  private int startX, startY;
+  private Rectangle2D.Float box;
+  private final House.Direction direction;
+  private final int endX;
+  private final int endY;
+  private final int startX;
+  private final int startY;
 
   public Wall(int startX, int endX, int startY, int endY, House.Direction direction)
   {

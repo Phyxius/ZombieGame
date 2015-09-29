@@ -7,9 +7,10 @@ import java.awt.geom.Point2D;
  * Also contains a GraphicsConfiguration object for the use of the Entities.
  * For documentation about the contained methods, see EntityManager.
  */
-public class DrawingManager
+class DrawingManager
 {
-  public final int screenPixelWidth, screenPixelHeight;
+  private final int screenPixelWidth;
+  private final int screenPixelHeight;
   /**
    * the screen width and height, taking scale into account
    */
@@ -24,8 +25,8 @@ public class DrawingManager
    * @param graphicsConfiguration the GraphicsConfiguration to wrap
    * @param screenWidth           the screen width, taking window scale into account
    * @param screenHeight          the screen height the screen height, taking scale into account
-   * @param screenPixelWidth
-   * @param screenPixelHeight
+   * @param screenPixelWidth      the screen width, in pixels
+   * @param screenPixelHeight     the scren height, in pixels
    */
   public DrawingManager(EntityManager entityManager, GraphicsConfiguration graphicsConfiguration, float screenWidth,
                         float screenHeight, int screenPixelWidth, int screenPixelHeight)

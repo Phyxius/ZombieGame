@@ -10,27 +10,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class SettingsWindow extends JFrame implements ActionListener
+class SettingsWindow extends JFrame implements ActionListener
 {
   private final Dimension comboBoxDimensions = new Dimension(200, 30);
   private final BoxListener comboBoxListener = new BoxListener();
   private final Dimension textFieldDimensions = new Dimension(75, 30);
   private final FieldListener textFieldListener = new FieldListener();
-  private JButton closeButton;
-  private JPanel content;
   private JPanel controlPanel;
-  private EntityManager entityManager;
   private JComboBox<String> gameSettingsBox;
-  private JLabel gameSettingsLabel;
   private JPanel gameSettingsPanel;
   private JTextField gameSettingsText;
   private JButton launchButton;
   private JComboBox<String> playerSettingsBox;
-  private JLabel playerSettingsLabel;
   private JPanel playerSettingsPanel;
   private JTextField playerSettingsText;
   private JComboBox<String> zombieSettingsBox;
-  private JLabel zombieSettingsLabel;
   private JPanel zombieSettingsPanel;
   private JTextField zombieSettingsText;
 
@@ -50,7 +44,7 @@ public class SettingsWindow extends JFrame implements ActionListener
     if (e.getSource() == launchButton)
     {
       JFrame zombieFrame = new JFrame();
-      entityManager = new EntityManager();
+      EntityManager entityManager = new EntityManager();
       ZombiePanel zombiePanel = new ZombiePanel(zombieFrame, entityManager);
       UpdateManager updateManager = new UpdateManager(entityManager);
       NewGame.makeNewGame(updateManager, 0);
@@ -138,7 +132,7 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void initContentPanel()
   {
-    content = new JPanel();
+    JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
     content.add(gameSettingsPanel);
     content.add(playerSettingsPanel);
@@ -151,7 +145,7 @@ public class SettingsWindow extends JFrame implements ActionListener
   {
     controlPanel = new JPanel(new FlowLayout());
     launchButton = new JButton("Launch");
-    closeButton = new JButton("Close");
+    JButton closeButton = new JButton("Close");
     launchButton.addActionListener(this);
     closeButton.addActionListener(this);
     controlPanel.add(launchButton);
@@ -168,7 +162,7 @@ public class SettingsWindow extends JFrame implements ActionListener
   {
     gameSettingsPanel = new JPanel();
     gameSettingsPanel.setLayout(new BoxLayout(gameSettingsPanel, BoxLayout.LINE_AXIS));
-    gameSettingsLabel = new JLabel("Game Settings    ");
+    JLabel gameSettingsLabel = new JLabel("Game Settings    ");
     gameSettingsPanel.add(gameSettingsLabel);
     String[] optionStrings = {"Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"};
     gameSettingsBox = new JComboBox<>(optionStrings);
@@ -187,7 +181,7 @@ public class SettingsWindow extends JFrame implements ActionListener
   {
     playerSettingsPanel = new JPanel();
     playerSettingsPanel.setLayout(new BoxLayout(playerSettingsPanel, BoxLayout.LINE_AXIS));
-    playerSettingsLabel = new JLabel("Player Settings   ");
+    JLabel playerSettingsLabel = new JLabel("Player Settings   ");
     playerSettingsPanel.add(playerSettingsLabel);
     String[] optionStrings = {"Hearing", "Stamina", "Regeneration", "Run Speed", "Traps", "Walk Speed"};
     playerSettingsBox = new JComboBox<>(optionStrings);
@@ -216,7 +210,7 @@ public class SettingsWindow extends JFrame implements ActionListener
   {
     zombieSettingsPanel = new JPanel();
     zombieSettingsPanel.setLayout(new BoxLayout(zombieSettingsPanel, BoxLayout.LINE_AXIS));
-    zombieSettingsLabel = new JLabel("Zombie Settings ");
+    JLabel zombieSettingsLabel = new JLabel("Zombie Settings ");
     zombieSettingsPanel.add(zombieSettingsLabel);
     String[] optionStrings = {"Decision Rate", "Smell", "Speed", "Turn Angle"};
     zombieSettingsBox = new JComboBox<>(optionStrings);

@@ -4,7 +4,7 @@ import java.util.Objects;
  * Shea Polansky
  * Class name and description goes here
  */
-public class Tuple<T1, T2>
+class Tuple<T1, T2>
 {
   public final T1 value1;
   public final T2 value2;

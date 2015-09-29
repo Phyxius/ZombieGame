@@ -5,10 +5,10 @@ import java.awt.event.*;
 /**
  * Created by arirappaport on 9/8/15.
  */
-public class ZombiePanel extends JPanel
+class ZombiePanel extends JPanel
 {
-  private EntityManager entityManager;
-  private JFrame frame;
+  private final EntityManager entityManager;
+  private final JFrame frame;
 
   public ZombiePanel(JFrame frame, EntityManager entityManager)
   {

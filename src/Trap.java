@@ -12,11 +12,11 @@ import java.awt.image.BufferedImage;
 
 public class Trap extends Entity
 {
-  protected Point2D.Float position;
-  protected int tileSize;
-  private int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1}; // The Center is a special case
-  private int[] dy = {-1, -1, -1, 0, 0, 1, 1, 1}; // The Center is a special case
-  private BufferedImage trapImg;
+  private Point2D.Float position;
+  private final int tileSize;
+  private final int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1}; // The Center is a special case
+  private final int[] dy = {-1, -1, -1, 0, 0, 1, 1, 1}; // The Center is a special case
+  private final BufferedImage trapImg;
 
   /**
    * Makes a Trap at the specified position

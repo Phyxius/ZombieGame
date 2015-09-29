@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public class GraphTest extends TestCase
 {
-  Graph<String> graph = new Graph<>();
+  private final Graph<String> graph = new Graph<>();
 
   public void setUp() throws Exception
   {

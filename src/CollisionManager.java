@@ -3,7 +3,7 @@
  * CollisionManager: Wraps an EntityManager to expose a subset
  * of its methods to Entities on collision events.
  */
-public class CollisionManager extends UpdateManager
+class CollisionManager extends UpdateManager
 {
   public CollisionManager(EntityManager entityManager)
   {

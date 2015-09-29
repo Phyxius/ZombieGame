@@ -12,7 +12,7 @@ public abstract class Entity
   /**
    * @return true if this object blocks light, false otherwise.
    */
-  public boolean blocksLight()
+  boolean blocksLight()
   {
     return false;
   }
@@ -57,7 +57,7 @@ public abstract class Entity
   /**
    * @return the upper left corner of this object
    */
-  public Point2D.Float getPosition() //returns upper left point of the object
+  Point2D.Float getPosition() //returns upper left point of the object
   {
     return null;
   }
@@ -65,7 +65,7 @@ public abstract class Entity
   /**
    * @return true if this object should emanate light, false otherwise.
    */
-  public boolean isLightSource()
+  boolean isLightSource()
   {
     return false;
   }
@@ -74,7 +74,7 @@ public abstract class Entity
    * @return true if this object is 'solid' and false otherwise. It is up to
    * other entities to make use of this information; no default behavior is specified.
    */
-  public boolean isSolid() //solid objects cannot move into each other
+  boolean isSolid() //solid objects cannot move into each other
   {
     return false;
   }

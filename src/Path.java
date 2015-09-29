@@ -59,7 +59,7 @@ public class Path<T>
    *
    * @param path the path to add
    */
-  public void append(Path<T> path)
+  void append(Path<T> path)
   {
     nodes.addAll(path.getNodes());
     totalPathCost += path.getTotalPathCost();

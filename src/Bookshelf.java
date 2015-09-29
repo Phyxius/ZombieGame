@@ -6,7 +6,7 @@
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-public class Bookshelf extends Obstacle
+class Bookshelf extends Obstacle
 {
   /**
    * Makes a Bookshelf object at

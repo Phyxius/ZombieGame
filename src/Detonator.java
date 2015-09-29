@@ -4,7 +4,7 @@
  *
  * @see Trap
  */
-public interface Detonator
+interface Detonator
 {
   /**
    * Simulates the press of a trigger.

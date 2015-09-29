@@ -22,10 +22,10 @@ public class Player extends Entity implements Detonator
   private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
   private Trap collidingTrap = null;
   private double directionAngle;
-  private House house;
+  private final House house;
   private boolean isRunning = false;
   private boolean moving;
-  private Point2D.Float position;
+  private final Point2D.Float position;
   private int progressCounter = 0;
   private boolean resetFlag;
   private float stamina = Settings.playerStamina;
@@ -219,8 +219,7 @@ public class Player extends Entity implements Detonator
     final boolean[] returnValue = {false};
     collidingTrap = null;
     manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) -> {
-      if (entity != this && entity.isSolid())
-      {
+      if (entity != this && entity.isSolid()) {
         this.position.x = xPosition;
         this.position.y = yPosition;
         returnValue[0] = true;
@@ -327,7 +326,7 @@ public class Player extends Entity implements Detonator
 
     private final BufferedImage[] IMAGE_LIST = new BufferedImage[12];
     private final Point2D.Float POSITION = new Point2D.Float();
-    private int imageHeight = Settings.tileSize;
+    private final int imageHeight = Settings.tileSize;
     private int imageWidth = 0;
     private int value;
 

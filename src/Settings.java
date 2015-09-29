@@ -2,7 +2,7 @@
  * Created by Shea on 2015-09-07.
  * Class name and description go here.
  */
-public class Settings
+class Settings
 {
   static final int DEFAULT_TILE_SIZE = 80;
   static final int ashOpacity = 64;
@@ -10,7 +10,7 @@ public class Settings
   public static int fireDuration; //frames
   public static int frameRate; //frames/sec
   public static double minAngle; // in Radians
-  public static int numObjectsGuranteed; //Rooms + hallways
+  public static final int numObjectsGuranteed; //Rooms + hallways
   public static float playerHearing;
   public static float playerRun; // pixels/sec
   public static int playerSightRadius; //pixels

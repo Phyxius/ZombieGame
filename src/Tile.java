@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
  */
 public class Tile
 {
-  private boolean isSolid;
-  private BufferedImage tileImg;
+  private final boolean isSolid;
+  private final BufferedImage tileImg;
 
   /**
    * @param imgName The name of the image, either a wall or non-wall Tile

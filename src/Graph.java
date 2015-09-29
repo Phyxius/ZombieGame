@@ -101,7 +101,7 @@ public class Graph<T>
    *
    * @param graph the graph to add
    */
-  public void add(Graph<T> graph)
+  void add(Graph<T> graph)
   {
     nodes.addAll(graph.getNodes());
     edges.putAll(graph.getEdges());
@@ -188,7 +188,7 @@ public class Graph<T>
    * means no connection.
    * Not all combinations of nodes will necessarily be represented.
    */
-  public Map<UnorderedTuple, Optional<Float>> getEdges()
+  Map<UnorderedTuple, Optional<Float>> getEdges()
   {
     return new HashMap<>(edges);
   }
@@ -210,7 +210,7 @@ public class Graph<T>
    * @param node the node whose neighbors to get
    * @return the Collection of neighbors
    */
-  public Collection<T> getNeighbors(T node)
+  private Collection<T> getNeighbors(T node)
   {
     return nodes.stream().filter(n -> edges.getOrDefault(new UnorderedTuple(node, n), Optional.empty()).isPresent())
         .collect(Collectors.toList());
@@ -219,7 +219,7 @@ public class Graph<T>
   /**
    * @return every Node in the graph
    */
-  public Collection<T> getNodes()
+  Collection<T> getNodes()
   {
     return new ArrayList<>(nodes);
   }
@@ -263,7 +263,7 @@ public class Graph<T>
    * @param node2  the second node
    * @param weight the new weight (or Optional.empty() for no connection)
    */
-  public void setEdge(T node1, T node2, Optional<Float> weight)
+  private void setEdge(T node1, T node2, Optional<Float> weight)
   {
     if (weight == null) throw new IllegalArgumentException("Weights cannot be null!");
     nodes.add(node1);
@@ -291,7 +291,7 @@ public class Graph<T>
    *              will be added as a connection to <code>node</code> with the weight given
    *              by the associated value.
    */
-  public void setEdges(T node, Map<T, Optional<Float>> edges)
+  private void setEdges(T node, Map<T, Optional<Float>> edges)
   {
     edges.entrySet().forEach(e -> setEdge(node, e.getKey(), e.getValue()));
   }

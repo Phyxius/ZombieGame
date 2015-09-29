@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class UpdateCounter extends Entity
 {
-  int updates;
+  private int updates;
 
   public UpdateCounter()
   {

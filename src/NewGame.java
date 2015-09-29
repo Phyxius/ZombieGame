@@ -1,7 +1,7 @@
 /**
  * Makes a new game
  */
-public class NewGame
+class NewGame
 {
   /**
    * Makes a new Game or Level.

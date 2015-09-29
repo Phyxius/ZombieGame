@@ -6,10 +6,10 @@
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Doorway
+class Doorway
 {
   private int lengthOfDoor;
-  private ArrayList<Point2D.Float> pointsinDoor;
+  private final ArrayList<Point2D.Float> pointsinDoor;
   private House.Direction sideOfRoom;
 
   /**

@@ -27,25 +27,25 @@ import java.awt.geom.Point2D;
 
 public abstract class ZombieModel extends Entity implements Detonator
 {
-  protected final SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
-  protected final Player player; // Reference to the player on the current board.
-  protected boolean aStarWorked;
-  protected boolean audibleBump;
-  protected boolean audibleFootSteps;
-  protected boolean collision;
-  protected int decisionRate; // New decision every decisionRate updates.
-  protected double directionAngle; // 0 - 2 * PI
-  protected double distanceFromPlayer;
-  protected MasterZombie master;
-  protected double minAngle;
-  protected boolean moving = true;
-  protected int numFailedAttempts = 0;
-  protected Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
-  protected Point2D.Float position = new Point2D.Float(); // Top Left Corner.
-  protected float smell; // smell radius = smell * tiles
-  protected float speed; // displacement = speed * tiles
-  protected boolean triedAStar;
-  protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
+  final SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
+  final Player player; // Reference to the player on the current board.
+  boolean aStarWorked;
+  boolean audibleBump;
+  boolean audibleFootSteps;
+  boolean collision;
+  int decisionRate; // New decision every decisionRate updates.
+  double directionAngle; // 0 - 2 * PI
+  double distanceFromPlayer;
+  private MasterZombie master;
+  double minAngle;
+  boolean moving = true;
+  int numFailedAttempts = 0;
+  Point2D.Float playerPosition = null; // if (!= null) player is within smell range.
+  Point2D.Float position = new Point2D.Float(); // Top Left Corner.
+  private float smell; // smell radius = smell * tiles
+  float speed; // displacement = speed * tiles
+  boolean triedAStar;
+  int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
 
   /**
    * Constructs a zombie using default values in Settings.
@@ -53,7 +53,7 @@ public abstract class ZombieModel extends Entity implements Detonator
    * @param player   The player associated with this zombie. Used in detectPlayer.
    * @param position The initial location of the zombie.
    */
-  public ZombieModel(Player player, Point2D.Float position)
+  ZombieModel(Player player, Point2D.Float position)
   {
     speed = Settings.zombieSpeed;
     decisionRate = (int) (Settings.zombieDecisionRate * Settings.frameRate);
@@ -154,7 +154,7 @@ public abstract class ZombieModel extends Entity implements Detonator
   /**
    * Attempts to find a path to the player given the player location is known.
    */
-  protected void pathFinding()
+  void pathFinding()
   {
     // A* to player
     int tileSize = Settings.tileSize;
@@ -188,7 +188,7 @@ public abstract class ZombieModel extends Entity implements Detonator
     audibleBump = distanceFromPlayer <= 2 * Settings.playerHearing;
   }
 
-  Point findCurrentlyOccupiedTile(int numFailedAttempts)
+  private Point findCurrentlyOccupiedTile(int numFailedAttempts)
   {
     int tileSize = Settings.tileSize;
     int upperLeftX = (int) getPosition().getX();

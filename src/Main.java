@@ -2,7 +2,7 @@
  * Shea Polansky
  * Main: Creates the game's GUI
  */
-public class Main
+class Main
 {
   /**
    * Creates the main game window.

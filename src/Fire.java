@@ -12,8 +12,8 @@ public class Fire extends Entity implements Detonator
   private final Animation fireAnimation;
   private final boolean lightSource;
   private int age = 0; //frames
-  private Rectangle2D explosionArea;
-  private BufferedImage fireBackground;
+  private final Rectangle2D explosionArea;
+  private final BufferedImage fireBackground;
   private BufferedImage frame;
 
   /**

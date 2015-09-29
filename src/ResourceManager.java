@@ -10,10 +10,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ResourceManager
+class ResourceManager
 {
-  public static HashMap<String, BufferedImage> imageHashMap;
-  public static ArrayList<String> imagePaths;
+  private static final HashMap<String, BufferedImage> imageHashMap;
+  private static final ArrayList<String> imagePaths;
 
   /**
    * Populates imagePaths with known resources so they can

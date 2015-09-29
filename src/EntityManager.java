@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
  * EntityManager: The central component of the game engine.
  * Controls global game state and dispatches events to Entities
  */
-public class EntityManager
+class EntityManager
 {
-  public boolean debugModeEnabled = false;
+  private final boolean debugModeEnabled = false;
   private Point2D.Float cameraOrigin = new Point2D.Float(0, 0);
-  private Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
-  private ArrayList<Entity> entities = new ArrayList<>();
-  private ArrayList<Entity> entitiesToAdd = new ArrayList<>();
-  private ArrayList<Entity> entitiesToRemove = new ArrayList<>();
+  private final Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
+  private final ArrayList<Entity> entities = new ArrayList<>();
+  private final ArrayList<Entity> entitiesToAdd = new ArrayList<>();
+  private final ArrayList<Entity> entitiesToRemove = new ArrayList<>();
   private Entity entityToFollow = null;
-  private HashMap<Integer, Boolean> keyDict = new HashMap<>();
+  private final HashMap<Integer, Boolean> keyDict = new HashMap<>();
   private float scale = 1;
 
   public EntityManager()

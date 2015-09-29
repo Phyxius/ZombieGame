@@ -7,11 +7,11 @@ import java.util.Random;
  * Created by Shea on 2015-09-07.
  * Util: miscellaneous utility methods.
  */
-public class Util
+class Util
 {
   static final int NUM_DIRECTIONS = 4;
-  public static int[] dx = {1, 0, -1, 0};
-  public static int[] dy = {0, 1, 0, -1};
+  public static final int[] dx = {1, 0, -1, 0};
+  public static final int[] dy = {0, 1, 0, -1};
   static Random rng = new Random();
 
   /**

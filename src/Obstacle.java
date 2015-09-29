@@ -19,7 +19,7 @@ public class Obstacle extends Entity
    * @param sprite      The image of the obstacle.
    * @param boundingBox The bounding box of the obstacle.
    */
-  public Obstacle(BufferedImage sprite, Rectangle2D.Float boundingBox)
+  Obstacle(BufferedImage sprite, Rectangle2D.Float boundingBox)
   {
     this.boundingBox = boundingBox;
     this.sprite = sprite;

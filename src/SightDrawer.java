@@ -19,7 +19,7 @@ public class SightDrawer extends Entity
   private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
   private final static Color[] GRADIENT_COLORS = new Color[]{TRANSPARENT, Color.black};
   private final HashMap<Point2D.Float, HashSet<Point2D.Float>> relevantCorners = new HashMap<>();
-  private ArrayList<Point2D.Float> lightSources = new ArrayList<>();
+  private final ArrayList<Point2D.Float> lightSources = new ArrayList<>();
   //private VolatileImage screenOverlay = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
   @Override

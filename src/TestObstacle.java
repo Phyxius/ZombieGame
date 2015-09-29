@@ -10,8 +10,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class TestObstacle extends Entity
 {
-  private Rectangle2D.Float bounds;
-  private Color color;
+  private final Rectangle2D.Float bounds;
 
   /**
    * Creates a new test obstacle
@@ -22,7 +21,7 @@ public class TestObstacle extends Entity
   public TestObstacle(Rectangle2D.Float bounds, Color color)
   {
     this.bounds = bounds;
-    this.color = color;
+    Color color1 = color;
   }
 
   @Override

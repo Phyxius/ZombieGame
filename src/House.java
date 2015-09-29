@@ -8,24 +8,25 @@ import java.util.*;
  */
 public class House extends Entity
 {
-  public static Graph<Point> graphOfGrid;
+  private static Graph<Point> graphOfGrid;
   public static boolean isResetting = false;
   public static int levelNum = 1;
   public static long seed;
-  private java.util.List<Bookshelf> books = new ArrayList<>();
-  private boolean[][] bookshelves;
-  private Tile[][] fullGrid;
-  private int gridHeight, gridWidth;
-  private ArrayList<Doorway> initDoorways;
-  private HashMap<Class, ArrayList<Point2D.Float>> initialPosition;
+  private final java.util.List<Bookshelf> books = new ArrayList<>();
+  private final boolean[][] bookshelves;
+  private final Tile[][] fullGrid;
+  private final int gridHeight;
+  private final int gridWidth;
+  private final ArrayList<Doorway> initDoorways;
+  private final HashMap<Class, ArrayList<Point2D.Float>> initialPosition;
   private MasterZombie master;
   private Player player;
   private int prevHallDoorX, prevHallDoorY;
-  private ArrayList<Room> roomList;
-  private Room startRoom;
-  private java.util.List<Trap> traps = new ArrayList<>();
-  private UpdateManager updateManager;
-  private java.util.List<ZombieModel> zombies = new LinkedList<>();
+  private final ArrayList<Room> roomList;
+  private final Room startRoom;
+  private final java.util.List<Trap> traps = new ArrayList<>();
+  private final UpdateManager updateManager;
+  private final java.util.List<ZombieModel> zombies = new LinkedList<>();
 
   /**
    * Makes a new House object of specified height and width at (0,0).

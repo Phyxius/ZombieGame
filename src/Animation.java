@@ -13,7 +13,7 @@
 
 import java.awt.image.BufferedImage;
 
-public class Animation
+class Animation
 {
   private final String filePath;
   private final int maxFrameIndex;

@@ -8,7 +8,7 @@ import java.util.Collection;
  * The methods in the class are a direct subset of the ones available in EntityManager; see that class
  * for documentation.
  */
-public class UpdateManager
+class UpdateManager
 {
   private final EntityManager entityManager;
 
