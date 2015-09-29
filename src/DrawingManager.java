@@ -15,6 +15,7 @@ public class DrawingManager
    * the screen width and height, taking scale into account
    */
   public final float screenWidth, screenHeight;
+  public final int screenPixelWidth, screenPixelHeight;
 
   /**
    * Creates a new DrawingManager wrapping the arguments.
@@ -22,13 +23,17 @@ public class DrawingManager
    * @param graphicsConfiguration the GraphicsConfiguration to wrap
    * @param screenWidth the screen width, taking window scale into account
    * @param screenHeight the screen height the screen height, taking scale into account
+   * @param screenPixelWidth
+   * @param screenPixelHeight
    */
-  public DrawingManager(EntityManager entityManager, GraphicsConfiguration graphicsConfiguration, float screenWidth, float screenHeight)
+  public DrawingManager(EntityManager entityManager, GraphicsConfiguration graphicsConfiguration, float screenWidth, float screenHeight, int screenPixelWidth, int screenPixelHeight)
   {
     this.entityManager = entityManager;
     this.graphicsConfiguration = graphicsConfiguration;
     this.screenWidth = screenWidth;
     this.screenHeight = screenHeight;
+    this.screenPixelHeight = screenPixelHeight;
+    this.screenPixelWidth = screenPixelWidth;
   }
 
   public Entity getEntityToFollow()
@@ -62,7 +67,7 @@ public class DrawingManager
    */
   public float gameXToScreenX(float x)
   {
-    return (x - getCameraOrigin().x) / screenWidth;
+    return (x - getCameraOrigin().x) / screenWidth * screenPixelWidth;
   }
 
   /**
@@ -73,7 +78,7 @@ public class DrawingManager
    */
   public float gameYToScreenY(float y)
   {
-    return (y - getCameraOrigin().y) / screenHeight;
+    return (y - getCameraOrigin().y) / screenHeight * screenPixelHeight;
   }
 
   /**

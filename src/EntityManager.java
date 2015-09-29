@@ -79,7 +79,7 @@ public class EntityManager
   public void draw(Graphics2D g, GraphicsConfiguration graphicsConfiguration)
   {
     if (entityToFollow != null) updateCameraOrigin(g.getClipBounds());
-    DrawingManager drawingManager = new DrawingManager(this, graphicsConfiguration, g.getClipBounds().width / scale, g.getClipBounds().height / scale);
+    DrawingManager drawingManager = new DrawingManager(this, graphicsConfiguration, g.getClipBounds().width / scale, g.getClipBounds().height / scale, g.getClipBounds().width, g.getClipBounds().height);
     for (Entity entity : entities)
     {
       final Rectangle2D.Float boundingBox = entity.getBoundingBox();
