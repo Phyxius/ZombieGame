@@ -86,4 +86,12 @@ public class DrawingManager
   {
     return new Point2D.Float(gameXToScreenX(pos.x), gameYToScreenY(pos.y));
   }
+
+  /**
+   *@return the current scale factor
+   */
+  public float getScale()
+  {
+    return entityManager.getScale();
+  }
 }

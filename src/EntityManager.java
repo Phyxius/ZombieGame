@@ -22,6 +22,7 @@ public class EntityManager
   public boolean debugModeEnabled = true;
   private Entity entityToFollow = null;
   private Point2D.Float cameraOrigin = new Point2D.Float(0, 0);
+
   private float scale = 1;
 
   public EntityManager()
@@ -288,8 +289,20 @@ public class EntityManager
     this.entityToFollow = entityToFollow;
   }
 
+  /**
+   * Sets the scale factor used when drawing to the screen.
+   * @param scale a number between zero (exclusive) and one (inclusive).
+   */
   public void setScale(float scale)
   {
     this.scale = scale;
+  }
+
+  /**
+   * @return the current scale factor
+   */
+  public float getScale()
+  {
+    return scale;
   }
 }
