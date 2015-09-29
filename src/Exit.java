@@ -34,7 +34,7 @@ public class Exit extends Entity
     {
       case NORTH:
         exitImg = ResourceManager.getImage("objects/north.png");
-        position.setLocation(startX+Util.rng.nextInt(width-2)*tilSz, startY-1);
+        position.setLocation(startX+Util.rng.nextInt(width-2)*tilSz, startY+1);
         break;
       case WEST:
         exitImg = ResourceManager.getImage("objects/west.png");
@@ -46,7 +46,7 @@ public class Exit extends Entity
         break;
       case SOUTH:
         exitImg = ResourceManager.getImage("objects/south.png");
-        position.setLocation(startX+Util.rng.nextInt(width-2), startY+1);
+        position.setLocation(startX+Util.rng.nextInt(width-2), startY-1);
         break;
     }
   }

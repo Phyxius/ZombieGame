@@ -5,6 +5,12 @@ import javax.swing.*;
  */
 public class NewGame
 {
+    /**
+     * Makes a new Game or Level.
+     * @param updateManager UpdateManager is passed off to the house.
+     * @param levelNum levelNum changes the difficulty
+     *                 by making more zombies and fewer traps.
+     */
     public static void makeNewGame (UpdateManager updateManager, int levelNum)
     {
         Settings.trapSpawnRate -= levelNum*(0.005f);
