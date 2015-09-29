@@ -290,7 +290,6 @@ public class EntityManager
 
   public void setScale(float scale)
   {
-    System.out.println(scale);
     this.scale = scale;
   }
 }
