@@ -61,7 +61,7 @@ public class Exit extends Entity
   @Override
   public int getDepth()
   {
-    return -1;
+    return 1001;
   }
 
   @Override
