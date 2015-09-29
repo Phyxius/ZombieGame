@@ -157,6 +157,7 @@ public class House extends Entity
         }
       }
     }
+    updateManager.add(new SightDrawer());
   }
 
   @Override
