@@ -15,8 +15,8 @@ import java.awt.image.BufferedImage;
 
 public class Animation
 {
-  protected final String filePath;
-  protected final int maxFrameIndex;
+  private final String filePath;
+  private final int maxFrameIndex;
   private BufferedImage frame;
   private int frameIndex = 0;
   private int syncOffset;

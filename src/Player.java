@@ -224,10 +224,6 @@ public class Player extends Entity implements Detonator
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
-      if (entity instanceof ZombieModel || entity instanceof Fire)
-      {
-        triggerHouseReset(manager);
-      }
     });
     return returnValue[0];
   }
@@ -303,7 +299,7 @@ public class Player extends Entity implements Detonator
     }
   }
 
-  private void triggerHouseReset(UpdateManager manager)
+  synchronized private void triggerHouseReset(UpdateManager manager)
   {
     manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
         !(e instanceof Exit) &&
