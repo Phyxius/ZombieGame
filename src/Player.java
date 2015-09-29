@@ -189,21 +189,17 @@ public class Player extends Entity implements Detonator
     final boolean[] returnValue = {false};
     collidingTrap = null;
     manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) -> {
-      if (entity != this && entity.isSolid())
-      {
+      if (entity != this && entity.isSolid()) {
         this.position.x = xPosition;
         this.position.y = yPosition;
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
-      if (entity instanceof ZombieModel || entity instanceof Fire)
-      {
-        for (Entity e : manager.getAllEntities())
-        {
+      if (entity instanceof ZombieModel || entity instanceof Fire) {
+        for (Entity e : manager.getAllEntities()) {
           if (!(e instanceof Wall) &&
-              !(e instanceof Exit) &&
-              !(e instanceof House))
-          {
+                  !(e instanceof Exit) &&
+                  !(e instanceof House)) {
             manager.remove(e);
           }
         }
@@ -461,6 +457,15 @@ public class Player extends Entity implements Detonator
     public void setPosition(float xPosition, float yPosition)
     {
       POSITION.setLocation(xPosition, yPosition);
+    }
+  }
+
+  @Override
+  public void onRemoved()
+  {
+    for (SoundEffect sfx : new SoundEffect[] {walkSFX, runSFX, trapSFX})
+    {
+      if (sfx.isPlaying()) sfx.stop();
     }
   }
 }

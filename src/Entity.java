@@ -123,4 +123,12 @@ public abstract class Entity
   {
 
   }
+
+  /**
+   * Called when the entity is removed from the game
+   */
+  public void onRemoved()
+  {
+
+  }
 }
