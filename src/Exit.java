@@ -37,6 +37,12 @@ public class Exit extends Entity
   }
 
   @Override
+  public int getDepth()
+  {
+    return -1;
+  }
+
+  @Override
   public boolean isSolid()
   {
     return false;

@@ -42,7 +42,7 @@ public class House extends Entity
    */
   public House(int gridWidth, int gridHeight, int levelNum, UpdateManager updateManager)
   {
-    if(House.levelNum != levelNum) seed = System.currentTimeMillis();
+    seed = System.currentTimeMillis();
     Util.rng = new Random(seed);
     this.gridHeight = gridHeight;
     this.gridWidth = gridWidth;
@@ -72,7 +72,11 @@ public class House extends Entity
     initializeMap();
     updateManager.setEntityToFollow(player);
 //    updateManager.setEntityToFollow(master);
-    if(!makeExit(true)) makeExit(false);
+    if(levelNum < 3)
+    {
+      //if (!makeExit(true)) makeExit(false);
+      makeExit(false);
+    }
     //generateBuffImgHouse();
   }
 

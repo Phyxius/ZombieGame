@@ -53,7 +53,7 @@ public class SettingsWindow extends JFrame implements ActionListener
       entityManager = new EntityManager();
       ZombiePanel zombiePanel = new ZombiePanel(zombieFrame, entityManager);
       UpdateManager updateManager = new UpdateManager(entityManager);
-      NewGame.makeNewGame(updateManager, 1);
+      NewGame.makeNewGame(updateManager, 0);
       zombiePanel.init();
       zombieFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
       zombieFrame.setSize(new Dimension(20 * Settings.tileSize, 20 * Settings.tileSize));
