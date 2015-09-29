@@ -8,21 +8,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
-class RandomZombie extends ZombieModel
+public class RandomZombie extends ZombieModel
 {
   private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
-  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
+  private final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
 
-  RandomZombie(Player player, Point2D.Float position)
+  public RandomZombie(Player player, Point2D.Float position)
   {
     super(player, position);
-  }
-
-  RandomZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
-  {
-    super(player, position, speed, decisionRate, smell, minAngle);
   }
 
   /**
@@ -132,7 +127,6 @@ class RandomZombie extends ZombieModel
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
         if (!zombieStep.isPlaying()) zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
-      //zombieStep.stop();
       soundCounter++;
     }
     updateCount++;

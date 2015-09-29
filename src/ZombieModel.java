@@ -25,7 +25,7 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-abstract class ZombieModel extends Entity implements Detonator
+public abstract class ZombieModel extends Entity implements Detonator
 {
   protected final SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
   protected final Player player; // Reference to the player on the current board.
@@ -54,7 +54,7 @@ abstract class ZombieModel extends Entity implements Detonator
    * @param player   The player associated with this zombie. Used in detectPlayer.
    * @param position The initial location of the zombie.
    */
-  ZombieModel(Player player, Point2D.Float position)
+  public ZombieModel(Player player, Point2D.Float position)
   {
     speed = Settings.zombieSpeed;
     decisionRate = (int) (Settings.zombieDecisionRate * Settings.frameRate);
@@ -75,7 +75,8 @@ abstract class ZombieModel extends Entity implements Detonator
    * @param smell        The radius of the area in which a zombie can detect a player.
    * @param minAngle     The minimum angle, in radians, a zombie turns when colliding with solid objects.
    */
-  ZombieModel(Player player, Point2D.Float position, float speed, float decisionRate, float smell, double minAngle)
+  public ZombieModel(Player player, Point2D.Float position, float speed, float decisionRate, float smell,
+                     double minAngle)
   {
     this(player, position);
     this.speed = speed;
@@ -85,7 +86,11 @@ abstract class ZombieModel extends Entity implements Detonator
     this.directionAngle = 2 * Util.rng.nextDouble() * Math.PI;
   }
 
-
+  /**
+   * Sets the location of the zombie.
+   *
+   * @param position Location of the zombie.
+   */
   public void setPosition(Point2D.Float position)
   {
     this.position = position;
@@ -137,11 +142,18 @@ abstract class ZombieModel extends Entity implements Detonator
     }
   }
 
+  /**
+   * Sets the master for the zombie to report to.
+   * @param master The zombie to report to.
+   */
   public void setMasterZombie(MasterZombie master)
   {
     this.master = master;
   }
 
+  /**
+   * Attempts to find a path to the player given the player location is known.
+   */
   protected void pathFinding()
   {
     // A* to player

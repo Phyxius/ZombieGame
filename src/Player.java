@@ -31,6 +31,7 @@ public class Player extends Entity implements Detonator
   private boolean staminaDepleted;
   private boolean trapAction;
   private int trapsInInventory = Settings.playerTraps;
+  private boolean resetFlag;
 
   /**
    * Constructs a default player.
@@ -108,7 +109,12 @@ public class Player extends Entity implements Detonator
   @Override
   public void onCollision(Entity other, CollisionManager c)
   {
-    if (other instanceof Fire || other instanceof ZombieModel) triggerHouseReset(c);
+    if (resetFlag) return;
+    if (other instanceof Fire || other instanceof ZombieModel)
+    {
+      resetFlag = true;
+      triggerHouseReset(c);
+    }
   }
 
   @Override
@@ -129,6 +135,7 @@ public class Player extends Entity implements Detonator
   @Override
   public void update(UpdateManager e)
   {
+    resetFlag = false;
     if (e.isKeyPressed(KeyEvent.VK_P)) // Picking up or dropping traps.
     {
       increaseStamina();

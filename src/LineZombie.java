@@ -8,11 +8,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
-class LineZombie extends ZombieModel
+public class LineZombie extends ZombieModel
 {
   private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
-  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
+  private final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
 
   /**
@@ -20,14 +20,9 @@ class LineZombie extends ZombieModel
    * @param player The player tracked by this zombie.
    * @param position The location of the zombie.
    */
-  LineZombie(Player player, Point2D.Float position)
+  public LineZombie(Player player, Point2D.Float position)
   {
     super(player, position);
-  }
-
-  LineZombie(Player player, float speed, float decisionRate, float smell, Point2D.Float position, double minAngle)
-  {
-    super(player, position, speed, decisionRate, smell, minAngle);
   }
 
   @Override

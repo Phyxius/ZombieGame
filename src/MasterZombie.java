@@ -11,7 +11,7 @@ public class MasterZombie extends ZombieModel implements Detonator
 {
   private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
-  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
+  private final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private Point2D.Float reportedPosition;
   private int soundCounter = 0;
 
@@ -20,7 +20,7 @@ public class MasterZombie extends ZombieModel implements Detonator
    * @param  player The player tracked by this zombie.
    * @param position The location of the zombie.
    */
-  MasterZombie(Player player, Point2D.Float position)
+  public MasterZombie(Player player, Point2D.Float position)
   {
     super(player, position);
   }
