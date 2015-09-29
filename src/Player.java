@@ -12,28 +12,31 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Entity implements Detonator
 {
-  private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
-  private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
+  private final Point2D.Float center;
   private final Animation moveAnimation = new Animation("animation/player1/moving_small_", 9, true);
+  private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
   private final ProgressBar staminaBar = new ProgressBar("gui/label_stamina.png", true);
-  private final SoundEffect trapSFX = new SoundEffect("soundfx/player_pickup.mp3");
   private final ProgressBar trapBar = new ProgressBar(null, false);
   private final GuiCounter trapCounter = new GuiCounter("gui/trapIcon.png");
-  private final Point2D.Float center;
-  private House house;
+  private final SoundEffect trapSFX = new SoundEffect("soundfx/player_pickup.mp3");
+  private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
   private Trap collidingTrap = null;
+  private double directionAngle;
+  private House house;
   private boolean isRunning = false;
   private boolean moving;
   private Point2D.Float position;
   private int progressCounter = 0;
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
-  private int trapsInInventory = Settings.playerTraps;
-  private double directionAngle;
   private boolean trapAction;
+  private int trapsInInventory = Settings.playerTraps;
 
   /**
    * Constructs a default player.
+   *
+   * @param house    The house that the player is in.
+   * @param position The location of the player.
    */
   public Player(House house, Point2D.Float position)
   {
@@ -50,9 +53,9 @@ public class Player extends Entity implements Detonator
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     // Drawing the character
-    AffineTransform transformer = new AffineTransform();
-    transformer.rotate(directionAngle, getBoundingBox().getWidth() / 2,
-        getBoundingBox().getHeight() / 2); // must rotate first then scale otherwise it will cause a bug
+    AffineTransform transformer =
+        new AffineTransform(); // must rotate first then scale otherwise it will not draw properly.
+    transformer.rotate(directionAngle, getBoundingBox().getWidth() / 2, getBoundingBox().getHeight() / 2);
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
     local.drawImage(
         (moving ? moveAnimation.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")),
@@ -75,9 +78,30 @@ public class Player extends Entity implements Detonator
   }
 
   @Override
+  public Rectangle2D.Float getBoundingBox()
+  {
+    Point2D.Float position = getPosition();
+    if (position == null) return null;
+    return new Rectangle2D.Float(position.x, position.y,
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize),
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
+  }
+
+  @Override
   public int getDepth()
   {
-    return 1100;
+    return 1100; // Highest graphics layer since gui is attached to player.
+  }
+
+  @Override
+  public Point2D.Float getPosition()
+  {
+    return this.position;
+  }
+
+  public void setPosition(Point2D.Float position)
+  {
+    this.position = position;
   }
 
   @Override
@@ -87,9 +111,18 @@ public class Player extends Entity implements Detonator
   }
 
   @Override
-  public Point2D.Float getPosition()
+  public void onCollision(Entity other, CollisionManager c)
   {
-    return this.position;
+    if (other instanceof Fire || other instanceof ZombieModel) triggerHouseReset(c);
+  }
+
+  @Override
+  public void onRemoved()
+  {
+    for (SoundEffect sfx : new SoundEffect[]{walkSFX, runSFX, trapSFX})
+    {
+      if (sfx.isPlaying()) sfx.stop();
+    }
   }
 
   @Override
@@ -98,20 +131,15 @@ public class Player extends Entity implements Detonator
     return isRunning();
   }
 
-  public void setPosition(Point2D.Float position)
-  {
-    this.position = position;
-  }
-
   @Override
   public void update(UpdateManager e)
   {
-    if (e.isKeyPressed(KeyEvent.VK_P))
+    if (e.isKeyPressed(KeyEvent.VK_P)) // Picking up or dropping traps.
     {
       increaseStamina();
       moving = false;
 
-      if (collidingTrap == null)
+      if (collidingTrap == null) // Drop trap.
       {
         if (trapsInInventory > 0)
         {
@@ -120,7 +148,7 @@ public class Player extends Entity implements Detonator
           if (!trapSFX.isPlaying()) trapSFX.play(0.0, 1.0);
           updatePickUpBar();
         }
-        if (progressCounter % (5 * Settings.frameRate) == 0)
+        if (progressCounter % (5 * Settings.frameRate) == 0) // Successfully dropped trap.
         {
           trapCounter.setValue(--trapsInInventory);
           Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize,
@@ -132,13 +160,13 @@ public class Player extends Entity implements Detonator
           trapAction = false;
         }
       }
-      else
+      else // Pick up trap.
       {
         trapAction = true;
         progressCounter++;
         if (!trapSFX.isPlaying()) trapSFX.play(0.0, 1.0);
         updatePickUpBar();
-        if (progressCounter % (5 * Settings.frameRate) == 0)
+        if (progressCounter % (5 * Settings.frameRate) == 0) // Successfully picked trap.
         {
           trapCounter.setValue(++trapsInInventory);
           e.remove(collidingTrap);
@@ -149,7 +177,7 @@ public class Player extends Entity implements Detonator
         }
       }
     }
-    else
+    else // No trap inter actions. Check for movement input.
     {
       progressCounter = 0;
       trapAction = false;
@@ -188,8 +216,7 @@ public class Player extends Entity implements Detonator
   {
     final boolean[] returnValue = {false};
     collidingTrap = null;
-    manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) ->
-    {
+    manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) -> {
       if (entity != this && entity.isSolid())
       {
         this.position.x = xPosition;
@@ -203,14 +230,6 @@ public class Player extends Entity implements Detonator
       }
     });
     return returnValue[0];
-  }
-
-  private void triggerHouseReset(UpdateManager manager)
-  {
-    manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
-        !(e instanceof Exit) &&
-        !(e instanceof House)).forEach(manager::remove);
-    house.resetHouse();
   }
 
   private void decreaseStamina()
@@ -239,11 +258,6 @@ public class Player extends Entity implements Detonator
     return isRunning;
   }
 
-  /**
-   * Used to indicate that stamina was recently depleted.
-   *
-   * @return Returns a true value while stamina < Settings.frameRate * 2 (2 seconds) after the player stamina reaches zero.
-   */
   private boolean isStaminaDepleted()
   {
     staminaDepleted =
@@ -289,6 +303,14 @@ public class Player extends Entity implements Detonator
     }
   }
 
+  private void triggerHouseReset(UpdateManager manager)
+  {
+    manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
+        !(e instanceof Exit) &&
+        !(e instanceof House)).forEach(manager::remove);
+    house.resetHouse();
+  }
+
   private void updatePickUpBar()
   {
     trapBar.setCurrentValue(progressCounter);
@@ -301,105 +323,16 @@ public class Player extends Entity implements Detonator
     staminaBar.setMaxValue((int) Settings.playerStamina);
   }
 
-  @Override
-  public Rectangle2D.Float getBoundingBox()
-  {
-    Point2D.Float position = getPosition();
-    if (position == null) return null;
-    return new Rectangle2D.Float(position.x, position.y,
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize),
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
-  }
-
-  private class ProgressBar
-  {
-    private final BufferedImage[] IMAGE_LIST = new BufferedImage[5];
-    private final Point2D.Float POSITION;
-    private final boolean absolutePosition;
-    private boolean changeColor;
-    private int currentValue;
-    private int maxValue;
-
-    ProgressBar(String labelPath, boolean absolutePositioning)
-    {
-      absolutePosition = absolutePositioning;
-      if (labelPath != null) IMAGE_LIST[0] = ResourceManager.getImage(labelPath);
-      IMAGE_LIST[1] = ResourceManager.getImage("gui/progress_border_green.png");
-      IMAGE_LIST[2] = ResourceManager.getImage("gui/progress_fill_green.png");
-      IMAGE_LIST[3] = ResourceManager.getImage("gui/progress_border_red.png");
-      IMAGE_LIST[4] = ResourceManager.getImage("gui/progress_fill_red.png");
-      setCurrentValue(-1);
-      setMaxValue(-1);
-      this.POSITION = new Point2D.Float();
-    }
-
-    public void draw(Graphics2D global, DrawingManager drawingManager)
-    {
-      int xPosition;
-      int yPosition;
-      if (absolutePosition)
-      {
-        xPosition = (int) POSITION.getX();
-        yPosition = (int) POSITION.getY();
-      }
-      else
-      {
-        xPosition = (int) (drawingManager.gameXToScreenX(POSITION.x));// - drawingManager.getCameraOrigin().getX());
-        yPosition = (int) (drawingManager.gameYToScreenY(POSITION.y));// - drawingManager.getCameraOrigin().getY());
-      }
-
-      int imageWidth = (int) (2f * Settings.tileSize * drawingManager.getScale());
-      int imageHeight = (int) (0.375f * Settings.tileSize * drawingManager.getScale());
-      int offset = 0;
-      if (IMAGE_LIST[0] != null)
-      {
-        offset = (int) (IMAGE_LIST[0].getWidth() * drawingManager.getScale());
-        global.drawImage(IMAGE_LIST[0], xPosition, yPosition, offset, imageHeight, null);
-      }
-      int fillWidth = (int) ((float) currentValue / maxValue * imageWidth);
-      if (changeColor)
-      {
-        global.drawImage(IMAGE_LIST[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
-        global.drawImage(IMAGE_LIST[4], xPosition + offset, yPosition, fillWidth, imageHeight, null);
-      }
-      else
-      {
-        global.drawImage(IMAGE_LIST[1], xPosition + offset, yPosition, imageWidth, imageHeight, null);
-        global.drawImage(IMAGE_LIST[2], xPosition + offset, yPosition, fillWidth, imageHeight, null);
-      }
-    }
-
-    public void setCurrentValue(int currentValue)
-    {
-      this.currentValue = currentValue;
-    }
-
-    public void setMaxValue(int maxValue)
-    {
-      this.maxValue = maxValue;
-    }
-
-    public void setPosition(float x, float y)
-    {
-      this.POSITION.setLocation(x, y);
-    }
-
-    public void changeColor(boolean changeColor)
-    {
-      this.changeColor = changeColor;
-    }
-  }
-
-  private class GuiCounter
+  private class GuiCounter // Used for Trap counter.
   {
 
     private final BufferedImage[] IMAGE_LIST = new BufferedImage[12];
     private final Point2D.Float POSITION = new Point2D.Float();
-    int imageHeight = Settings.tileSize;
-    int imageWidth = 0;
+    private int imageHeight = Settings.tileSize;
+    private int imageWidth = 0;
     private int value;
 
-    GuiCounter(String imagePath)
+    private GuiCounter(String imagePath)
     {
 
       for (int i = 0; i < 10; i++)
@@ -410,12 +343,18 @@ public class Player extends Entity implements Detonator
       setValue(0);
     }
 
-    public int getValue()
+    private void draw(Graphics2D global, DrawingManager drawingManager)
     {
-      return value;
+      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(),
+          (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
     }
 
-    public void setValue(int value)
+    private void setPosition(float xPosition, float yPosition)
+    {
+      POSITION.setLocation(xPosition, yPosition);
+    }
+
+    private void setValue(int value)
     {
       if (value >= 0)
       {
@@ -465,31 +404,84 @@ public class Player extends Entity implements Detonator
         offset += digitWidth;
       }
     }
-
-    public void draw(Graphics2D global, DrawingManager drawingManager)
-    {
-      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(),
-          (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
-    }
-
-    public void setPosition(float xPosition, float yPosition)
-    {
-      POSITION.setLocation(xPosition, yPosition);
-    }
   }
 
-  @Override
-  public void onCollision(Entity other, CollisionManager c)
+  private class ProgressBar // Green progress bars for the gui.
   {
-    if (other instanceof Fire || other instanceof ZombieModel) triggerHouseReset(c);
-  }
+    private final BufferedImage[] IMAGE_LIST = new BufferedImage[5];
+    private final Point2D.Float POSITION;
+    private final boolean absolutePosition;
+    private boolean changeColor;
+    private int currentValue;
+    private int maxValue;
 
-  @Override
-  public void onRemoved()
-  {
-    for (SoundEffect sfx : new SoundEffect[]{walkSFX, runSFX, trapSFX})
+    private ProgressBar(String labelPath, boolean absolutePositioning)
     {
-      if (sfx.isPlaying()) sfx.stop();
+      absolutePosition = absolutePositioning;
+      if (labelPath != null) IMAGE_LIST[0] = ResourceManager.getImage(labelPath);
+      IMAGE_LIST[1] = ResourceManager.getImage("gui/progress_border_green.png");
+      IMAGE_LIST[2] = ResourceManager.getImage("gui/progress_fill_green.png");
+      IMAGE_LIST[3] = ResourceManager.getImage("gui/progress_border_red.png");
+      IMAGE_LIST[4] = ResourceManager.getImage("gui/progress_fill_red.png");
+      setCurrentValue(-1);
+      setMaxValue(-1);
+      this.POSITION = new Point2D.Float();
+    }
+
+    private void changeColor(boolean changeColor)
+    {
+      this.changeColor = changeColor;
+    }
+
+    private void draw(Graphics2D global, DrawingManager drawingManager)
+    {
+      int xPosition;
+      int yPosition;
+      if (absolutePosition)
+      {
+        xPosition = (int) POSITION.getX();
+        yPosition = (int) POSITION.getY();
+      }
+      else
+      {
+        xPosition = (int) (drawingManager.gameXToScreenX(POSITION.x));// - drawingManager.getCameraOrigin().getX());
+        yPosition = (int) (drawingManager.gameYToScreenY(POSITION.y));// - drawingManager.getCameraOrigin().getY());
+      }
+
+      int imageWidth = (int) (2f * Settings.tileSize * drawingManager.getScale());
+      int imageHeight = (int) (0.375f * Settings.tileSize * drawingManager.getScale());
+      int offset = 0;
+      if (IMAGE_LIST[0] != null)
+      {
+        offset = (int) (IMAGE_LIST[0].getWidth() * drawingManager.getScale());
+        global.drawImage(IMAGE_LIST[0], xPosition, yPosition, offset, imageHeight, null);
+      }
+      int fillWidth = (int) ((float) currentValue / maxValue * imageWidth);
+      if (changeColor)
+      {
+        global.drawImage(IMAGE_LIST[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(IMAGE_LIST[4], xPosition + offset, yPosition, fillWidth, imageHeight, null);
+      }
+      else
+      {
+        global.drawImage(IMAGE_LIST[1], xPosition + offset, yPosition, imageWidth, imageHeight, null);
+        global.drawImage(IMAGE_LIST[2], xPosition + offset, yPosition, fillWidth, imageHeight, null);
+      }
+    }
+
+    private void setCurrentValue(int currentValue)
+    {
+      this.currentValue = currentValue;
+    }
+
+    private void setMaxValue(int maxValue)
+    {
+      this.maxValue = maxValue;
+    }
+
+    private void setPosition(float x, float y)
+    {
+      this.POSITION.setLocation(x, y);
     }
   }
 }
