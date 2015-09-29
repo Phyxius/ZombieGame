@@ -2,10 +2,10 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  * Created by Mohammad R. Yousefi on 9/27/2015.
+ * A simple zombie that moves in straight lines. It can be informed of the location of player by other zombies.
  */
 public class MasterZombie extends ZombieModel implements Detonator
 {
@@ -13,7 +13,7 @@ public class MasterZombie extends ZombieModel implements Detonator
   private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
-  private LinkedList <ZombieModel> reportingZombies = new LinkedList<>();
+  private Point2D.Float reportedPosition;
 
   MasterZombie(Player player, Point2D.Float position)
   {
@@ -23,9 +23,10 @@ public class MasterZombie extends ZombieModel implements Detonator
   @Override
   public void update(UpdateManager e)
   {
-    detectPlayer();
+
     if (updateCount % decisionRate == 0)
     {
+      detectPlayer();
       if (playerPosition == null)
       {
         if (collision)
@@ -92,17 +93,16 @@ public class MasterZombie extends ZombieModel implements Detonator
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
         zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
-      //zombieStep.stop();
-      soundCounter++;
     }
     updateCount++;
+    reportedPosition = null;
   }
 
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
-    local.setColor(new Color (255,0,0,50));
-    local.fillOval(0,0,(int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
+    local.setColor(new Color(255, 0, 0, 50));
+    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle, Settings.tileSize / 2,
         Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug
@@ -121,28 +121,26 @@ public class MasterZombie extends ZombieModel implements Detonator
     if (other instanceof Fire) collisionManager.remove(this);
   }
 
-  @Override
-  public int getDepth()
+  /**
+   * Used by normal zombies to notify the master zombie of the player position.
+   *
+   * @param position current player position.
+   */
+  public void reportPlayer(Point2D.Float position)
   {
-    return 100;
-  }
-
-  public void reportPlayer(Point2D.Float position, ZombieModel zombie)
-  {
-    playerPosition = position;
-    if (!reportingZombies.contains(zombie)) reportingZombies.add(zombie);
+    reportedPosition = position;
   }
 
   @Override
   void detectPlayer()
   {
-    final boolean[] searchResult = {false};
-    new LinkedList<>(reportingZombies).forEach((ZombieModel zombie) ->
-    {
-      if (zombie.isTrackingPlayer()) searchResult[0] = true;
-      else reportingZombies.remove(zombie);
-    });
-    if (searchResult[0]) return;
     super.detectPlayer();
+    if (playerPosition == null) playerPosition = reportedPosition;
+  }
+
+  @Override
+  public int getDepth()
+  {
+    return super.getDepth() + 100;
   }
 }

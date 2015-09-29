@@ -1,3 +1,8 @@
+/**
+ * Created by Mohammad R. Yousefi on 07/09/15.
+ * Provides the functionality and characteristic of the human controlled player character in the game.
+ */
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
@@ -5,10 +10,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by Mohammad R. Yousefi on 07/09/15.
- * Containts the functionality of the player character in the game.
- */
 public class Player extends Entity implements Detonator
 {
   private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
@@ -51,23 +52,23 @@ public class Player extends Entity implements Detonator
     transformer.rotate(directionAngle, getBoundingBox().getWidth() / 2,
         getBoundingBox().getHeight() / 2); // must rotate first then scale otherwise it will cause a bug
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    local.drawImage((moving ? moveAnimation.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")), transformer, null);
+    local.drawImage(
+        (moving ? moveAnimation.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")),
+        transformer, null);
 
     // Drawing the trap progress bar
     if (isPickingUp() || isPlacing)
     {
-      trapBar
-          .setPosition((float) (position.x - Settings.tileSize / 2),
-              (float) (position.y - Settings.tileSize / 4));
+      trapBar.setPosition((float) (position.x - Settings.tileSize / 2), (float) (position.y - Settings.tileSize / 4));
       trapBar.draw(global, drawingManager);
     }
 
     // Drawing the stamina bar
-    staminaBar.setPosition((float) (Settings.tileSize * drawingManager.getScale()), (float) (global.getClipBounds().getHeight() -
-        Settings.tileSize * drawingManager.getScale()));
+    staminaBar.setPosition((float) (Settings.tileSize * drawingManager.getScale()),
+        (float) (global.getClipBounds().getHeight() - Settings.tileSize * drawingManager.getScale()));
     staminaBar.draw(global, drawingManager);
-    trapCounter.setPosition(Settings.tileSize * drawingManager.getScale(), (float) global.getClipBounds().getHeight() -
-        2.15f * Settings.tileSize * drawingManager.getScale());
+    trapCounter.setPosition(Settings.tileSize * drawingManager.getScale(),
+        (float) global.getClipBounds().getHeight() - 2.15f * Settings.tileSize * drawingManager.getScale());
     trapCounter.draw(global, drawingManager);
   }
 
@@ -207,7 +208,7 @@ public class Player extends Entity implements Detonator
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
-      if(entity instanceof ZombieModel)
+      if (entity instanceof ZombieModel)
       {
         manager.remove(manager.getAllEntities());
         //NewGame.makeNewGame(manager, House.levelNum);
@@ -248,7 +249,8 @@ public class Player extends Entity implements Detonator
    */
   private boolean isStaminaDepleted()
   {
-    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.playerStaminaRegen * Settings.frameRate * 2);
+    staminaDepleted =
+        stamina == 0 || (staminaDepleted && stamina < Settings.playerStaminaRegen * Settings.frameRate * 2);
     staminaBar.changeColor(staminaDepleted);
     return staminaDepleted;
   }
@@ -308,7 +310,8 @@ public class Player extends Entity implements Detonator
     Point2D.Float position = getPosition();
     if (position == null) return null;
     return new Rectangle2D.Float(position.x, position.y,
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize), (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize),
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
   }
 
   private class ProgressBar
@@ -399,7 +402,6 @@ public class Player extends Entity implements Detonator
     int imageWidth = 0;
     private int value;
 
-
     GuiCounter(String imagePath)
     {
 
@@ -460,8 +462,10 @@ public class Player extends Entity implements Detonator
 
     public void draw(Graphics2D global, DrawingManager drawingManager)
     {
-      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(), (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
+      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(),
+          (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
     }
+
     public void setPosition(float xPosition, float yPosition)
     {
       POSITION.setLocation(xPosition, yPosition);

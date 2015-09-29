@@ -1,11 +1,10 @@
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.Set;
-
 /**
  * Created by Mohammad R. Yousefi on 07/09/15.
  * Basic model for the zombies in the Zombie House game.
  */
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 abstract class ZombieModel extends Entity implements Detonator
 {
@@ -26,6 +25,7 @@ abstract class ZombieModel extends Entity implements Detonator
   protected double distanceFromPlayer;
   protected boolean moving = true;
   protected MasterZombie master;
+
   /**
    * Constructs a zombie using default values in Settings.
    *
@@ -87,7 +87,7 @@ abstract class ZombieModel extends Entity implements Detonator
     {
       playerPosition =
           new Point2D.Float((float) player.getBoundingBox().getCenterX(), (float) player.getBoundingBox().getCenterY());
-      if (master != null) master.reportPlayer(playerPosition, this);
+      if (master != null) master.reportPlayer(playerPosition);
     }
     else
     {
@@ -101,11 +101,13 @@ abstract class ZombieModel extends Entity implements Detonator
     int tileSize = Settings.tileSize;
     int upperLeftX = (int) getPosition().getX();
     int upperLeftY = (int) getPosition().getY();
-    if (numFailedAttempts == 0) return new Point((upperLeftX + (tileSize / 2)) / tileSize, (upperLeftY + (tileSize / 2)) / tileSize);
+    if (numFailedAttempts == 0)
+      return new Point((upperLeftX + (tileSize / 2)) / tileSize, (upperLeftY + (tileSize / 2)) / tileSize);
     if (numFailedAttempts == 1) return new Point(upperLeftX / tileSize, upperLeftY / tileSize);
     if (numFailedAttempts == 2) return new Point((upperLeftX + tileSize) / tileSize, upperLeftY / tileSize);
     if (numFailedAttempts == 3) return new Point(upperLeftX / tileSize, (upperLeftY + tileSize) / tileSize);
-    if (numFailedAttempts == 4) return new Point((upperLeftX + tileSize) / tileSize, (upperLeftY + tileSize) / tileSize);
+    if (numFailedAttempts == 4)
+      return new Point((upperLeftX + tileSize) / tileSize, (upperLeftY + tileSize) / tileSize);
     else return null;
   }
 
@@ -125,9 +127,11 @@ abstract class ZombieModel extends Entity implements Detonator
     // A* to player
     int tileSize = Settings.tileSize;
     Point zombieCenter = findCurrentlyOccupiedTile(numFailedAttempts);
-    Point playerCenter = new Point((int)(playerPosition.getX()+tileSize/2)/tileSize, (int)(playerPosition.getY()+tileSize/2)/tileSize);
+    Point playerCenter = new Point((int) (playerPosition.getX() + tileSize / 2) / tileSize,
+        (int) (playerPosition.getY() + tileSize / 2) / tileSize);
     Point pointToAimAt = House.calculateAStar(zombieCenter, playerCenter);
-    if(pointToAimAt != null) directionAngle = Math.atan2((pointToAimAt.getY()-zombieCenter.getY()),(pointToAimAt.getX()-zombieCenter.getX()));
+    if (pointToAimAt != null) directionAngle =
+        Math.atan2((pointToAimAt.getY() - zombieCenter.getY()), (pointToAimAt.getX() - zombieCenter.getX()));
     moving = true;
     triedAStar = true;
   }
@@ -135,11 +139,6 @@ abstract class ZombieModel extends Entity implements Detonator
   public void setMasterZombie(MasterZombie master)
   {
     this.master = master;
-  }
-
-  public boolean isTrackingPlayer()
-  {
-    return playerPosition != null;
   }
 
   /**

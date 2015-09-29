@@ -1,3 +1,8 @@
+/**
+ * Created by Mohammad R. Yousefi on 9/26/2015.
+ * Provides access to settings and allows the user to modify them..
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,10 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-/**
- * Created by Mohammad R. Yousefi on 9/26/2015.
- * View and Edit settings for the program.
- */
 public class SettingsWindow extends JFrame implements ActionListener
 {
   private final Dimension comboBoxDimensions = new Dimension(200, 30);
@@ -33,16 +34,14 @@ public class SettingsWindow extends JFrame implements ActionListener
   private JPanel zombieSettingsPanel;
   private JTextField zombieSettingsText;
 
+  /**
+   * Creates and displays a settings window.
+   */
   public SettingsWindow()
   {
     House.seed = System.currentTimeMillis();
     initWindow();
     showWindows();
-  }
-
-  public static void main(String[] args)
-  {
-    SwingUtilities.invokeLater(SettingsWindow::new);
   }
 
   @Override
@@ -66,7 +65,8 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void changeGameValues(float value)
   {
-    switch ((String) gameSettingsBox.getSelectedItem()) // "Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
+    switch ((String) gameSettingsBox
+        .getSelectedItem()) // "Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
     {
       case "Exit Distance":
         Settings.distanceAwayExit = (int) value;
@@ -92,7 +92,8 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void changePlayerValues(float value)
   {
-    switch ((String) playerSettingsBox.getSelectedItem()) // "Hearing", "Stamina", "Regeneration", "Run Speed", "Traps", "Walk Speed"
+    switch ((String) playerSettingsBox
+        .getSelectedItem()) // "Hearing", "Stamina", "Regeneration", "Run Speed", "Traps", "Walk Speed"
     {
       case "Hearing":
         Settings.playerHearing = value;
@@ -241,7 +242,8 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void updateGameTextField()
   {
-    switch ((String) gameSettingsBox.getSelectedItem()) // "Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
+    switch ((String) gameSettingsBox
+        .getSelectedItem()) // "Exit Distance", "Frame Rate", "Sight Radius", "Tile Size", "Trap Spawn", "Zombie Spawn"
     {
       case "Exit Distance":
         gameSettingsText.setText(String.format("%d", Settings.distanceAwayExit));
@@ -266,7 +268,8 @@ public class SettingsWindow extends JFrame implements ActionListener
 
   private void updatePlayerTextField()
   {
-    switch ((String) playerSettingsBox.getSelectedItem())//"Hearing", "Stamina", "Regeneration", "Run Speed", "Traps", "Walk Speed"
+    switch ((String) playerSettingsBox
+        .getSelectedItem())//"Hearing", "Stamina", "Regeneration", "Run Speed", "Traps", "Walk Speed"
     {
       case "Hearing":
         playerSettingsText.setText(String.format("%.2f", Settings.playerHearing));

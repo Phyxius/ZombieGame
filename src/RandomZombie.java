@@ -1,12 +1,13 @@
+/**
+ * Created by Mohammad R. Yousefi on 07/09/15.
+ * A simple zombie that moves in random directions until.
+ */
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
-/**
- * Created by Mohammad R. Yousefi on 07/09/15.
- * A simple zombie that moves in straight lines until reaching a solid obstacle.
- */
 class RandomZombie extends ZombieModel
 {
   private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
@@ -117,8 +118,8 @@ class RandomZombie extends ZombieModel
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
-    local.setColor(new Color (0,255,0,50));
-    local.fillOval(0,0,(int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
+    local.setColor(new Color(0, 255, 0, 50));
+    local.fillOval(0, 0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight());
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle, Settings.tileSize / 2,
         Settings.tileSize / 2); // must rotate first then scale otherwise it will cause a bug

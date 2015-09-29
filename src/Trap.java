@@ -1,11 +1,14 @@
+/**
+ * Created by arirappaport on 9/7/15.
+ * Trap objects explode upon contact with Detonators with active trigger.
+ * @see Detonator
+ */
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by arirappaport on 9/7/15.
- */
 public class Trap extends Entity
 {
   protected int tileSize;
@@ -68,7 +71,8 @@ public class Trap extends Entity
     {
       int curDx = dx[i];
       int curDy = dy[i];
-      explosionArea = new Rectangle2D.Float(position.x + tileSize * curDx, position.y + tileSize * curDy, tileSize, tileSize);
+      explosionArea =
+          new Rectangle2D.Float(position.x + tileSize * curDx, position.y + tileSize * curDy, tileSize, tileSize);
       c.add(new Fire(explosionArea, false));
     }
     //Rectangle2D.Float explosionArea = new Rectangle2D.Float(position.x-tileSize, position.y-tileSize, tileSize*3, tileSize*3);
