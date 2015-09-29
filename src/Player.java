@@ -188,32 +188,41 @@ public class Player extends Entity implements Detonator
   {
     final boolean[] returnValue = {false};
     collidingTrap = null;
-    manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) -> {
-      if (entity != this && entity.isSolid()) {
+    manager.getCollidingEntities(this.getBoundingBox()).forEach((Entity entity) ->
+    {
+      if (entity != this && entity.isSolid())
+      {
         this.position.x = xPosition;
         this.position.y = yPosition;
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
-      if (entity instanceof ZombieModel || entity instanceof Fire) {
-        for (Entity e : manager.getAllEntities()) {
-          if (!(e instanceof Wall) &&
-                  !(e instanceof Exit) &&
-                  !(e instanceof House)) {
-            manager.remove(e);
-          }
-        }
-        house.resetHouse();
-        return;
+      if (entity instanceof ZombieModel || entity instanceof Fire)
+      {
+        triggerHouseReset(manager);
       }
     });
     return returnValue[0];
   }
 
+  private void triggerHouseReset(UpdateManager manager)
+  {
+    manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
+        !(e instanceof Exit) &&
+        !(e instanceof House)).forEach(manager::remove);
+    house.resetHouse();
+  }
+
   private void decreaseStamina()
   {
-    if (stamina > 0) stamina--;
-    else stamina = 0;
+    if (stamina > 0)
+    {
+      stamina--;
+    }
+    else
+    {
+      stamina = 0;
+    }
     isStaminaDepleted();
     updateStaminaBar();
   }
@@ -413,7 +422,10 @@ public class Player extends Entity implements Detonator
         this.value = value;
         updateImage();
       }
-      else this.value = 0;
+      else
+      {
+        this.value = 0;
+      }
     }
 
     private void updateImage()
@@ -428,8 +440,14 @@ public class Player extends Entity implements Detonator
 
       int value = this.value;
       int order;
-      if (value == 0) order = 1;
-      else order = 1 + (int) Math.log10(value);
+      if (value == 0)
+      {
+        order = 1;
+      }
+      else
+      {
+        order = 1 + (int) Math.log10(value);
+      }
 
       imageWidth = iconWidth + order * digitWidth;
       IMAGE_LIST[11] = new BufferedImage(imageWidth, imageHeight, IMAGE_LIST[0].getType());
@@ -461,9 +479,15 @@ public class Player extends Entity implements Detonator
   }
 
   @Override
+  public void onCollision(Entity other, CollisionManager c)
+  {
+    if (other instanceof Fire || other instanceof ZombieModel) triggerHouseReset(c);
+  }
+
+  @Override
   public void onRemoved()
   {
-    for (SoundEffect sfx : new SoundEffect[] {walkSFX, runSFX, trapSFX})
+    for (SoundEffect sfx : new SoundEffect[]{walkSFX, runSFX, trapSFX})
     {
       if (sfx.isPlaying()) sfx.stop();
     }
