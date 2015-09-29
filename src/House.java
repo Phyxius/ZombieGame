@@ -3,10 +3,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by arirappaport on 9/10/15.
@@ -25,6 +22,7 @@ public class House extends Entity
   private Room startRoom;
   private int gridHeight, gridWidth;
   private int prevHallDoorX, prevHallDoorY;
+  private java.util.List<ZombieModel> zombies = new LinkedList<>();
 
   /**
    * Makes a new House object of specified height and width at (0,0).
@@ -63,6 +61,8 @@ public class House extends Entity
     makeBookcases();
     makeGraph();
     makeMasterZombie();
+    updateManager.setEntityToFollow(player);
+    updateManager.setEntityToFollow(master);
     if(!makeExit(true)) makeExit(false);
     //generateBuffImgHouse();
   }
@@ -231,7 +231,7 @@ public class House extends Entity
     int tileSize = Settings.tileSize;
     player = new Player();
     updateManager.add(player);
-    updateManager.setEntityToFollow(player);
+
     Room startRoom = new Room(startX, startY, width, height,false,player, updateManager);
     ArrayList<Direction> directions = new ArrayList<>();
     Collections.addAll(directions, Direction.values());
@@ -465,7 +465,7 @@ public class House extends Entity
     newHallway.init();
     newRoom.addDoorways();
     newRoom.init();
-    newRoom.spawnZombies();
+    zombies.addAll(newRoom.spawnZombies());
   }
 
   private void copyObjectsToGrid()
@@ -585,22 +585,14 @@ public class House extends Entity
 
   private void makeMasterZombie()
   {
-    ArrayList<Entity> zombies = new ArrayList<>();
-    updateManager.getAllEntities(true).forEach(entity ->
-    {
-      if (entity instanceof ZombieModel) zombies.add(entity);
-    });
-
-    if (zombies.size() > 0)
-    {
-      int index = Util.rng.nextInt(zombies.size());
-      Entity zombie = zombies.get(index);
-      master = new MasterZombie(player, new Point2D.Float(zombie.getPosition().x, zombie.getPosition().y));
-      updateManager.remove(zombie);
-      zombies.remove(index);
-      zombies.forEach(entity -> ((ZombieModel) entity).setMasterZombie(master));
-      updateManager.add(master);
-    }
+    int index = Util.rng.nextInt(zombies.size());
+    ZombieModel zombie = zombies.get(index);
+    master = new MasterZombie(player, new Point2D.Float(zombie.getPosition().x, zombie.getPosition().y));
+    zombies.remove(zombie);
+    zombies.forEach(entity -> ((ZombieModel) entity).setMasterZombie(master));
+    zombies.add(master);
+    updateManager.add(zombies);
+    zombies = null;
   }
 
   private boolean makeExit(boolean makeFarAway)
