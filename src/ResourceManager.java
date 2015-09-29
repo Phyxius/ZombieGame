@@ -6,6 +6,7 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -73,7 +74,8 @@ public class ResourceManager
     ClassLoader classLoader = ResourceManager.class.getClassLoader();
     try
     {
-      image = ImageIO.read(classLoader.getResourceAsStream(path));
+      final InputStream inputStream = ResourceManager.class.getResourceAsStream(path);
+      image = ImageIO.read(inputStream);
     }
     catch (IOException ex)
     {

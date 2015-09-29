@@ -139,6 +139,7 @@ public class EntityManager
   {
 
     entities.removeAll(entitiesToRemove);
+    entitiesToRemove.forEach(Entity::onRemoved);
     entitiesToRemove.clear();
     entities.addAll(entitiesToAdd);
     entitiesToAdd.clear();
