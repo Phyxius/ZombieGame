@@ -17,14 +17,14 @@ public class SettingsWindow extends JFrame implements ActionListener
   private final Dimension textFieldDimensions = new Dimension(75, 30);
   private final FieldListener textFieldListener = new FieldListener();
   private JButton closeButton;
-  private JButton launchButton;
   private JPanel content;
   private JPanel controlPanel;
-  private JComboBox<String> gameSettingsBox;
   private EntityManager entityManager;
+  private JComboBox<String> gameSettingsBox;
   private JLabel gameSettingsLabel;
   private JPanel gameSettingsPanel;
   private JTextField gameSettingsText;
+  private JButton launchButton;
   private JComboBox<String> playerSettingsBox;
   private JLabel playerSettingsLabel;
   private JPanel playerSettingsPanel;

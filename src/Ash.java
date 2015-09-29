@@ -27,9 +27,10 @@ public class Ash extends Entity
   }
 
   @Override
-  public Point2D.Float getPosition()
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
-    return position;
+    local.setColor(new Color(0, 0, 0, Settings.ashOpacity));
+    local.fillRect(0, 0, ((int) boundingBox.width), ((int) boundingBox.height));
   }
 
   @Override
@@ -39,15 +40,14 @@ public class Ash extends Entity
   }
 
   @Override
-  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
-  {
-    local.setColor(new Color(0, 0, 0, Settings.ashOpacity));
-    local.fillRect(0, 0, ((int) boundingBox.width), ((int) boundingBox.height));
-  }
-
-  @Override
   public int getDepth()
   {
     return -10;
+  }
+
+  @Override
+  public Point2D.Float getPosition()
+  {
+    return position;
   }
 }
