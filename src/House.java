@@ -117,7 +117,7 @@ public class House extends Entity
    */
   public void resetHouse()
   {
-    for(Class c: initialPosition.keySet())
+    for (Class c : initialPosition.keySet())
     {
       if (c.equals(Player.class))
       {
@@ -126,7 +126,7 @@ public class House extends Entity
       }
     }
     updateManager.setEntityToFollow(player);
-    for(Class c: initialPosition.keySet())
+    for (Class c:initialPosition.keySet())
     {
       if (c.equals(LineZombie.class))
       {
