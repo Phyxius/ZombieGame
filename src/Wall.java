@@ -91,10 +91,6 @@ public class Wall extends Entity
     return endY;
   }
 
-  /**
-   *
-   * @return Returns true, walls block light.
-   */
   @Override
   public boolean blocksLight() {
     return true;

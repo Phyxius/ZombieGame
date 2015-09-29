@@ -64,12 +64,12 @@ public class Player extends Entity implements Detonator
     // Drawing the trap progress bar
     if (trapAction)
     {
-      trapBar.setPosition((float) (position.x - Settings.tileSize / 2), (float) (position.y - Settings.tileSize / 4));
+      trapBar.setPosition(position.x - Settings.tileSize / 2, position.y - Settings.tileSize / 4);
       trapBar.draw(global, drawingManager);
     }
 
     // Drawing the stamina bar
-    staminaBar.setPosition((float) (Settings.tileSize * drawingManager.getScale()),
+    staminaBar.setPosition(Settings.tileSize * drawingManager.getScale(),
         (float) (global.getClipBounds().getHeight() - Settings.tileSize * drawingManager.getScale()));
     staminaBar.draw(global, drawingManager);
     trapCounter.setPosition(Settings.tileSize * drawingManager.getScale(),
@@ -97,11 +97,6 @@ public class Player extends Entity implements Detonator
   public Point2D.Float getPosition()
   {
     return this.position;
-  }
-
-  public void setPosition(Point2D.Float position)
-  {
-    this.position = position;
   }
 
   @Override
@@ -224,10 +219,6 @@ public class Player extends Entity implements Detonator
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
-      if (entity instanceof ZombieModel || entity instanceof Fire)
-      {
-        triggerHouseReset(manager);
-      }
     });
     return returnValue[0];
   }
@@ -303,7 +294,7 @@ public class Player extends Entity implements Detonator
     }
   }
 
-  private void triggerHouseReset(UpdateManager manager)
+  synchronized private void triggerHouseReset(UpdateManager manager)
   {
     manager.getAllEntities().stream().filter(e -> !(e instanceof Wall) &&
         !(e instanceof Exit) &&
