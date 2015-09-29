@@ -23,6 +23,7 @@ public class Doorway
   /**
    * Adds a point of the Doorway
    * to the specified location
+   *
    * @param point The Point to be added.
    */
   public void addPoint(Point2D.Float point)
@@ -32,7 +33,8 @@ public class Doorway
 
   /**
    * Adds a point in the doorway at a specified location
-   * @param i Location of point.
+   *
+   * @param i     Location of point.
    * @param point Point is used for Coords.
    */
   public void addPointInDoorway(int i, Point2D.Float point)
@@ -42,6 +44,7 @@ public class Doorway
 
   /**
    * Gets the length of the Doorway.
+   *
    * @return Returns the length of the Doorway.
    */
   public int getLengthOfDoorway()
@@ -50,8 +53,7 @@ public class Doorway
   }
 
   /**
-   *
-   * @param lengthOfDoor
+   * @param lengthOfDoor The length of the doorway.
    */
   public void setLengthOfDoorway(int lengthOfDoor)
   {

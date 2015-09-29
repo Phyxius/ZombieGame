@@ -17,7 +17,8 @@ public class MasterZombie extends ZombieModel implements Detonator
 
   /**
    * Creates a new zombie.
-   * @param  player The player tracked by this zombie.
+   *
+   * @param player   The player tracked by this zombie.
    * @param position The location of the zombie.
    */
   public MasterZombie(Player player, Point2D.Float position)
@@ -137,10 +138,10 @@ public class MasterZombie extends ZombieModel implements Detonator
       moving = true;
 
       //double volume = 10;
-      if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && audibleFootSteps)
+      if (audibleFootSteps)
       {
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
-        if (!zombieStep.isPlaying())zombieStep.play(balance, 0.5 / distanceFromPlayer);
+        if (!zombieStep.isPlaying()) zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
     }
     updateCount++;

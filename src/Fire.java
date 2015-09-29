@@ -11,7 +11,6 @@ public class Fire extends Entity implements Detonator
 {
   private final Animation fireAnimation;
   private final boolean lightSource;
-  private final int numFireFrames;
   private int age = 0; //frames
   private Rectangle2D explosionArea;
   private BufferedImage fireBackground;
@@ -19,6 +18,7 @@ public class Fire extends Entity implements Detonator
 
   /**
    * Creates a new fire object.
+   *
    * @param explosionArea The area covered by the fire.
    * @param isLightSource Indicates that this fire provides light.
    */
@@ -26,7 +26,7 @@ public class Fire extends Entity implements Detonator
   {
     this.explosionArea = explosionArea;
     lightSource = isLightSource;
-    numFireFrames = 318;
+    int numFireFrames = 318;
     fireBackground = ResourceManager.getImage("fire/firebackground.png");
     fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
   }

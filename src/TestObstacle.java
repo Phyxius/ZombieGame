@@ -15,19 +15,14 @@ public class TestObstacle extends Entity
 
   /**
    * Creates a new test obstacle
+   *
    * @param bounds the bounds of the obstacle
-   * @param color the color of the obstacle
+   * @param color  the color of the obstacle
    */
   public TestObstacle(Rectangle2D.Float bounds, Color color)
   {
     this.bounds = bounds;
     this.color = color;
-  }
-
-  @Override
-  public boolean isSolid()
-  {
-    return true;
   }
 
   @Override
@@ -53,5 +48,11 @@ public class TestObstacle extends Entity
   {
     bounds.x = position.x;
     bounds.y = position.y;
+  }
+
+  @Override
+  public boolean isSolid()
+  {
+    return true;
   }
 }

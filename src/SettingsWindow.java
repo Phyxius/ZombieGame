@@ -327,7 +327,7 @@ public class SettingsWindow extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-      float value = 0;
+      float value;
       JTextField field = (JTextField) e.getSource();
       try
       {

@@ -4,26 +4,26 @@
  */
 public class Settings
 {
-  static final int ashOpacity = 64;
   static final int DEFAULT_TILE_SIZE = 80;
+  static final int ashOpacity = 64;
+  public static int distanceAwayExit = 30; //tiles
+  public static int fireDuration; //frames
   public static int frameRate; //frames/sec
-  public static int distanceAwayExit= 30; //tiles
-  public static float zombieSpeed = 0.5f; //tiles/sec
-  public static float zombieDecisionRate = 2.0f; //sec
-  public static float zombieSmellRadius = 7f; //tiles
-  public static int tileSize; //pixels
-  public static float playerWalk; // pixels/sec
-  public static float playerRun; // pixels/sec
-  public static float playerStamina; // sec * frameRate
-  public static float playerHearing;
-  public static float playerStaminaRegen;
   public static double minAngle; // in Radians
   public static int numObjectsGuranteed; //Rooms + hallways
-  public static int fireDuration; //frames
+  public static float playerHearing;
+  public static float playerRun; // pixels/sec
   public static int playerSightRadius; //pixels
-  public static float zombieSpawnRate = 0.01f;
-  public static float trapSpawnRate = 0.01f;
+  public static float playerStamina; // sec * frameRate
+  public static float playerStaminaRegen;
   public static int playerTraps = 1;
+  public static float playerWalk; // pixels/sec
+  public static int tileSize; //pixels
+  public static float trapSpawnRate = 0.01f;
+  public static float zombieDecisionRate = 2.0f; //sec
+  public static float zombieSmellRadius = 7f; //tiles
+  public static float zombieSpawnRate = 0.01f;
+  public static float zombieSpeed = 0.5f; //tiles/sec
 
   static //ensures correct order of assignment
   {

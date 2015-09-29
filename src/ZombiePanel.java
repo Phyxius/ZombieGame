@@ -1,13 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 /**
  * Created by arirappaport on 9/8/15.
@@ -38,12 +31,6 @@ public class ZombiePanel extends JPanel
     new Timer(1000 / Settings.frameRate, this::timerTick).start();
   }
 
-  private void timerTick(ActionEvent actionEvent)
-  {
-    entityManager.update();
-    repaint();
-  }
-
   @Override
   //This whole method is just to sample
   // all the tiles
@@ -54,6 +41,12 @@ public class ZombiePanel extends JPanel
     //House house = new House(32,32);
     //g.drawImage(house.houseImg, 0, 0, house.houseImg.getWidth(), house.houseImg.getHeight(), null);
     entityManager.draw((Graphics2D) g, getGraphicsConfiguration());
+  }
+
+  private void timerTick(ActionEvent actionEvent)
+  {
+    entityManager.update();
+    repaint();
   }
 
   private class KeyboardHandler extends KeyAdapter
@@ -77,7 +70,7 @@ public class ZombiePanel extends JPanel
     public void componentResized(ComponentEvent componentEvent)
     {
       //Settings.updateTileSize((int)(componentEvent.getComponent().getWidth() / 1080f * Settings.DEFAULT_TILE_SIZE));
-      entityManager.setScale(componentEvent.getComponent().getWidth() / 1920f );
+      entityManager.setScale(componentEvent.getComponent().getWidth() / 1920f);
     }
   }
 }
