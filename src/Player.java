@@ -14,7 +14,7 @@ public class Player extends Entity implements Detonator
   public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
   private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
   private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
-//  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
+  //  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
   private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving_small_", 9, true);
   //  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
   //private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
@@ -46,12 +46,13 @@ public class Player extends Entity implements Detonator
     runSFX.loop();
     TRAP_SFX.loop();
   }
+
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle, getBoundingBox().getWidth() / 2,
-        getBoundingBox().getHeight()/2); // must rotate first then scale otherwise it will cause a bug
+        getBoundingBox().getHeight() / 2); // must rotate first then scale otherwise it will cause a bug
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
     local.drawImage((moving ? MOVE_ANIMATION.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")), transformer, null); // IDLE_ANIMATION.getFrame()), transformer, null);
 //    local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), 0,0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight(), null);
@@ -83,7 +84,7 @@ public class Player extends Entity implements Detonator
       TRAP_BAR.draw(global);
     }
     STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
-            Settings.tileSize);
+        Settings.tileSize);
     STAMINA_BAR.draw(global);
     TRAP_COUNTER.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
         2.15f * Settings.tileSize);
@@ -327,6 +328,15 @@ public class Player extends Entity implements Detonator
     STAMINA_BAR.setMaxValue((int) Settings.playerStamina);
   }
 
+  @Override
+  public Rectangle2D.Float getBoundingBox()
+  {
+    Point2D.Float position = getPosition();
+    if (position == null) return null;
+    return new Rectangle2D.Float(position.x, position.y,
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize), (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
+  }
+
   private class ProgressBar
   {
     private final BufferedImage[] IMAGE_LIST = new BufferedImage[5];
@@ -338,7 +348,7 @@ public class Player extends Entity implements Detonator
     ProgressBar(String labelPath)
     {
 
-      if (labelPath != null) IMAGE_LIST[0] =  ResourceManager.getImage(labelPath);
+      if (labelPath != null) IMAGE_LIST[0] = ResourceManager.getImage(labelPath);
       IMAGE_LIST[1] = ResourceManager.getImage("gui/progress_border_green.png");
       IMAGE_LIST[2] = ResourceManager.getImage("gui/progress_fill_green.png");
       IMAGE_LIST[3] = ResourceManager.getImage("gui/progress_border_red.png");
@@ -364,7 +374,7 @@ public class Player extends Entity implements Detonator
       if (changeColor)
       {
         global.drawImage(IMAGE_LIST[3], xPosition + offset, yPosition, imageWidth, imageHeight, null);
-        global.drawImage(IMAGE_LIST[4], xPosition + offset, yPosition, fillWidth , imageHeight, null);
+        global.drawImage(IMAGE_LIST[4], xPosition + offset, yPosition, fillWidth, imageHeight, null);
       }
       else
       {
@@ -388,7 +398,7 @@ public class Player extends Entity implements Detonator
       this.POSITION.setLocation(x, y);
     }
 
-    public void changeColor (boolean changeColor)
+    public void changeColor(boolean changeColor)
     {
       this.changeColor = changeColor;
     }
@@ -399,12 +409,12 @@ public class Player extends Entity implements Detonator
 
     private final BufferedImage[] IMAGE_LIST = new BufferedImage[12];
     private final Point2D.Float POSITION = new Point2D.Float();
-    private int value;
     int imageHeight = Settings.tileSize;
     int imageWidth = 0;
+    private int value;
 
 
-    GuiCounter (String imagePath)
+    GuiCounter(String imagePath)
     {
 
       for (int i = 0; i < 10; i++)
@@ -462,7 +472,7 @@ public class Player extends Entity implements Detonator
       }
     }
 
-    public void draw (Graphics2D global)
+    public void draw(Graphics2D global)
     {
       global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(), imageWidth, imageHeight, null);
     }
@@ -471,14 +481,5 @@ public class Player extends Entity implements Detonator
     {
       POSITION.setLocation(xPosition, yPosition);
     }
-  }
-
-  @Override
-  public Rectangle2D.Float getBoundingBox()
-  {
-    Point2D.Float position = getPosition();
-    if (position == null) return null;
-    return new Rectangle2D.Float(position.x, position.y,
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize), (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
   }
 }

@@ -82,7 +82,7 @@ public class DrawingManager
    * @param pos the Point2D.Float to convert
    * @return the converted value
    */
-  public Point2D.Float gamePositionToScrenPosition(Point2D.Float pos)
+  public Point2D.Float gamePositionToScreenPosition(Point2D.Float pos)
   {
     return new Point2D.Float(gameXToScreenX(pos.x), gameYToScreenY(pos.y));
   }

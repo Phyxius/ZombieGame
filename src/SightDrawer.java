@@ -3,6 +3,7 @@ import java.awt.geom.*;
 import java.awt.image.VolatileImage;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,13 +33,10 @@ public class SightDrawer extends Entity
     overlayDrawer.setColor(Color.black);
     overlayDrawer.fillRect(0, 0, screenOverlay.getWidth(), screenOverlay.getHeight());
     overlayDrawer.setComposite(AlphaComposite.SrcIn);
-    float cameraY = (float)drawingManager.getCameraOrigin().getY();
-    float cameraX = (float)drawingManager.getCameraOrigin().getX();
     for (Map.Entry<Point2D.Float, HashSet<Point2D.Float>> entry : relevantCorners.entrySet())
     {
       Point2D.Float lightSource = entry.getKey();
-      lightSource.setLocation(lightSource.getX() - cameraX,
-          lightSource.getY() - cameraY);
+      lightSource.setLocation(drawingManager.gamePositionToScreenPosition(lightSource));
       RadialGradientPaint p = new RadialGradientPaint(lightSource, Settings.playerSightRadius, GRADIENT_FRACTIONS, GRADIENT_COLORS);
       overlayDrawer.setPaint(p);
       /*LIGHT_ELLIPSE.setFrameFromCenter(lightSource,
@@ -46,8 +44,8 @@ public class SightDrawer extends Entity
               (float) (lightSource.getY() + Settings.playerSightRadius)));
       overlayDrawer.fill(LIGHT_ELLIPSE);*/
       List<Point2D.Float> points = entry.getValue().parallelStream()
-          .map(point -> new Point2D.Float(point.x - cameraX, point.y - cameraY))
-          .sorted(Comparator.comparing((Point2D.Float point) -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x)).thenComparing(point -> lightSource.distanceSq(point)))
+          .map(drawingManager::gamePositionToScreenPosition)
+          .sorted(Comparator.comparing((Point2D.Float point) -> Math.atan2(point.y - lightSource.y, point.x - lightSource.x)).thenComparing((Function<Point2D.Float, Double>) lightSource::distanceSq))
           .collect(Collectors.toList());
       //overlayDrawer.setColor(Color.green);
       Polygon litArea = new Polygon();
