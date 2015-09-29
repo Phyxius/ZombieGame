@@ -25,13 +25,16 @@ import java.awt.geom.Point2D;
 
 abstract class ZombieModel extends Entity implements Detonator
 {
+  protected final SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
   protected final Player player; // Reference to the player on the current board.
+  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   protected boolean aStarWorked;
+  protected boolean audibleBump;
+  protected boolean audibleFootSteps;
   protected boolean collision;
   protected int decisionRate; // New decision every decisionRate updates.
   protected double directionAngle; // 0 - 2 * PI
   protected double distanceFromPlayer;
-  protected boolean audibleFootSteps;
   protected MasterZombie master;
   protected double minAngle;
   protected boolean moving = true;
@@ -42,8 +45,6 @@ abstract class ZombieModel extends Entity implements Detonator
   protected float speed; // displacement = speed * tiles
   protected boolean triedAStar;
   protected int updateCount = 0; // New decision when updateCount % (decisionRate * frameRate) == 0
-  protected SoundEffect bumpSound = new SoundEffect("soundfx/bump.mp3");
-  protected boolean audibleBump;
 
   /**
    * Constructs a zombie using default values in Settings.

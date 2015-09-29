@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 public class Fire extends Entity implements Detonator
 {
-  private final boolean LIGHT_SOURCE;
+  private final boolean lightSource;
   private final int numFireFrames;
   Animation fireAnimation;
   private int age = 0; //frames
@@ -20,7 +20,7 @@ public class Fire extends Entity implements Detonator
   public Fire(Rectangle2D.Float explosionArea, boolean isLightSource)
   {
     this.explosionArea = explosionArea;
-    LIGHT_SOURCE = isLightSource;
+    lightSource = isLightSource;
     numFireFrames = 318;
     fireBackground = ResourceManager.getImage("fire/firebackground.png");
     fireAnimation = new Animation("animation/fireAnimation/fire-", numFireFrames);
@@ -46,7 +46,7 @@ public class Fire extends Entity implements Detonator
   @Override
   public boolean isLightSource()
   {
-    return LIGHT_SOURCE;
+    return lightSource;
   }
 
   @Override

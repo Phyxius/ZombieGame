@@ -9,11 +9,10 @@ import java.util.Collection;
  */
 public class MasterZombie extends ZombieModel implements Detonator
 {
-  private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
-  private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
+  private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
+  private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private Point2D.Float reportedPosition;
   private int soundCounter = 0;
-  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
 
   MasterZombie(Player player, Point2D.Float position)
   {

@@ -10,10 +10,9 @@ import java.util.Collection;
 
 class RandomZombie extends ZombieModel
 {
-  private Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
-  private Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
+  private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
+  private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
   private int soundCounter = 0;
-  private SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
 
   RandomZombie(Player player, Point2D.Float position)
   {
