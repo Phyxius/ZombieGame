@@ -1,10 +1,11 @@
-import java.awt.*;
+/**
+ * Created by arirappaport on 9/19/15.
+ * Provides doorways used in generating a house.
+ */
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-/**
- * Created by arirappaport on 9/19/15.
- */
 public class Doorway
 {
   private ArrayList<Point2D.Float> pointsinDoor;
@@ -12,26 +13,50 @@ public class Doorway
   private House.Direction sideOfRoom;
 
   /**
-   *
+   * Creates empty doorway object.
    */
   public Doorway()
   {
     pointsinDoor = new ArrayList<>();
   }
 
-  public void setLengthOfDoorway(int lengthOfDoor) {this.lengthOfDoor = lengthOfDoor;}
+  public void setLengthOfDoorway(int lengthOfDoor)
+  {
+    this.lengthOfDoor = lengthOfDoor;
+  }
 
-  public int getLengthOfDoorway() {return lengthOfDoor;}
+  public int getLengthOfDoorway()
+  {
+    return lengthOfDoor;
+  }
 
-  public ArrayList<Point2D.Float> getPointsinDoor() {return pointsinDoor;}
+  public ArrayList<Point2D.Float> getPointsinDoor()
+  {
+    return pointsinDoor;
+  }
 
-  public void addPointInDoorway(int i, Point2D.Float point){pointsinDoor.add(i,point); }
+  public void addPointInDoorway(int i, Point2D.Float point)
+  {
+    pointsinDoor.add(i, point);
+  }
 
-  public Point2D.Float getPointAt(int i) {return pointsinDoor.get(i);}
+  public Point2D.Float getPointAt(int i)
+  {
+    return pointsinDoor.get(i);
+  }
 
-  public void addPoint(Point2D.Float point) {pointsinDoor.add(point);}
+  public void addPoint(Point2D.Float point)
+  {
+    pointsinDoor.add(point);
+  }
 
-  public House.Direction getSideOfRoom() {return sideOfRoom;}
+  public House.Direction getSideOfRoom()
+  {
+    return sideOfRoom;
+  }
 
-  public void setSideOfRoom(House.Direction side) {sideOfRoom = side;}
+  public void setSideOfRoom(House.Direction side)
+  {
+    sideOfRoom = side;
+  }
 }

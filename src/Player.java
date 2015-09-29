@@ -1,3 +1,8 @@
+/**
+ * Created by Mohammad R. Yousefi on 07/09/15.
+ * Provides the functionality and characteristic of the human controlled player character in the game.
+ */
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
@@ -5,90 +10,66 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by Mohammad R. Yousefi on 07/09/15.
- * Player information and behavior.
- */
 public class Player extends Entity implements Detonator
 {
-  public static final Font UI_FONT = new Font("SansSerif", Font.PLAIN, Settings.tileSize / 2);
   private final SoundEffect walkSFX = new SoundEffect("soundfx/player_footstep.mp3");
   private final SoundEffect runSFX = new SoundEffect("soundfx/player_footstep_run.mp3");
-  //  private final Animation IDLE_ANIMATION = new Animation("animation/player1/idle-", 1, true);
-  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving_small_", 9, true);
-  //  private final Animation MOVE_ANIMATION = new Animation("animation/player1/moving-", 9, true);
-  //private final Animation IDLE_ANIMATION = new Animation("animation/player/idle_", 8, true);
-  //private final Animation MOVE_ANIMATION = new Animation("animation/player/move_", 13, true);
-  private final ProgressBar STAMINA_BAR = new ProgressBar("gui/label_stamina.png");
-  private final SoundEffect TRAP_SFX = new SoundEffect("soundfx/player_pickup.mp3");
-  private final ProgressBar TRAP_BAR = new ProgressBar("");
-  private final GuiCounter TRAP_COUNTER = new GuiCounter("gui/trapIcon.png");
-  private final Point2D.Float CENTER;
+  private final Animation moveAnimation = new Animation("animation/player1/moving_small_", 9, true);
+  private final ProgressBar staminaBar = new ProgressBar("gui/label_stamina.png", true);
+  private final SoundEffect trapSFX = new SoundEffect("soundfx/player_pickup.mp3");
+  private final ProgressBar trapBar = new ProgressBar("", false);
+  private final GuiCounter trapCounter = new GuiCounter("gui/trapIcon.png");
+  private final Point2D.Float center;
   private Trap collidingTrap = null;
-  private boolean flipAnimation;
   private boolean isPickingUp;
   private boolean isPlacing;
   private boolean isRunning = false;
   private boolean moving;
   private Point2D.Float position = new Point2D.Float(42 * Settings.tileSize, 43 * Settings.tileSize);
   private int progressCounter = 0;
-  private int soundCounter = 0;
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
   private int trapsInInventory = Settings.playerTraps;
   private double directionAngle;
 
+  /**
+   * Constructs a default player.
+   */
   public Player()
   {
-    CENTER = new Point2D.Float((float) getBoundingBox().getCenterX(), (float) getBoundingBox().getCenterY());
-    TRAP_COUNTER.setValue(trapsInInventory);
+    center = new Point2D.Float((float) getBoundingBox().getCenterX(), (float) getBoundingBox().getCenterY());
+    trapCounter.setValue(trapsInInventory);
     walkSFX.loop();
     runSFX.loop();
-    TRAP_SFX.loop();
+    trapSFX.loop();
   }
 
   @Override
   public void draw(Graphics2D local, Graphics2D global, DrawingManager drawingManager)
   {
+    // Drawing the character
     AffineTransform transformer = new AffineTransform();
     transformer.rotate(directionAngle, getBoundingBox().getWidth() / 2,
         getBoundingBox().getHeight() / 2); // must rotate first then scale otherwise it will cause a bug
     transformer.scale((double) Settings.tileSize / 80, (double) Settings.tileSize / 80);
-    local.drawImage((moving ? MOVE_ANIMATION.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")), transformer, null); // IDLE_ANIMATION.getFrame()), transformer, null);
-//    local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), 0,0, (int) getBoundingBox().getWidth(), (int) getBoundingBox().getHeight(), null);
+    local.drawImage(
+        (moving ? moveAnimation.getFrame() : ResourceManager.getImage("animation/player1/moving_small_0.png")),
+        transformer, null);
 
-
-//    AffineTransform transformer = new AffineTransform();
-//    if (flipAnimation)
-//    {
-//      BufferedImage frame = (moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame());
-//      transformer.scale(-1, 1);
-//      transformer.translate(-frame.getWidth(), 0);
-//      AffineTransformOp opTransformer = new AffineTransformOp(transformer, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-//      frame = opTransformer.filter(frame, null);
-//      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
-//          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
-//      local.drawImage(frame, transformer, null);
-//    }
-//    else
-//    {
-//      transformer.setToScale((double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE,
-//          (double) Settings.tileSize / Settings.DEFAULT_TILE_SIZE);
-//      local.drawImage((moving ? MOVE_ANIMATION.getFrame() : IDLE_ANIMATION.getFrame()), transformer, null);
-//    }
+    // Drawing the trap progress bar
     if (isPickingUp() || isPlacing)
     {
-      TRAP_BAR
-          .setPosition((float) (position.x - drawingManager.getCameraOrigin().getX() - Settings.tileSize / 2),
-              (float) (position.y - drawingManager.getCameraOrigin().getY() - Settings.tileSize / 4));
-      TRAP_BAR.draw(global);
+      trapBar.setPosition((float) (position.x - Settings.tileSize / 2), (float) (position.y - Settings.tileSize / 4));
+      trapBar.draw(global, drawingManager);
     }
-    STAMINA_BAR.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
-        Settings.tileSize);
-    STAMINA_BAR.draw(global);
-    TRAP_COUNTER.setPosition(Settings.tileSize, (float) global.getClipBounds().getHeight() -
-        2.15f * Settings.tileSize);
-    TRAP_COUNTER.draw(global);
+
+    // Drawing the stamina bar
+    staminaBar.setPosition((float) (Settings.tileSize * drawingManager.getScale()),
+        (float) (global.getClipBounds().getHeight() - Settings.tileSize * drawingManager.getScale()));
+    staminaBar.draw(global, drawingManager);
+    trapCounter.setPosition(Settings.tileSize * drawingManager.getScale(),
+        (float) global.getClipBounds().getHeight() - 2.15f * Settings.tileSize * drawingManager.getScale());
+    trapCounter.draw(global, drawingManager);
   }
 
   @Override
@@ -126,7 +107,6 @@ public class Player extends Entity implements Detonator
     if (isPickingUp() || isPlacing)
     {
       increaseStamina();
-//      IDLE_ANIMATION.nextFrame(moving);
       moving = false;
       if (e.isKeyPressed(KeyEvent.VK_P))
       {
@@ -134,11 +114,11 @@ public class Player extends Entity implements Detonator
         updatePickUpBar();
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
-          TRAP_COUNTER.setValue(++trapsInInventory);
+          trapCounter.setValue(++trapsInInventory);
           e.remove(collidingTrap);
           collidingTrap = null;
           isPickingUp = false;
-          TRAP_SFX.stop();
+          trapSFX.stop();
         }
       }
       else if (e.isKeyPressed(KeyEvent.VK_T))
@@ -147,20 +127,20 @@ public class Player extends Entity implements Detonator
         updatePickUpBar();
         if (progressCounter % (5 * Settings.frameRate) == 0)
         {
-          TRAP_COUNTER.setValue(--trapsInInventory);
-          Trap trap = new Trap(new Point2D.Float((int) (CENTER.getX() / Settings.tileSize) * Settings.tileSize,
-              (int) (CENTER.getY() / Settings.tileSize) * Settings.tileSize));
+          trapCounter.setValue(--trapsInInventory);
+          Trap trap = new Trap(new Point2D.Float((int) (center.getX() / Settings.tileSize) * Settings.tileSize,
+              (int) (center.getY() / Settings.tileSize) * Settings.tileSize));
           e.add(trap);
           collidingTrap = trap;
           isPlacing = false;
-          TRAP_SFX.stop();
+          trapSFX.stop();
         }
       }
       else
       {
         isPlacing = false;
         isPickingUp = false;
-        TRAP_SFX.stop();
+        trapSFX.stop();
         progressCounter = 0;
       }
     }
@@ -172,8 +152,6 @@ public class Player extends Entity implements Detonator
       if (e.isKeyPressed(KeyEvent.VK_UP) || e.isKeyPressed(KeyEvent.VK_W)) yMovement -= 1;
       if (e.isKeyPressed(KeyEvent.VK_DOWN) || e.isKeyPressed(KeyEvent.VK_S)) yMovement += 1;
 
-      if (xMovement > 0) flipAnimation = false;
-      else if (xMovement < 0) flipAnimation = true;
       // Normalize movement vector.
       double movementMagnitude = Math.sqrt(xMovement * xMovement + yMovement * yMovement);
       xMovement /= movementMagnitude;
@@ -184,12 +162,11 @@ public class Player extends Entity implements Detonator
         directionAngle = Math.atan2(yMovement, xMovement);
         isRunning = e.isKeyPressed(KeyEvent.VK_R) && !staminaDepleted;
         move((float) getPosition().getX(), (float) getPosition().getY(), xMovement, yMovement, isRunning, e);
-        MOVE_ANIMATION.nextFrame(!moving);
+        moveAnimation.nextFrame(!moving);
         moving = true;
       }
       else
       {
-//        IDLE_ANIMATION.nextFrame(moving);
         walkSFX.stop();
         runSFX.stop();
         moving = false;
@@ -200,7 +177,7 @@ public class Player extends Entity implements Detonator
       {
         isPickingUp = true;
         progressCounter++;
-        TRAP_SFX.play(0.0, 1.0);
+        trapSFX.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
@@ -213,7 +190,7 @@ public class Player extends Entity implements Detonator
       {
         progressCounter++;
         isPlacing = true;
-        TRAP_SFX.play(0.0, 1.0);
+        trapSFX.play(0.0, 1.0);
         updatePickUpBar();
       }
       else
@@ -235,8 +212,8 @@ public class Player extends Entity implements Detonator
         this.position.y = yPosition;
         returnValue[0] = true;
       }
-      if (entity instanceof Trap && entity.getBoundingBox().contains(CENTER)) collidingTrap = (Trap) entity;
-      if(entity instanceof ZombieModel)
+      if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
+      if (entity instanceof ZombieModel)
       {
         manager.remove(manager.getAllEntities());
         NewGame.makeNewGame(manager, House.levelNum);
@@ -277,8 +254,9 @@ public class Player extends Entity implements Detonator
    */
   private boolean isStaminaDepleted()
   {
-    staminaDepleted = stamina == 0 || (staminaDepleted && stamina < Settings.playerStaminaRegen * Settings.frameRate * 2);
-    STAMINA_BAR.changeColor(staminaDepleted);
+    staminaDepleted =
+        stamina == 0 || (staminaDepleted && stamina < Settings.playerStaminaRegen * Settings.frameRate * 2);
+    staminaBar.changeColor(staminaDepleted);
     return staminaDepleted;
   }
 
@@ -297,8 +275,7 @@ public class Player extends Entity implements Detonator
       {
         if (walkSFX.isPlaying()) walkSFX.stop();
         if (!runSFX.isPlaying()) runSFX.play(0.0, 1.0);
-        soundCounter++;
-        CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
+        center.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
         decreaseStamina();
       }
     }
@@ -315,22 +292,21 @@ public class Player extends Entity implements Detonator
       {
         if (runSFX.isPlaying()) runSFX.stop();
         if (!walkSFX.isPlaying()) walkSFX.play(0.0, 1.0);
-        soundCounter++;
-        CENTER.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
+        center.setLocation(getBoundingBox().getCenterX(), getBoundingBox().getCenterY());
       }
     }
   }
 
   private void updatePickUpBar()
   {
-    TRAP_BAR.setCurrentValue(progressCounter);
-    TRAP_BAR.setMaxValue(5 * Settings.frameRate);
+    trapBar.setCurrentValue(progressCounter);
+    trapBar.setMaxValue(5 * Settings.frameRate);
   }
 
   private void updateStaminaBar()
   {
-    STAMINA_BAR.setCurrentValue((int) stamina);
-    STAMINA_BAR.setMaxValue((int) Settings.playerStamina);
+    staminaBar.setCurrentValue((int) stamina);
+    staminaBar.setMaxValue((int) Settings.playerStamina);
   }
 
   @Override
@@ -339,20 +315,22 @@ public class Player extends Entity implements Detonator
     Point2D.Float position = getPosition();
     if (position == null) return null;
     return new Rectangle2D.Float(position.x, position.y,
-        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize), (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize),
+        (int) ((65.0 / Settings.DEFAULT_TILE_SIZE) * Settings.tileSize));
   }
 
   private class ProgressBar
   {
     private final BufferedImage[] IMAGE_LIST = new BufferedImage[5];
     private final Point2D.Float POSITION;
+    private final boolean absolutePosition;
     private boolean changeColor;
     private int currentValue;
     private int maxValue;
 
-    ProgressBar(String labelPath)
+    ProgressBar(String labelPath, boolean absolutePositioning)
     {
-
+      absolutePosition = absolutePositioning;
       if (labelPath != null) IMAGE_LIST[0] = ResourceManager.getImage(labelPath);
       IMAGE_LIST[1] = ResourceManager.getImage("gui/progress_border_green.png");
       IMAGE_LIST[2] = ResourceManager.getImage("gui/progress_fill_green.png");
@@ -363,17 +341,28 @@ public class Player extends Entity implements Detonator
       this.POSITION = new Point2D.Float();
     }
 
-    public void draw(Graphics2D global)
+    public void draw(Graphics2D global, DrawingManager drawingManager)
     {
-      int xPosition = (int) POSITION.getX();
-      int yPosition = (int) POSITION.getY();
-      int imageWidth = 2 * Settings.tileSize;
-      int imageHeight = (int) (0.375 * Settings.tileSize);
+      int xPosition;
+      int yPosition;
+      if (absolutePosition)
+      {
+        xPosition = (int) POSITION.getX();
+        yPosition = (int) POSITION.getY();
+      }
+      else
+      {
+        xPosition = (int) (drawingManager.gameXToScreenX(POSITION.x));// - drawingManager.getCameraOrigin().getX());
+        yPosition = (int) (drawingManager.gameYToScreenY(POSITION.y));// - drawingManager.getCameraOrigin().getY());
+      }
+
+      int imageWidth = (int) (2f * Settings.tileSize * drawingManager.getScale());
+      int imageHeight = (int) (0.375f * Settings.tileSize * drawingManager.getScale());
       int offset = 0;
       if (IMAGE_LIST[0] != null)
       {
-        offset = imageWidth;
-        global.drawImage(IMAGE_LIST[0], xPosition, yPosition, imageWidth, imageHeight, null);
+        offset = (int) (IMAGE_LIST[0].getWidth() * drawingManager.getScale());
+        global.drawImage(IMAGE_LIST[0], xPosition, yPosition, offset, imageHeight, null);
       }
       int fillWidth = (int) ((float) currentValue / maxValue * imageWidth);
       if (changeColor)
@@ -417,7 +406,6 @@ public class Player extends Entity implements Detonator
     int imageHeight = Settings.tileSize;
     int imageWidth = 0;
     private int value;
-
 
     GuiCounter(String imagePath)
     {
@@ -477,9 +465,10 @@ public class Player extends Entity implements Detonator
       }
     }
 
-    public void draw(Graphics2D global)
+    public void draw(Graphics2D global, DrawingManager drawingManager)
     {
-      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(), imageWidth, imageHeight, null);
+      global.drawImage(IMAGE_LIST[11], (int) POSITION.getX(), (int) POSITION.getY(),
+          (int) (imageWidth * drawingManager.getScale()), (int) (imageHeight * drawingManager.getScale()), null);
     }
 
     public void setPosition(float xPosition, float yPosition)

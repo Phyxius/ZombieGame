@@ -1,10 +1,12 @@
+/**
+ * Created by arirappaport on 9/7/15.
+ * Provides the functionality and characteristics of a fire.
+ */
+
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by arirappaport on 9/7/15.
- */
 public class Fire extends Entity implements Detonator
 {
   private final int numFireFrames;
@@ -34,12 +36,13 @@ public class Fire extends Entity implements Detonator
     return 3;
   }
 
-  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
+  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
     //Animate fire
     local.drawImage(fireBackground, 0, 0, Settings.tileSize, Settings.tileSize, null);
     local.drawImage(frame, 0, 0, Settings.tileSize, Settings.tileSize, null);
   }
+
   @Override
   public void update(UpdateManager updateManager)
   {

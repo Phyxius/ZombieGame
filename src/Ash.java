@@ -1,3 +1,7 @@
+/**
+ * Ash object provides a graphical overlay for burnt objects.
+ */
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -13,6 +17,7 @@ public class Ash extends Entity
 
   /**
    * Creates a new Ash with the given bounding box
+   *
    * @param boundingBox the bounding box to use
    */
   public Ash(Rectangle2D.Float boundingBox)

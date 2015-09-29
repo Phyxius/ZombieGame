@@ -1,13 +1,14 @@
+/**
+ * Created by arirappaport on 9/8/15.
+ * ResourceManager: Handles loading and memoization of resources.
+ */
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by arirappaport on 9/8/15.
- * ResourceManager: Handles loading and memoization of resources.
- */
 public class ResourceManager
 {
   public static HashMap<String, BufferedImage> imageHashMap;
@@ -38,32 +39,10 @@ public class ResourceManager
       imagePaths.add("animation/zombie/move_" + i + ".png");
     }
 
-    //for (int i = 0; i <= 13; i++)
-    //{
-    //  imagePaths.add("animation/player/move_" + i + ".png");
-    //}
-    //for (int i = 0; i <= 8; i++)
-    //{
-    //  imagePaths.add("animation/player/idle_" + i + ".png");
-    //}
-
-//    for (int i = 0; i < 10; i++)
-//    {
-//      imagePaths.add("animation/player1/moving-" + i + ".png");
-//    }
-//    for (int i = 0; i <= 1; i++)
-//    {
-//      imagePaths.add("animation/player1/idle-" + i + ".png");
-//    }
-
     for (int i = 0; i < 10; i++)
     {
       imagePaths.add("animation/player1/moving_small_" + i + ".png");
     }
-//    for (int i = 0; i <= 1; i++)
-//    {
-//      imagePaths.add("animation/player1/idle-" + i + ".png");
-//    }
 
     imagePaths.add("gui/trapIcon.png");
     for (int i = 0; i < 10; i++)
@@ -83,6 +62,7 @@ public class ResourceManager
   /**
    * Gets Image at the given path, loading from the filesystem if it has not already
    * been loaded.
+   *
    * @param path the path to the image
    * @return the loaded image
    */

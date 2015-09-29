@@ -1,8 +1,3 @@
-// Maybe we should change the maxFrameIndex to totalFrames and save number of the frames instead of index.
-// The value of the maxFrameIndex is never used without + 1.
-
-// Do we want to have an animation duration for one time animations such as the trap?
-
 /**
  * Created by arirappaport on 9/10/15.
  *
@@ -15,9 +10,10 @@
  * @param syncOffset Used for synchronization of the frameRate. When syncOffset % syncTarget == 0 update frameIndex.
  * @param syncTarget Used for synchronization of the frameRate. syncTarget = Settings.frameRate / (maxFrameIndex + 1) && syncTarget > 1 otherwise synchronization is turned off.
  */
+
 import java.awt.image.BufferedImage;
 
-public class Animation // Modified 9-17 FrameRateSync
+public class Animation
 {
   protected final String filePath;
   protected final int maxFrameIndex;
@@ -29,8 +25,9 @@ public class Animation // Modified 9-17 FrameRateSync
 
   /**
    * Creates an animation object with no synchronization.
+   *
    * @param truncatedFilePath The filePath for the animation.
-   * @param maxFrameIndex The maxFrameIndex for the animation.
+   * @param maxFrameIndex     The maxFrameIndex for the animation.
    */
   public Animation(String truncatedFilePath, int maxFrameIndex)
   {
@@ -41,9 +38,10 @@ public class Animation // Modified 9-17 FrameRateSync
 
   /**
    * Creates an animation object with no synchronization.
+   *
    * @param truncatedFilePath The filePath for the animation.
-   * @param maxFrameIndex The maxFrameIndex for the animation.
-   * @param synchronize The frame rate synchronization state for the animation.
+   * @param maxFrameIndex     The maxFrameIndex for the animation.
+   * @param synchronize       The frame rate synchronization state for the animation.
    */
   public Animation(String truncatedFilePath, int maxFrameIndex, boolean synchronize)
   {
@@ -61,6 +59,7 @@ public class Animation // Modified 9-17 FrameRateSync
 
   /**
    * Updates the animation frame.
+   *
    * @param reset Resets the animation to the first frame.
    * @return The current frame.
    */
