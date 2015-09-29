@@ -70,7 +70,7 @@ public class House extends Entity
     updateManager.setEntityToFollow(player);
     if (levelNum < 3)
     {
-      makeExit(false);
+      if(!makeExit(true))makeExit(false);
     }
   }
 
@@ -455,7 +455,7 @@ public class House extends Entity
     {
       roomStart.setLocation(room.getStartX() * Settings.tileSize, room.getStartY() * Settings.tileSize);
       Collections.shuffle(room.wallList);
-      if (room.isLeaf() && !room.equals(startRoom) &&
+      if (room.isLeaf() &&  !room.equals(startRoom) &&
           (!makeFarAway || roomStart.distance(player.getPosition()) > Settings.distanceAwayExit * Settings.tileSize))
       {
         for (Wall wall : room.wallList)
