@@ -108,7 +108,7 @@ class RandomZombie extends ZombieModel
           if (entity instanceof Wall || entity instanceof Obstacle && audibleBump)
           {
             zombieStep.stop();
-            bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
+            bumpSound.play((this.getPosition().x - player.getPosition().x) / Settings.tileSize, 1.0);
           }
           moving = false;
         }
@@ -130,7 +130,7 @@ class RandomZombie extends ZombieModel
       if (soundCounter % ((Settings.frameRate / 3) + 10) == 0 && audibleFootSteps)
       {
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
-        zombieStep.play(balance, 0.5 / distanceFromPlayer);
+        if (!zombieStep.isPlaying()) zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
       //zombieStep.stop();
       soundCounter++;
