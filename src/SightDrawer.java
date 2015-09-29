@@ -37,7 +37,7 @@ public class SightDrawer extends Entity
     {
       Point2D.Float lightSource = entry.getKey();
       lightSource.setLocation(drawingManager.gamePositionToScreenPosition(lightSource));
-      RadialGradientPaint p = new RadialGradientPaint(lightSource, Settings.playerSightRadius, GRADIENT_FRACTIONS, GRADIENT_COLORS);
+      RadialGradientPaint p = new RadialGradientPaint(lightSource, Settings.playerSightRadius * drawingManager.getScale(), GRADIENT_FRACTIONS, GRADIENT_COLORS);
       overlayDrawer.setPaint(p);
       /*LIGHT_ELLIPSE.setFrameFromCenter(lightSource,
           new Point2D.Float((float) (lightSource.getX() + Settings.playerSightRadius),
@@ -79,8 +79,9 @@ public class SightDrawer extends Entity
     relevantCorners.clear();
     for (Point2D.Float lightSource : lightSources)
     {
-      Collection<Entity> potentiallyLitEntities = e.getCollidingEntities(new Ellipse2D.Float(lightSource.x - Settings.playerSightRadius, lightSource.y - Settings.playerSightRadius,
-          2 * Settings.playerSightRadius, 2 * Settings.playerSightRadius)).stream().filter(Entity::blocksLight).collect(Collectors.toList());
+      int playerSightRadius = Settings.playerSightRadius;
+      Collection<Entity> potentiallyLitEntities = e.getCollidingEntities(new Ellipse2D.Float(lightSource.x - playerSightRadius, lightSource.y - playerSightRadius,
+          2 * playerSightRadius, 2 * playerSightRadius)).stream().filter(Entity::blocksLight).collect(Collectors.toList());
       /*
         The following code is using the Streams API even though a foreach loop would be more readable because
         Streams provide free parallelism. It takes the list of 'interesting' (i.e. light blocking within sight range) entities,
