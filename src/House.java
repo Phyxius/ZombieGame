@@ -55,7 +55,6 @@ public class House extends Entity
     initDoorways = new ArrayList<>();
     graphOfGrid = new Graph<>();
     fullGrid = new Tile[gridHeight][gridWidth];
-    //houseImg = new BufferedImage(gridWidth*tileSize, gridHeight*tileSize, BufferedImage.TYPE_INT_ARGB);
     int roomStartX = 40;
     int roomStartY = 40;
     int startWidth = 8;
@@ -72,13 +71,10 @@ public class House extends Entity
     makeMasterZombie();
     initializeMap();
     updateManager.setEntityToFollow(player);
-//    updateManager.setEntityToFollow(master);
     if(levelNum < 3)
     {
-      //if (!makeExit(true)) makeExit(false);
       makeExit(false);
     }
-    //generateBuffImgHouse();
   }
 
   /**
@@ -93,7 +89,6 @@ public class House extends Entity
   @Override
   public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager)
   {
-    //local.drawImage(houseImg, 0, 0, houseImg.getWidth(), houseImg.getHeight(), null);
     int tileSize = Settings.tileSize;
     Point2D.Float curOrigin = drawingManager.getCameraOrigin();
     int curStartY = (int) curOrigin.getY()/tileSize;
@@ -111,8 +106,6 @@ public class House extends Entity
                          (int)(tileSize*drawingManager.getScale()),(int)(tileSize*drawingManager.getScale()), null);
       }
     }
-    //local.setColor(Color.green);
-    //connections.forEach(Line -> local.draw(Line));
   }
 
 
@@ -184,19 +177,6 @@ public class House extends Entity
   public boolean isSolid() //solid objects cannot move into each other
   {
     return false;
-  }
-  @Override
-  public void keyPressed(KeyEvent e) {}
-  public void keyReleased(KeyEvent e)
-  {
-
-  }
-  @Override
-  public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
-  {
-  }
-  public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
-  {
   }
 
   @Override
