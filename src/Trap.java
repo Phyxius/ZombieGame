@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+
 public class Trap extends Entity
 {
   protected int tileSize;
@@ -17,6 +18,10 @@ public class Trap extends Entity
   private int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1}; // The Center is a special case
   private int[] dy = {-1, -1, -1, 0, 0, 1, 1, 1}; // The Center is a special case
 
+  /**
+   * Makes a Trap at the specified position
+   * @param position
+   */
   public Trap(Point2D.Float position)
   {
     this.position = position;

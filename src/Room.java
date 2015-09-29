@@ -225,11 +225,17 @@ public class Room
     return traps;
   }
 
+  /**
+   *
+   * @return Returns whether or not the
+   * room has multiple doors.
+   */
   public boolean isLeaf()
   {
     return isLeaf;
   }
 
+  //Makes a horizontal wall
   private void makeWallHoriz(int startY, House.Direction dir)
   {
     int tileSize = Settings.tileSize;
@@ -258,8 +264,7 @@ public class Room
     }
   }
 
-
-
+  //Makes a vertical wall
   private void makeWallVert(int startX, House.Direction dir)
   {
     int tileSize = Settings.tileSize;

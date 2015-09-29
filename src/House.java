@@ -26,6 +26,7 @@ public class House extends Entity
   private int prevHallDoorX, prevHallDoorY;
   public static long seed;
   public static int levelNum = 1;
+  public static boolean isResetting = false;
   private java.util.List<ZombieModel> zombies = new LinkedList<>();
   private java.util.List<Trap> traps = new ArrayList<>();
   private java.util.List<Bookshelf> books = new ArrayList<>();
@@ -113,6 +114,7 @@ public class House extends Entity
     //local.setColor(Color.green);
     //connections.forEach(Line -> local.draw(Line));
   }
+
 
   public void resetHouse()
   {
@@ -284,10 +286,11 @@ public class House extends Entity
     return newHallway;
   }
 
+  //Make the inital room, all other rooms are created around this one
   private Room makeInitRoom(int startX, int startY, int width, int height, UpdateManager updateManager)
   {
     int tileSize = Settings.tileSize;
-    player = new Player(this, new Point2D.Float(44*Settings.tileSize, 44*Settings.tileSize));
+    player = new Player(this, new Point2D.Float(44*Settings.tileSize, 44*Settings.tileSize));//Put player in middle of init room
     updateManager.add(player);
 
     Room startRoom = new Room(startX, startY, width, height,false,player, updateManager);
@@ -305,6 +308,8 @@ public class House extends Entity
     return startRoom;
   }
 
+  //Called by generateRoomList, makes a room and initial doorway
+  //in the opposite direction so there is an opening on both sides
   private Room makeNewRoom(int prevRoomDoorX, int prevRoomDoorY, Direction comingFrom,
                                   Doorway firstdoor, int prevRoomDoorSize)
   {
@@ -353,6 +358,9 @@ public class House extends Entity
     return newRoom;
   }
 
+  //Makes a number of doors based on
+  //a function of depth. Also, makes
+  //sure there are enough doors.
   private int calculateNumDoors(int depth)
   {
     int numDoors = 0;
@@ -576,6 +584,7 @@ public class House extends Entity
     {
       for(Room room: roomList)
       {
+        if(room.equals(startRoom)) continue;
         startX = room.getStartX();
         startY = room.getStartY();
         width = room.getWidth()+startX;
