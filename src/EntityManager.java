@@ -19,7 +19,7 @@ public class EntityManager
   private ArrayList<Entity> entitiesToAdd = new ArrayList<>();
   private Comparator<Entity> depthComparator = Comparator.comparingInt(Entity::getDepth);
   private HashMap<Integer, Boolean> keyDict = new HashMap<>();
-  public boolean debugModeEnabled = true;
+  public boolean debugModeEnabled = false;
   private Entity entityToFollow = null;
   private Point2D.Float cameraOrigin = new Point2D.Float(0, 0);
 
