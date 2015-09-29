@@ -122,7 +122,6 @@ class LineZombie extends ZombieModel
         double balance = (this.getPosition().x - player.getPosition().x) / Settings.tileSize;
         zombieStep.play(balance, 0.5 / distanceFromPlayer);
       }
-      //zombieStep.stop();
       soundCounter++;
     }
     updateCount++;
