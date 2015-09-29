@@ -2,8 +2,8 @@
  * Created by Mohammad R. Yousefi on 07/09/15.
  * Basic model for the zombies in the Zombie House game.
  *
- * @param player The player object that the zombie tracks.
  * @param aStarWorked The success state of path finding.
+ * @param bumpSound The bump audio for the zombie.
  * @param collision Collision state of the zombie object.
  * @param decisionRate The delay between each decision.
  * @param directionAngle The current direction of movement.
@@ -12,12 +12,14 @@
  * @param master The master zombie that the zombie reports to when detecting the player.
  * @param minAngle Minimum change in heading upon collisions.
  * @param moving The movement state of the zombie.
+ * @param player The player object that the zombie tracks.
  * @param playerPosition The last known location of the player.
  * @param position Location of the zombie.
  * @param smell Maximum detection distance for the zombie.
  * @param speed Movement speed of the zombie.
  * @param triedAStar Indicates whether path finding has beed attempted.
  * @param updateCount The number of update calls.
+ * @param zombieStep The walking audio for the zombie.
  */
 
 import java.awt.*;
