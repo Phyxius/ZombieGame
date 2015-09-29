@@ -20,12 +20,13 @@ public class Player extends Entity implements Detonator
   private final ProgressBar trapBar = new ProgressBar("", false);
   private final GuiCounter trapCounter = new GuiCounter("gui/trapIcon.png");
   private final Point2D.Float center;
+  private House house;
   private Trap collidingTrap = null;
   private boolean isPickingUp;
   private boolean isPlacing;
   private boolean isRunning = false;
   private boolean moving;
-  private Point2D.Float position = new Point2D.Float(42 * Settings.tileSize, 43 * Settings.tileSize);
+  private Point2D.Float position;
   private int progressCounter = 0;
   private float stamina = Settings.playerStamina;
   private boolean staminaDepleted;
@@ -35,10 +36,12 @@ public class Player extends Entity implements Detonator
   /**
    * Constructs a default player.
    */
-  public Player()
+  public Player(House house, Point2D.Float position)
   {
+    this.position = position;
     center = new Point2D.Float((float) getBoundingBox().getCenterX(), (float) getBoundingBox().getCenterY());
     trapCounter.setValue(trapsInInventory);
+    this.house = house;
     walkSFX.loop();
     runSFX.loop();
     trapSFX.loop();
@@ -215,8 +218,16 @@ public class Player extends Entity implements Detonator
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
       if (entity instanceof ZombieModel)
       {
-        manager.remove(manager.getAllEntities());
-        NewGame.makeNewGame(manager, House.levelNum);
+        for(Entity e: manager.getAllEntities())
+        {
+          if(!(e instanceof Wall)&&
+             !(e instanceof Exit) &&
+             !(e instanceof House))
+          {
+            manager.remove(e);
+          }
+        }
+        house.resetHouse();
       }
     });
     return returnValue[0];

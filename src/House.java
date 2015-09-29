@@ -11,7 +11,7 @@ import java.util.*;
 public class House extends Entity
 {
   public static Graph<Point> graphOfGrid;
-  private HashMap<Entity, Point2D.Float> initialPosition;
+  private HashMap<Class, ArrayList<Point2D.Float>> initialPosition;
   private Tile[][] fullGrid;
   private boolean[][] bookshelves;
   private UpdateManager updateManager;
@@ -112,28 +112,44 @@ public class House extends Entity
 
   public void resetHouse()
   {
-    for(Entity entity: initialPosition.keySet())
+    for(Class c: initialPosition.keySet())
     {
-
-      if(entity instanceof LineZombie)
+      if (c.equals(Player.class))
       {
-        ((LineZombie) entity).setPosition(initialPosition.get(entity));
-        updateManager.add(entity);
+        player = new Player(this, new Point2D.Float(44* Settings.tileSize, 44* Settings.tileSize));
+        updateManager.add(player);
       }
-      if(entity instanceof RandomZombie)
+    }
+    updateManager.setEntityToFollow(player);
+    for(Class c: initialPosition.keySet())
+    {
+      if (c.equals(LineZombie.class))
       {
-        ((RandomZombie) entity).setPosition(initialPosition.get(entity));
-        updateManager.add(entity);
+        for (Point2D.Float p : initialPosition.get(c))
+        {
+          updateManager.add(new LineZombie(player, p));
+        }
       }
-      if(entity instanceof Player)
+      if (c.equals(RandomZombie.class))
       {
-        ((Player) entity).setPosition(initialPosition.get(entity));
-        updateManager.add(entity);
+        for (Point2D.Float p : initialPosition.get(c))
+        {
+          updateManager.add(new RandomZombie(player, p));
+        }
       }
-      if(entity instanceof Exit)
+      if (c.equals(Trap.class))
       {
-        ((Exit) entity).setPosition(initialPosition.get(entity));
-        updateManager.add(entity);
+        for (Point2D.Float p : initialPosition.get(c))
+        {
+          updateManager.add(new Trap(p));
+        }
+      }
+      if (c.equals(Bookshelf.class))
+      {
+        for (Point2D.Float p : initialPosition.get(c))
+        {
+          updateManager.add(new Bookshelf(p));
+        }
       }
     }
   }
@@ -267,7 +283,7 @@ public class House extends Entity
   private Room makeInitRoom(int startX, int startY, int width, int height, UpdateManager updateManager)
   {
     int tileSize = Settings.tileSize;
-    player = new Player();
+    player = new Player(this, new Point2D.Float(44*Settings.tileSize, 44*Settings.tileSize));
     updateManager.add(player);
 
     Room startRoom = new Room(startX, startY, width, height,false,player, updateManager);
@@ -630,20 +646,36 @@ public class House extends Entity
 
   private void initializeMap()
   {
+    ArrayList<Point2D.Float> lineZombiePoints = new ArrayList<>();
+    ArrayList<Point2D.Float> randomZombiePoints = new ArrayList<>();
+    ArrayList<Point2D.Float> trapPoints = new ArrayList<>();
+    ArrayList<Point2D.Float> bookPoints = new ArrayList<>();
+    ArrayList<Point2D.Float> playerPoints = new ArrayList<>();
     for(ZombieModel zombie: zombies)
     {
-      initialPosition.put(zombie, new Point2D.Float((int) zombie.getPosition().getX(), (int) zombie.getPosition().getY()));
+      if(zombie instanceof LineZombie)
+      {
+        lineZombiePoints.add(new Point2D.Float((int) zombie.getPosition().getX(), (int) zombie.getPosition().getY()));
+      }
+      if(zombie instanceof RandomZombie)
+      {
+        randomZombiePoints.add(new Point2D.Float((int) zombie.getPosition().getX(), (int) zombie.getPosition().getY()));
+      }
     }
+    initialPosition.put(LineZombie.class, lineZombiePoints);
+    initialPosition.put(RandomZombie.class, randomZombiePoints);
     for(Trap trap: traps)
     {
-      initialPosition.put(trap, new Point2D.Float((int) trap.getPosition().getX(), (int) trap.getPosition().getY()));
+      trapPoints.add(new Point2D.Float((int) trap.getPosition().getX(), (int) trap.getPosition().getY()));
     }
+    initialPosition.put(Trap.class, trapPoints);
     for(Bookshelf book: books)
     {
-      initialPosition.put(book, new Point2D.Float((int) book.getPosition().getX(), (int) book.getPosition().getY()));
+      bookPoints.add(new Point2D.Float((int) book.getPosition().getX(), (int) book.getPosition().getY()));
     }
-    initialPosition.put(player, new Point2D.Float((int) player.getPosition().getX(), (int) player.getPosition().getY()));
-    initialPosition.put(exit, new Point2D.Float((int) player.getPosition().getX(), (int) player.getPosition().getY()));
+    initialPosition.put(Bookshelf.class, bookPoints);
+    playerPoints.add(new Point2D.Float((int) player.getPosition().getX(), (int) player.getPosition().getY()));
+    initialPosition.put(Player.class, playerPoints);
   }
 
   private void makeMasterZombie()
