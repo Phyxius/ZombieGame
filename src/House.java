@@ -682,6 +682,7 @@ public class House extends Entity
 
   private void makeMasterZombie()
   {
+    if (zombies.size() == 0) return;
     int index = Util.rng.nextInt(zombies.size());
     ZombieModel zombie = zombies.get(index);
     master = new MasterZombie(player, new Point2D.Float(zombie.getPosition().x, zombie.getPosition().y));

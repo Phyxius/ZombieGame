@@ -21,11 +21,13 @@ public abstract class Entity
    * Draws the entity to the given canvas.
    * No guarantee is provided how often it will be called relative to Update(), so
    * <b>do not</b> change any state in this method.
-   * @param local a Graphics2D object clipped to the bounding box reported by the entity
-   * @param screen a Graphics2D object clipped to the screen
+   *
+   * @param local          a Graphics2D object clipped to the bounding box reported by the entity
+   * @param screen         a Graphics2D object clipped to the screen
    * @param drawingManager An interface that allows read-only access to the global game state
    */
-  public void draw(Graphics2D local, Graphics2D screen, DrawingManager drawingManager) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
+  public void draw(Graphics2D local, Graphics2D screen,
+                   DrawingManager drawingManager) //local = origin centered at upper-left corner of object, screen = origin at upper-left corner of screen
   {
   }
 
@@ -38,13 +40,13 @@ public abstract class Entity
   {
     Point2D.Float position = getPosition();
     if (position == null) return null;
-    return new Rectangle2D.Float(position.x, position.y,
-        Settings.tileSize, Settings.tileSize);
+    return new Rectangle2D.Float(position.x, position.y, Settings.tileSize, Settings.tileSize);
   }
 
   /**
    * Get's the Entity's 'depth'. Entities with higher depths are drawn above entities
    * with lower depths.
+   *
    * @return the depth.
    */
   public int getDepth() //lower numbers are drawn above higher numbers
@@ -79,6 +81,7 @@ public abstract class Entity
 
   /**
    * Called when a key is pressed.
+   *
    * @param e the corresponding KeyEvent object.
    */
   public void keyPressed(KeyEvent e)
@@ -88,6 +91,7 @@ public abstract class Entity
 
   /**
    * Called when a key is pressed.
+   *
    * @param e the corresponding KeyEvent object.
    */
   public void keyReleased(KeyEvent e)
@@ -98,8 +102,9 @@ public abstract class Entity
   /**
    * Called after updates have been resolved each tick, once for each object this object
    * intersects with.
+   *
    * @param other the object being collided with
-   * @param c used to access global state
+   * @param c     used to access global state
    */
   public void onCollision(Entity other, CollisionManager c) //called when collided with other entity
   {
@@ -110,9 +115,11 @@ public abstract class Entity
    * Updates the object's state, and allows read-write access to global
    * state via an UpdateManager.
    * Called as close to Settings.framerate times per second as is feasible.
+   *
    * @param e the UpdateManager to use
    */
-  public void update(UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
+  public void update(
+      UpdateManager e) //called for each update tick, EntityManager contains methods to add/remove/etc entities
   {
 
   }

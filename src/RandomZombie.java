@@ -12,6 +12,7 @@ class RandomZombie extends ZombieModel
 {
   private final Animation idleAnimation = new Animation("animation/zombie/idle_", 16, true);
   private final Animation moveAnimation = new Animation("animation/zombie/move_", 16, true);
+  protected final SoundEffect zombieStep = new SoundEffect("soundfx/zombiefoot.mp3");
   private int soundCounter = 0;
 
   RandomZombie(Player player, Point2D.Float position)
@@ -104,7 +105,11 @@ class RandomZombie extends ZombieModel
           }
           position.setLocation(lastX, lastY); // Cancel last move and no that it collided.
           collision = true;
-          if (entity instanceof Wall && audibleBump) bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
+          if (entity instanceof Wall || entity instanceof Obstacle && audibleBump)
+          {
+            zombieStep.stop();
+            bumpSound.play(this.getPosition().x - player.getPosition().x / Settings.tileSize, 1.0);
+          }
           moving = false;
         }
       });

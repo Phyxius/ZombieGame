@@ -216,7 +216,7 @@ public class Player extends Entity implements Detonator
         returnValue[0] = true;
       }
       if (entity instanceof Trap && entity.getBoundingBox().contains(center)) collidingTrap = (Trap) entity;
-      if (entity instanceof ZombieModel)
+      if (entity instanceof ZombieModel || entity instanceof Fire)
       {
         for(Entity e: manager.getAllEntities())
         {
